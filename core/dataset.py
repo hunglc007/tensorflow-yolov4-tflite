@@ -1,15 +1,5 @@
 #! /usr/bin/env python
 # coding=utf-8
-#================================================================
-#   Copyright (C) 2019 * Ltd. All rights reserved.
-#
-#   Editor      : VIM
-#   File name   : dataset.py
-#   Author      : YunYang1994
-#   Created date: 2019-03-15 18:05:03
-#   Description :
-#
-#================================================================
 
 import os
 import cv2
