@@ -68,6 +68,7 @@ python main.py --output results_yolov4_tf
 * [ ] Update scale xy
 * [ ] ciou
 * [ ] Mosaic data augmentation
+* [x] Mish activation
 * [x] yolov4 tflite version
 * [x] yolov4 in8 tflite version for mobile
 
