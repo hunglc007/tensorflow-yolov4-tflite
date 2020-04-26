@@ -5,4 +5,4 @@ tqdm
 absl-py
 matplotlib
 easydict
-tensorflow_addons=0.9.1
+tensorflow_addons==0.9.1

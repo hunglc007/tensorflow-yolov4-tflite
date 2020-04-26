@@ -5,4 +5,4 @@ tensorflow==2.1.0
 absl-py
 easydict
 matplotlib
-tensorflow_addons=0.9.1
+tensorflow_addons==0.9.1
