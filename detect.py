@@ -2,7 +2,7 @@ import time
 from absl import app, flags, logging
 from absl.flags import FLAGS
 import core.utils as utils
-from core.yolov3 import YOLOv3, YOLOv3_tiny, decode
+from core.yolov4 import YOLOv4, decode
 from PIL import Image
 from core.config import cfg
 import cv2
@@ -10,12 +10,12 @@ import numpy as np
 import tensorflow as tf
 
 flags.DEFINE_string('framework', 'tf', '(tf, tflite')
-flags.DEFINE_string('weights', './data/yolov3.weights',
+flags.DEFINE_string('weights', './data/yolov4.weights',
                     'path to weights file')
-flags.DEFINE_integer('size', 416, 'resize images to')
-flags.DEFINE_boolean('tiny', False, 'yolov3 or yolov3-tiny')
+flags.DEFINE_integer('size', 608, 'resize images to')
+flags.DEFINE_boolean('tiny', False, 'yolov4 or yolov4-tiny')
 flags.DEFINE_string('image', './data/kite.jpg', 'path to input image')
-flags.DEFINE_string('output', './output.jpg', 'path to output image')
+flags.DEFINE_string('output', 'result.png', 'path to output image')
 
 def main(_argv):
     if FLAGS.tiny:
@@ -36,7 +36,7 @@ def main(_argv):
     if FLAGS.framework == 'tf':
         input_layer = tf.keras.layers.Input([input_size, input_size, 3])
         if FLAGS.tiny:
-            feature_maps = YOLOv3_tiny(input_layer)
+            feature_maps = YOLOv4(input_layer)
             bbox_tensors = []
             for i, fm in enumerate(feature_maps):
                 bbox_tensor = decode(fm, i)
@@ -45,7 +45,7 @@ def main(_argv):
             model = tf.keras.Model(input_layer, bbox_tensors)
             utils.load_weights_tiny(model, FLAGS.weights)
         else:
-            feature_maps = YOLOv3(input_layer)
+            feature_maps = YOLOv4(input_layer)
             bbox_tensors = []
             for i, fm in enumerate(feature_maps):
                 bbox_tensor = decode(fm, i)

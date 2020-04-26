@@ -8,13 +8,13 @@ import numpy as np
 import tensorflow as tf
 import core.utils as utils
 from core.config import cfg
-from core.yolov3 import YOLOv3, YOLOv3_tiny, decode
+from core.yolov4 import YOLOv4, decode
 
-flags.DEFINE_string('weights', './data/yolov3-tiny.weights',
+flags.DEFINE_string('weights', './data/yolov4.weights',
                     'path to weights file')
 flags.DEFINE_string('framework', 'tf', 'select model type in (tf, tflite)'
                     'path to weights file')
-flags.DEFINE_boolean('tiny', True, 'yolov3 or yolov3-tiny')
+flags.DEFINE_boolean('tiny', False, 'yolov3 or yolov3-tiny')
 flags.DEFINE_integer('size', 416, 'resize images to')
 flags.DEFINE_string('annotation_path', "./data/dataset/val2017.txt", 'annotation path')
 flags.DEFINE_string('write_image_path', "./data/detection/", 'write image path')
@@ -43,7 +43,7 @@ def main(_argv):
     if FLAGS.framework == "tf":
         input_layer = tf.keras.layers.Input([INPUT_SIZE, INPUT_SIZE, 3])
         if FLAGS.tiny:
-            feature_maps = YOLOv3_tiny(input_layer)
+            feature_maps = YOLOv4(input_layer)
             bbox_tensors = []
             for i, fm in enumerate(feature_maps):
                 bbox_tensor = decode(fm, i)
@@ -52,7 +52,7 @@ def main(_argv):
             model = tf.keras.Model(input_layer, bbox_tensors)
             utils.load_weights_tiny(model, FLAGS.weights)
         else:
-            feature_maps = YOLOv3(input_layer)
+            feature_maps = YOLOv4(input_layer)
             bbox_tensors = []
             for i, fm in enumerate(feature_maps):
                 bbox_tensor = decode(fm, i)
