@@ -3,17 +3,16 @@ from absl import app, flags, logging
 from absl.flags import FLAGS
 import numpy as np
 import cv2
-from core.yolov3 import YOLOv3, YOLOv3_tiny, decode
-import tensorflow_model_optimization as tfmot
+from core.yolov4 import YOLOv4, decode
 import core.utils as utils
 import os
 from yolov3_tf2.dataset import transform_images
 
-flags.DEFINE_string('weights', './data/yolov3-tiny.weights', 'path to weights file')
-flags.DEFINE_string('output', './checkpoints/yolov3-tiny-fp16-416.tflite', 'path to output')
-flags.DEFINE_boolean('tiny', True, 'path to output')
+flags.DEFINE_string('weights', './data/yolov4.weights', 'path to weights file')
+flags.DEFINE_string('output', './checkpoints/yolov4.tflite', 'path to output')
+flags.DEFINE_boolean('tiny', False, 'path to output')
 flags.DEFINE_integer('input_size', 416, 'path to output')
-flags.DEFINE_string('quantize_mode', "float16", 'quantize mode (int8, float16, full_int8)')
+flags.DEFINE_string('quantize_mode', "int8", 'quantize mode (int8, float16, full_int8)')
 flags.DEFINE_string('dataset', "/media/user/Source/Data/coco_dataset/coco/5k.txt", 'path to dataset')
 
 def representative_data_gen():
@@ -29,18 +28,18 @@ def representative_data_gen():
     else:
       continue
 
-def apply_quantization_to_dense(layer):
-  # print(layer.name)
-  if isinstance(layer, (tf.keras.layers.Conv2D, tf.keras.layers.BatchNormalization,
-                        tf.keras.layers.ZeroPadding2D, tf.keras.layers.ReLU)):
-    print(layer.name)
-    return tfmot.quantization.keras.quantize_annotate_layer(layer)
-  return layer
+# def apply_quantization_to_dense(layer):
+#   # print(layer.name)
+#   if isinstance(layer, (tf.keras.layers.Conv2D, tf.keras.layers.BatchNormalization,
+#                         tf.keras.layers.ZeroPadding2D, tf.keras.layers.ReLU)):
+#     print(layer.name)
+#     return tfmot.quantization.keras.quantize_annotate_layer(layer)
+#   return layer
 
 def save_tflite():
   input_layer = tf.keras.layers.Input([FLAGS.input_size, FLAGS.input_size, 3])
   if FLAGS.tiny:
-    feature_maps = YOLOv3_tiny(input_layer)
+    feature_maps = YOLOv4(input_layer)
     bbox_tensors = []
     for i, fm in enumerate(feature_maps):
       bbox_tensor = decode(fm, i)
@@ -50,7 +49,7 @@ def save_tflite():
     model.summary()
     utils.load_weights_tiny(model, FLAGS.weights)
   else:
-    feature_maps = YOLOv3(input_layer)
+    feature_maps = YOLOv4(input_layer)
     bbox_tensors = []
     for i, fm in enumerate(feature_maps):
       bbox_tensor = decode(fm, i)
