@@ -56,6 +56,7 @@ python main.py --output results_yolov4_tf
 
   * YOLOv4: Optimal Speed and Accuracy of Object Detection [YOLOv4](https://arxiv.org/abs/2004.10934).
   * [darknet](https://github.com/AlexeyAB/darknet)
-  * My project is inspired by these previous fantasic YOLOv3 implementations:
+  
+   My project is inspired by these previous fantasic YOLOv3 implementations:
   * [Yolov3 tensorflow](https://github.com/YunYang1994/tensorflow-yolov3)
   * [Yolov3 tf2](https://github.com/zzh8829/yolov3-tf2)
