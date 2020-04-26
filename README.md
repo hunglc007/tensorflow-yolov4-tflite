@@ -16,6 +16,9 @@ Download yolov4.weights file: https://drive.google.com/open?id=1cewMfusmPjYWbrnu
 ```bash
 # yolov4
 python detect.py --weights ./data/yolov4.weights --framework tf --size 608 --image ./data/kite.jpg
+
+# yolov4 tflite
+python detect.py --weights ./data/yolov4-int8.tflite --framework tflite --size 416 --image ./data/kite.jpg
 ```
 
 #### Output
