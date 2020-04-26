@@ -9,7 +9,7 @@ Tensorflow 2.1.0
 tensorflow_addons 0.9.1 (require for mish activation)
 requirements.txt
 
-###Performance
+### Performance
 <p align="center"><img src="data/performance.png" width="640"\></p>
 
 ### Demo
@@ -19,7 +19,7 @@ requirements.txt
 python detect.py --weights ./data/yolov4.weights --framework tf --size 608 --image ./data/kite.jpg
 ```
 
-####Output
+#### Output
 <p align="center"><img src="result.png" width="640"\></p>
 
 
