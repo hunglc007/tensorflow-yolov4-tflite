@@ -22,7 +22,12 @@ python detect.py --weights ./data/yolov4-int8.tflite --framework tflite --size 4
 ```
 
 #### Output
+
+##### Yolov4 original weight
 <p align="center"><img src="result.png" width="640"\></p>
+
+##### Yolov4 tflite int8
+<p align="center"><img src="result-int8.png" width="640"\></p>
 
 ### Convert to tflite
 
