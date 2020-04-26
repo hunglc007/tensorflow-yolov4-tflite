@@ -60,8 +60,8 @@ python main.py --output results_yolov4_tf
 * [ ] Update scale xy
 * [ ] ciou
 * [ ] Mosaic data augmentation
-* [ ] yolov4 tflite version
-* [ ] yolov4 in8 tflite version for mobile
+* [x] yolov4 tflite version
+* [x] yolov4 in8 tflite version for mobile
 
 ### References
 
