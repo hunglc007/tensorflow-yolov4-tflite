@@ -6,7 +6,7 @@ Download yolov4.weights file: https://drive.google.com/open?id=1cewMfusmPjYWbrnu
 
 ### Prerequisites
 * Tensorflow 2.1.0
-* tensorflow_addons 0.9.1 (require for mish activation)
+* tensorflow_addons 0.9.1 (required for mish activation)
 
 ### Performance
 <p align="center"><img src="data/performance.png" width="640"\></p>
