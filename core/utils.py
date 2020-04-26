@@ -9,7 +9,7 @@ def load_weights_tiny(model, weights_file):
     major, minor, revision, seen, _ = np.fromfile(wf, dtype=np.int32, count=5)
 
     j = 0
-    for i in range(13):
+    for i in range(1):
         conv_layer_name = 'conv2d_%d' %i if i > 0 else 'conv2d'
         bn_layer_name = 'batch_normalization_%d' %j if j > 0 else 'batch_normalization'
 
@@ -43,12 +43,12 @@ def load_weights_tiny(model, weights_file):
     assert len(wf.read()) == 0, 'failed to read all data'
     wf.close()
 
-def load_weights(model, weights_file):
+def load_weights_v3(model, weights_file):
     wf = open(weights_file, 'rb')
     major, minor, revision, seen, _ = np.fromfile(wf, dtype=np.int32, count=5)
 
     j = 0
-    for i in range(78):
+    for i in range(75):
         conv_layer_name = 'conv2d_%d' %i if i > 0 else 'conv2d'
         bn_layer_name = 'batch_normalization_%d' %j if j > 0 else 'batch_normalization'
 
@@ -57,7 +57,7 @@ def load_weights(model, weights_file):
         k_size = conv_layer.kernel_size[0]
         in_dim = conv_layer.input_shape[-1]
 
-        if i not in [99, 100, 111]:
+        if i not in [58, 66, 74]:
             # darknet weights: [beta, gamma, mean, variance]
             bn_weights = np.fromfile(wf, dtype=np.float32, count=4 * filters)
             # tf weights: [gamma, beta, mean, variance]
@@ -73,13 +73,52 @@ def load_weights(model, weights_file):
         # tf shape (height, width, in_dim, out_dim)
         conv_weights = conv_weights.reshape(conv_shape).transpose([2, 3, 1, 0])
 
-        if i not in [99, 100, 111]:
+        if i not in [58, 66, 74]:
             conv_layer.set_weights([conv_weights])
             bn_layer.set_weights(bn_weights)
         else:
             conv_layer.set_weights([conv_weights, conv_bias])
 
     # assert len(wf.read()) == 0, 'failed to read all data'
+    wf.close()
+
+def load_weights(model, weights_file):
+    wf = open(weights_file, 'rb')
+    major, minor, revision, seen, _ = np.fromfile(wf, dtype=np.int32, count=5)
+
+    j = 0
+    for i in range(110):
+        conv_layer_name = 'conv2d_%d' %i if i > 0 else 'conv2d'
+        bn_layer_name = 'batch_normalization_%d' %j if j > 0 else 'batch_normalization'
+
+        conv_layer = model.get_layer(conv_layer_name)
+        filters = conv_layer.filters
+        k_size = conv_layer.kernel_size[0]
+        in_dim = conv_layer.input_shape[-1]
+
+        if i not in [93, 101, 109]:
+            # darknet weights: [beta, gamma, mean, variance]
+            bn_weights = np.fromfile(wf, dtype=np.float32, count=4 * filters)
+            # tf weights: [gamma, beta, mean, variance]
+            bn_weights = bn_weights.reshape((4, filters))[[1, 0, 2, 3]]
+            bn_layer = model.get_layer(bn_layer_name)
+            j += 1
+        else:
+            conv_bias = np.fromfile(wf, dtype=np.float32, count=filters)
+
+        # darknet shape (out_dim, in_dim, height, width)
+        conv_shape = (filters, in_dim, k_size, k_size)
+        conv_weights = np.fromfile(wf, dtype=np.float32, count=np.product(conv_shape))
+        # tf shape (height, width, in_dim, out_dim)
+        conv_weights = conv_weights.reshape(conv_shape).transpose([2, 3, 1, 0])
+
+        if i not in [93, 101, 109]:
+            conv_layer.set_weights([conv_weights])
+            bn_layer.set_weights(bn_weights)
+        else:
+            conv_layer.set_weights([conv_weights, conv_bias])
+
+    assert len(wf.read()) == 0, 'failed to read all data'
     wf.close()
 
 
@@ -255,6 +294,7 @@ def postprocess_boxes(pred_bbox, org_img_shape, input_size, score_threshold):
     # # (5) discard some boxes with low scores
     classes = np.argmax(pred_prob, axis=-1)
     scores = pred_conf * pred_prob[np.arange(len(pred_coor)), classes]
+    # scores = pred_prob[np.arange(len(pred_coor)), classes]
     score_mask = scores > score_threshold
     mask = np.logical_and(scale_mask, score_mask)
     coors, scores, classes = pred_coor[mask], scores[mask], classes[mask]

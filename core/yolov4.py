@@ -13,49 +13,106 @@ NUM_CLASS       = len(utils.read_class_names(cfg.YOLO.CLASSES))
 STRIDES         = np.array(cfg.YOLO.STRIDES)
 IOU_LOSS_THRESH = cfg.YOLO.IOU_LOSS_THRESH
 
+def YOLOv3(input_layer):
+    route_1, route_2, conv = backbone.darknet53(input_layer)
+
+    conv = common.convolutional(conv, (1, 1, 1024,  512))
+    conv = common.convolutional(conv, (3, 3,  512, 1024))
+    conv = common.convolutional(conv, (1, 1, 1024,  512))
+    conv = common.convolutional(conv, (3, 3,  512, 1024))
+    conv = common.convolutional(conv, (1, 1, 1024,  512))
+
+    conv_lobj_branch = common.convolutional(conv, (3, 3, 512, 1024))
+    conv_lbbox = common.convolutional(conv_lobj_branch, (1, 1, 1024, 3*(NUM_CLASS + 5)), activate=False, bn=False)
+
+    conv = common.convolutional(conv, (1, 1,  512,  256))
+    conv = common.upsample(conv)
+
+    conv = tf.concat([conv, route_2], axis=-1)
+
+    conv = common.convolutional(conv, (1, 1, 768, 256))
+    conv = common.convolutional(conv, (3, 3, 256, 512))
+    conv = common.convolutional(conv, (1, 1, 512, 256))
+    conv = common.convolutional(conv, (3, 3, 256, 512))
+    conv = common.convolutional(conv, (1, 1, 512, 256))
+
+    conv_mobj_branch = common.convolutional(conv, (3, 3, 256, 512))
+    conv_mbbox = common.convolutional(conv_mobj_branch, (1, 1, 512, 3*(NUM_CLASS + 5)), activate=False, bn=False)
+
+    conv = common.convolutional(conv, (1, 1, 256, 128))
+    conv = common.upsample(conv)
+
+    conv = tf.concat([conv, route_1], axis=-1)
+
+    conv = common.convolutional(conv, (1, 1, 384, 128))
+    conv = common.convolutional(conv, (3, 3, 128, 256))
+    conv = common.convolutional(conv, (1, 1, 256, 128))
+    conv = common.convolutional(conv, (3, 3, 128, 256))
+    conv = common.convolutional(conv, (1, 1, 256, 128))
+
+    conv_sobj_branch = common.convolutional(conv, (3, 3, 128, 256))
+    conv_sbbox = common.convolutional(conv_sobj_branch, (1, 1, 256, 3*(NUM_CLASS +5)), activate=False, bn=False)
+
+    return [conv_sbbox, conv_mbbox, conv_lbbox]
+
 def YOLOv4(input_layer):
     route_1, route_2, conv = backbone.cspdarknet53(input_layer)
-    # conv = backbone.cspdarknet53(input_layer)
 
-    # conv = common.convolutional(conv, (1, 1, 1024,  512))
-    # conv = common.convolutional(conv, (3, 3,  512, 1024))
-    # conv = common.convolutional(conv, (1, 1, 1024,  512))
-    # conv = common.convolutional(conv, (3, 3,  512, 1024))
-    # conv = common.convolutional(conv, (1, 1, 1024,  512))
-    #
-    # conv_lobj_branch = common.convolutional(conv, (3, 3, 512, 1024))
-    # conv_lbbox = common.convolutional(conv_lobj_branch, (1, 1, 1024, 3*(NUM_CLASS + 5)), activate=False, bn=False)
-    #
-    # conv = common.convolutional(conv, (1, 1,  512,  256))
-    # conv = common.upsample(conv)
-    #
-    # conv = tf.concat([conv, route_2], axis=-1)
+    route = conv
+    conv = common.convolutional(conv, (1, 1, 512, 256))
+    conv = common.upsample(conv)
+    route_2 = common.convolutional(route_2, (1, 1, 512, 256))
+    conv = tf.concat([route_2, conv], axis=-1)
 
-    # conv = common.convolutional(conv, (1, 1, 768, 256))
-    # conv = common.convolutional(conv, (3, 3, 256, 512))
-    # conv = common.convolutional(conv, (1, 1, 512, 256))
-    # conv = common.convolutional(conv, (3, 3, 256, 512))
-    # conv = common.convolutional(conv, (1, 1, 512, 256))
-    #
-    # conv_mobj_branch = common.convolutional(conv, (3, 3, 256, 512))
-    # conv_mbbox = common.convolutional(conv_mobj_branch, (1, 1, 512, 3*(NUM_CLASS + 5)), activate=False, bn=False)
-    #
-    # conv = common.convolutional(conv, (1, 1, 256, 128))
-    # conv = common.upsample(conv)
-    #
-    # conv = tf.concat([conv, route_1], axis=-1)
-    #
-    # conv = common.convolutional(conv, (1, 1, 384, 128))
-    # conv = common.convolutional(conv, (3, 3, 128, 256))
-    # conv = common.convolutional(conv, (1, 1, 256, 128))
-    # conv = common.convolutional(conv, (3, 3, 128, 256))
-    # conv = common.convolutional(conv, (1, 1, 256, 128))
-    #
-    # conv_sobj_branch = common.convolutional(conv, (3, 3, 128, 256))
-    # conv_sbbox = common.convolutional(conv_sobj_branch, (1, 1, 256, 3*(NUM_CLASS +5)), activate=False, bn=False)
+    conv = common.convolutional(conv, (1, 1, 512, 256))
+    conv = common.convolutional(conv, (3, 3, 256, 512))
+    conv = common.convolutional(conv, (1, 1, 512, 256))
+    conv = common.convolutional(conv, (3, 3, 256, 512))
+    conv = common.convolutional(conv, (1, 1, 512, 256))
 
-    # return [conv_sbbox, conv_mbbox, conv_lbbox]
-    return [route_1, route_2, conv]
+    route_2 = conv
+    conv = common.convolutional(conv, (1, 1, 256, 128))
+    conv = common.upsample(conv)
+    route_1 = common.convolutional(route_1, (1, 1, 256, 128))
+    conv = tf.concat([route_1, conv], axis=-1)
+
+    conv = common.convolutional(conv, (1, 1, 256, 128))
+    conv = common.convolutional(conv, (3, 3, 128, 256))
+    conv = common.convolutional(conv, (1, 1, 256, 128))
+    conv = common.convolutional(conv, (3, 3, 128, 256))
+    conv = common.convolutional(conv, (1, 1, 256, 128))
+
+    route_1 = conv
+    conv = common.convolutional(conv, (3, 3, 128, 256))
+    conv_sbbox = common.convolutional(conv, (1, 1, 256, 3 * (NUM_CLASS + 5)), activate=False, bn=False)
+
+    conv = common.convolutional(route_1, (3, 3, 128, 256), downsample=True)
+    conv = tf.concat([conv, route_2], axis=-1)
+
+    conv = common.convolutional(conv, (1, 1, 512, 256))
+    conv = common.convolutional(conv, (3, 3, 256, 512))
+    conv = common.convolutional(conv, (1, 1, 512, 256))
+    conv = common.convolutional(conv, (3, 3, 256, 512))
+    conv = common.convolutional(conv, (1, 1, 512, 256))
+
+    route_2 = conv
+    conv = common.convolutional(conv, (3, 3, 256, 512))
+    conv_mbbox = common.convolutional(conv, (1, 1, 512, 3 * (NUM_CLASS + 5)), activate=False, bn=False)
+
+    conv = common.convolutional(route_2, (3, 3, 256, 512), downsample=True)
+    conv = tf.concat([conv, route], axis=-1)
+
+    conv = common.convolutional(conv, (1, 1, 1024, 512))
+    conv = common.convolutional(conv, (3, 3, 512, 1024))
+    conv = common.convolutional(conv, (1, 1, 1024, 512))
+    conv = common.convolutional(conv, (3, 3, 512, 1024))
+    conv = common.convolutional(conv, (1, 1, 1024, 512))
+
+    conv = common.convolutional(conv, (3, 3, 512, 1024))
+    conv_lbbox = common.convolutional(conv, (1, 1, 1024, 3 * (NUM_CLASS + 5)), activate=False, bn=False)
+
+    return [conv_sbbox, conv_mbbox, conv_lbbox]
+    # return [route_1, route_2, conv]
 def decode(conv_output, i=0):
     """
     return tensor of shape [batch_size, output_size, output_size, anchor_per_scale, 5 + num_classes]
