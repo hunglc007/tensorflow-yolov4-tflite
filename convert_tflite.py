@@ -9,7 +9,7 @@ import os
 from yolov3_tf2.dataset import transform_images
 
 flags.DEFINE_string('weights', './data/yolov4.weights', 'path to weights file')
-flags.DEFINE_string('output', './checkpoints/yolov4.tflite', 'path to output')
+flags.DEFINE_string('output', './data/yolov4.tflite', 'path to output')
 flags.DEFINE_boolean('tiny', False, 'path to output')
 flags.DEFINE_integer('input_size', 416, 'path to output')
 flags.DEFINE_string('quantize_mode', "int8", 'quantize mode (int8, float16, full_int8)')

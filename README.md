@@ -21,7 +21,18 @@ python detect.py --weights ./data/yolov4.weights --framework tf --size 608 --ima
 #### Output
 <p align="center"><img src="result.png" width="640"\></p>
 
+### Convert to tflite
 
+```bash
+# yolov4
+python convert_tflite.py --weights ./data/yolov4.weights --output ./data/yolov4.tflite
+
+# yolov4 quantize int8
+python convert_tflite.py --weights ./data/yolov4.tf --output ./data/yolov4-int8.tflite --quantize_mode int8
+
+# yolov4 quantize float16
+python convert_tflite.py --weights ./data/yolov4.tf --output ./data/yolov4-fp16.tflite --quantize_mode float16
+```
 
 ### Evaluate on COCO 2017 Dataset
 ```bash
