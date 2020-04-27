@@ -1,6 +1,5 @@
 from absl import app, flags, logging
 from absl.flags import FLAGS
-from yolov3_tf2 import utils
 import cv2
 import os
 import shutil
