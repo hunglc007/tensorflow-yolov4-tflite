@@ -12,6 +12,9 @@ flags.DEFINE_string('image', './data/kite.jpg', 'path to input image')
 flags.DEFINE_integer('size', 416, 'resize images to')
 
 def main(_argv):
+    physical_devices = tf.config.experimental.list_physical_devices('GPU')
+    if len(physical_devices) > 0:
+        tf.config.experimental.set_memory_growth(physical_devices[0], True)
     input_layer = tf.keras.layers.Input([FLAGS.size, FLAGS.size, 3])
     feature_maps = YOLOv4(input_layer)
     bbox_tensors = []
