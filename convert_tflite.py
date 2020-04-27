@@ -6,7 +6,6 @@ import cv2
 from core.yolov4 import YOLOv4, decode
 import core.utils as utils
 import os
-from yolov3_tf2.dataset import transform_images
 
 flags.DEFINE_string('weights', './data/yolov4.weights', 'path to weights file')
 flags.DEFINE_string('output', './data/yolov4.tflite', 'path to output')
