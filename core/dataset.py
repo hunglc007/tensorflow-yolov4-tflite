@@ -1,5 +1,15 @@
 #! /usr/bin/env python
 # coding=utf-8
+#================================================================
+#   Copyright (C) 2019 * Ltd. All rights reserved.
+#
+#   Editor      : VIM
+#   File name   : dataset.py
+#   Author      : YunYang1994
+#   Created date: 2019-03-15 18:05:03
+#   Description :
+#
+#================================================================
 
 import os
 import cv2
@@ -46,7 +56,8 @@ class Dataset(object):
     def __next__(self):
 
         with tf.device('/cpu:0'):
-            self.train_input_size = random.choice(self.train_input_sizes)
+            # self.train_input_size = random.choice(self.train_input_sizes)
+            self.train_input_size = cfg.TRAIN.INPUT_SIZE
             self.train_output_sizes = self.train_input_size // self.strides
 
             batch_image = np.zeros((self.batch_size, self.train_input_size, self.train_input_size, 3), dtype=np.float32)

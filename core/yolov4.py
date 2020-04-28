@@ -12,6 +12,8 @@ from core.config import cfg
 NUM_CLASS       = len(utils.read_class_names(cfg.YOLO.CLASSES))
 STRIDES         = np.array(cfg.YOLO.STRIDES)
 IOU_LOSS_THRESH = cfg.YOLO.IOU_LOSS_THRESH
+XYSCALE = cfg.YOLO.XYSCALE
+ANCHORS = utils.get_anchors(cfg.YOLO.ANCHORS)
 
 def YOLOv3(input_layer):
     route_1, route_2, conv = backbone.darknet53(input_layer)
@@ -112,65 +114,79 @@ def YOLOv4(input_layer):
     conv_lbbox = common.convolutional(conv, (1, 1, 1024, 3 * (NUM_CLASS + 5)), activate=False, bn=False)
 
     return [conv_sbbox, conv_mbbox, conv_lbbox]
-    # return [route_1, route_2, conv]
+
 def decode(conv_output, i=0):
     """
     return tensor of shape [batch_size, output_size, output_size, anchor_per_scale, 5 + num_classes]
             contains (x, y, w, h, score, probability)
     """
-
     conv_shape       = tf.shape(conv_output)
     batch_size       = conv_shape[0]
     output_size      = conv_shape[1]
 
     conv_output = tf.reshape(conv_output, (batch_size, output_size, output_size, 3, 5 + NUM_CLASS))
-
-    # conv_raw_dxdy = conv_output[:, :, :, :, 0:2]
-    # conv_raw_dwdh = conv_output[:, :, :, :, 2:4]
-    # conv_raw_conf = conv_output[:, :, :, :, 4:5]
-    # conv_raw_prob = conv_output[:, :, :, :, 5: ]
-    # conv_raw_dxdy, conv_raw_dwdh, conv_raw_conf, conv_raw_prob = tf.split(conv_output, (2, 2, 1, NUM_CLASS), axis=-1)
     conv_raw_xywh, conv_raw_conf, conv_raw_prob = tf.split(conv_output, (4, 1, NUM_CLASS), axis=-1)
-
-    # y = tf.tile(tf.range(output_size, dtype=tf.int32)[:, tf.newaxis], [1, output_size])
-    # x = tf.tile(tf.range(output_size, dtype=tf.int32)[tf.newaxis, :], [output_size, 1])
-    # xy_grid = tf.concat([x[:, :, tf.newaxis], y[:, :, tf.newaxis]], axis=-1)
-    # xy_grid = tf.tile(xy_grid[tf.newaxis, :, :, tf.newaxis, :], [batch_size, 1, 1, 3, 1])
-    # xy_grid = tf.cast(xy_grid, tf.float32)
-
-    # x = tf.tile(tf.expand_dims(tf.range(output_size, dtype=tf.int32), axis=0), [output_size, 1])
-    # y = tf.tile(tf.expand_dims(tf.range(output_size, dtype=tf.int32), axis=1), [1, output_size])
-    # xy_grid = tf.expand_dims(tf.stack([x, y], axis=-1), axis=2)  # [gx, gy, 1, 2]
-
-    # xy_grid = tf.meshgrid(tf.range(output_size), tf.range(output_size))
-    # xy_grid = tf.expand_dims(tf.stack(xy_grid, axis=-1), axis=2)  # [gx, gy, 1, 2]
-
-    # xy_grid = tf.tile(tf.expand_dims(xy_grid, axis=0), [batch_size, 1, 1, 3, 1])
-    # xy_grid = tf.cast(xy_grid, tf.float32)
-
-    # pred_xy = (tf.sigmoid(conv_raw_dxdy) + xy_grid) * STRIDES[i]
-    # pred_wh = (tf.exp(conv_raw_dwdh) * ANCHORS[i]) * STRIDES[i]
-    # pred_xywh = tf.concat([pred_xy, pred_wh], axis=-1)
 
     pred_conf = tf.sigmoid(conv_raw_conf)
     pred_prob = tf.sigmoid(conv_raw_prob)
 
-    # return xy_grid
     return tf.concat([conv_raw_xywh, pred_conf, pred_prob], axis=-1)
-    # return tf.concat([pred_xywh, pred_conf, pred_prob], axis=-1)
+
+def decode_train(conv_output, i=0):
+    conv_shape = tf.shape(conv_output)
+    batch_size = conv_shape[0]
+    output_size = conv_shape[1]
+
+    conv_output = tf.reshape(conv_output, (batch_size, output_size, output_size, 3, 5 + NUM_CLASS))
+    conv_raw_dxdy, conv_raw_dwdh, conv_raw_conf, conv_raw_prob = tf.split(conv_output, (2, 2, 1, NUM_CLASS), axis=-1)
+
+    x = tf.tile(tf.expand_dims(tf.range(output_size, dtype=tf.int32), axis=0), [output_size, 1])
+    y = tf.tile(tf.expand_dims(tf.range(output_size, dtype=tf.int32), axis=1), [1, output_size])
+    xy_grid = tf.expand_dims(tf.stack([x, y], axis=-1), axis=2)  # [gx, gy, 1, 2]
+    # xy_grid = np.meshgrid(np.arange(output_size), np.arange(output_size))
+    # xy_grid = np.expand_dims(np.stack(xy_grid, axis=-1), axis=2)  # [gx, gy, 1, 2]
+
+    xy_grid = tf.tile(tf.expand_dims(xy_grid, axis=0), [batch_size, 1, 1, 3, 1])
+    xy_grid = tf.cast(xy_grid, tf.float32)
+
+    pred_xy = ((tf.sigmoid(conv_raw_dxdy) * XYSCALE[i]) - 0.5 * (XYSCALE[i] - 1) + xy_grid) * STRIDES[i]
+    pred_wh = (tf.exp(conv_raw_dwdh) * ANCHORS[i])
+    pred_xywh = tf.concat([pred_xy, pred_wh], axis=-1)
+
+    pred_conf = tf.sigmoid(conv_raw_conf)
+    pred_prob = tf.sigmoid(conv_raw_prob)
+
+    return tf.concat([pred_xywh, pred_conf, pred_prob], axis=-1)
+
+def YOLOv3_tiny(input_layer):
+    route_1, conv = backbone.darknet53_tiny(input_layer)
+
+    conv = common.convolutional(conv, (1, 1, 1024, 256))
+
+    conv_lobj_branch = common.convolutional(conv, (3, 3, 256, 512))
+    conv_lbbox = common.convolutional(conv_lobj_branch, (1, 1, 512, 3 * (NUM_CLASS + 5)), activate=False, bn=False)
+
+    conv = common.convolutional(conv, (1, 1, 256, 128))
+    conv = common.upsample(conv)
+    conv = tf.concat([conv, route_1], axis=-1)
+
+    conv_mobj_branch = common.convolutional(conv, (3, 3, 128, 256))
+    conv_mbbox = common.convolutional(conv_mobj_branch, (1, 1, 256, 3 * (NUM_CLASS + 5)), activate=False, bn=False)
+
+    return [conv_mbbox, conv_lbbox]
 
 def bbox_iou(boxes1, boxes2):
 
     boxes1_area = boxes1[..., 2] * boxes1[..., 3]
     boxes2_area = boxes2[..., 2] * boxes2[..., 3]
 
-    boxes1 = tf.concat([boxes1[..., :2] - boxes1[..., 2:] * 0.5,
+    boxes1_coor = tf.concat([boxes1[..., :2] - boxes1[..., 2:] * 0.5,
                         boxes1[..., :2] + boxes1[..., 2:] * 0.5], axis=-1)
-    boxes2 = tf.concat([boxes2[..., :2] - boxes2[..., 2:] * 0.5,
+    boxes2_coor = tf.concat([boxes2[..., :2] - boxes2[..., 2:] * 0.5,
                         boxes2[..., :2] + boxes2[..., 2:] * 0.5], axis=-1)
 
-    left_up = tf.maximum(boxes1[..., :2], boxes2[..., :2])
-    right_down = tf.minimum(boxes1[..., 2:], boxes2[..., 2:])
+    left_up = tf.maximum(boxes1_coor[..., :2], boxes1_coor[..., :2])
+    right_down = tf.minimum(boxes2_coor[..., 2:], boxes2_coor[..., 2:])
 
     inter_section = tf.maximum(right_down - left_up, 0.0)
     inter_area = inter_section[..., 0] * inter_section[..., 1]
