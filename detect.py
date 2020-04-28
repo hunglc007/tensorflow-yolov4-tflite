@@ -24,6 +24,7 @@ def main(_argv):
     else:
         STRIDES = np.array(cfg.YOLO.STRIDES)
         ANCHORS = utils.get_anchors(cfg.YOLO.ANCHORS, FLAGS.tiny)
+    XYSCALE = cfg.YOLO.XYSCALE
     input_size = FLAGS.size
     image_path = FLAGS.image
 
@@ -69,26 +70,9 @@ def main(_argv):
         interpreter.invoke()
         pred_bbox = [interpreter.get_tensor(output_details[i]['index']) for i in range(len(output_details))]
 
-    for i, pred in enumerate(pred_bbox):
-        conv_shape = pred.shape
-        output_size = conv_shape[1]
-        conv_raw_dxdy = pred[:, :, :, :, 0:2]
-        conv_raw_dwdh = pred[:, :, :, :, 2:4]
-        xy_grid = np.meshgrid(np.arange(output_size), np.arange(output_size))
-        xy_grid = np.expand_dims(np.stack(xy_grid, axis=-1), axis=2)  # [gx, gy, 1, 2]
-
-        xy_grid = np.tile(tf.expand_dims(xy_grid, axis=0), [1, 1, 1, 3, 1])
-        xy_grid = xy_grid.astype(np.float)
-
-        pred_xy = (tf.sigmoid(conv_raw_dxdy) + xy_grid) * STRIDES[i]
-        # pred_wh = (tf.exp(conv_raw_dwdh) * ANCHORS[i]) * STRIDES[i]
-        pred_wh = (tf.exp(conv_raw_dwdh) * ANCHORS[i])
-        pred[:, :, :, :, 0:4] = tf.concat([pred_xy, pred_wh], axis=-1)
-
-    pred_bbox = [tf.reshape(x, (-1, tf.shape(x)[-1])) for x in pred_bbox]
-    pred_bbox = tf.concat(pred_bbox, axis=0)
-    bboxes = utils.postprocess_boxes(pred_bbox, original_image_size, input_size, 0.3)
-    bboxes = utils.nms(bboxes, 0.45, method='nms')
+    pred_bbox = utils.postprocess_bbbox(pred_bbox, XYSCALE, ANCHORS, STRIDES)
+    bboxes = utils.postprocess_boxes(pred_bbox, original_image_size, input_size, 0.25)
+    bboxes = utils.nms(bboxes, 0.213, method='nms')
 
     image = utils.draw_bbox(original_image, bboxes)
     image = Image.fromarray(image)

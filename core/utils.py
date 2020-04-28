@@ -2,6 +2,7 @@ import cv2
 import random
 import colorsys
 import numpy as np
+import tensorflow as tf
 from core.config import cfg
 
 def load_weights_tiny(model, weights_file):
@@ -220,6 +221,40 @@ def bboxes_iou(boxes1, boxes2):
 
     return ious
 
+def bboxes_ciou(boxes1, boxes2):
+
+    boxes1 = np.array(boxes1)
+    boxes2 = np.array(boxes2)
+
+    left = np.maximum(boxes1[..., 0], boxes2[..., 0])
+    up = np.maximum(boxes1[..., 1], boxes2[..., 1])
+    right = np.maximum(boxes1[..., 2], boxes2[..., 2])
+    down = np.maximum(boxes1[..., 3], boxes2[..., 3])
+
+    c = (right - left) * (right - left) + (up - down) * (up - down)
+    iou = bboxes_iou(boxes1, boxes2)
+
+    ax = (boxes1[..., 0] + boxes1[..., 2]) / 2
+    ay = (boxes1[..., 1] + boxes1[..., 3]) / 2
+    bx = (boxes2[..., 0] + boxes2[..., 2]) / 2
+    by = (boxes2[..., 1] + boxes2[..., 3]) / 2
+
+    u = (ax - bx) * (ax - bx) + (ay - by) * (ay - by)
+    d = u/c
+
+    aw = boxes1[..., 2] - boxes1[..., 0]
+    ah = boxes1[..., 3] - boxes1[..., 1]
+    bw = boxes2[..., 2] - boxes2[..., 0]
+    bh = boxes2[..., 3] - boxes2[..., 1]
+
+    ar_gt = bw/bh
+    ar_pred = aw/ah
+
+    ar_loss = 4 / (np.pi * np.pi) * (np.arctan(ar_gt) - np.arctan(ar_pred)) * (np.arctan(ar_gt) - np.arctan(ar_pred))
+    alpha = ar_loss / (1 - iou + ar_loss + 0.000001)
+    ciou_term = d + alpha * ar_loss
+
+    return iou - ciou_term
 
 def nms(bboxes, iou_threshold, sigma=0.3, method='nms'):
     """
@@ -258,7 +293,30 @@ def nms(bboxes, iou_threshold, sigma=0.3, method='nms'):
 
     return best_bboxes
 
+def diounms_sort(bboxes, iou_threshold, sigma=0.3, method='nms', beta_nms=0.6):
+    best_bboxes = []
+    return best_bboxes
+def postprocess_bbbox(pred_bbox, XYSCALE, ANCHORS, STRIDES):
+    for i, pred in enumerate(pred_bbox):
+        conv_shape = pred.shape
+        output_size = conv_shape[1]
+        conv_raw_dxdy = pred[:, :, :, :, 0:2]
+        conv_raw_dwdh = pred[:, :, :, :, 2:4]
+        xy_grid = np.meshgrid(np.arange(output_size), np.arange(output_size))
+        xy_grid = np.expand_dims(np.stack(xy_grid, axis=-1), axis=2)  # [gx, gy, 1, 2]
 
+        xy_grid = np.tile(tf.expand_dims(xy_grid, axis=0), [1, 1, 1, 3, 1])
+        xy_grid = xy_grid.astype(np.float)
+
+        # pred_xy = (tf.sigmoid(conv_raw_dxdy) + xy_grid) * STRIDES[i]
+        pred_xy = ((tf.sigmoid(conv_raw_dxdy) * XYSCALE[i]) - 0.5 * (XYSCALE[i] - 1) + xy_grid) * STRIDES[i]
+        # pred_wh = (tf.exp(conv_raw_dwdh) * ANCHORS[i]) * STRIDES[i]
+        pred_wh = (tf.exp(conv_raw_dwdh) * ANCHORS[i])
+        pred[:, :, :, :, 0:4] = tf.concat([pred_xy, pred_wh], axis=-1)
+
+    pred_bbox = [tf.reshape(x, (-1, tf.shape(x)[-1])) for x in pred_bbox]
+    pred_bbox = tf.concat(pred_bbox, axis=0)
+    return pred_bbox
 def postprocess_boxes(pred_bbox, org_img_shape, input_size, score_threshold):
 
     valid_scale=[0, np.inf]

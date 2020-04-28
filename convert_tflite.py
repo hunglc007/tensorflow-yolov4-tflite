@@ -27,14 +27,6 @@ def representative_data_gen():
     else:
       continue
 
-# def apply_quantization_to_dense(layer):
-#   # print(layer.name)
-#   if isinstance(layer, (tf.keras.layers.Conv2D, tf.keras.layers.BatchNormalization,
-#                         tf.keras.layers.ZeroPadding2D, tf.keras.layers.ReLU)):
-#     print(layer.name)
-#     return tfmot.quantization.keras.quantize_annotate_layer(layer)
-#   return layer
-
 def save_tflite():
   input_layer = tf.keras.layers.Input([FLAGS.input_size, FLAGS.input_size, 3])
   if FLAGS.tiny:
@@ -57,15 +49,6 @@ def save_tflite():
     model = tf.keras.Model(input_layer, bbox_tensors)
     model.summary()
     utils.load_weights(model, FLAGS.weights)
-
-
-
-  # annotated_model = tf.keras.models.clone_model(
-  #   model,
-  #   clone_function=apply_quantization_to_dense,
-  # )
-  # quant_aware_model = tfmot.quantization.keras.quantize_apply(annotated_model)
-  # quant_aware_model.summary()
 
   converter = tf.lite.TFLiteConverter.from_keras_model(model)
   if FLAGS.quantize_mode == 'int8':

@@ -178,6 +178,32 @@ def bbox_iou(boxes1, boxes2):
 
     return 1.0 * inter_area / union_area
 
+def bbox_ciou(boxes1, boxes2):
+    boxes1_coor = tf.concat([boxes1[..., :2] - boxes1[..., 2:] * 0.5,
+                        boxes1[..., :2] + boxes1[..., 2:] * 0.5], axis=-1)
+    boxes2_coor = tf.concat([boxes2[..., :2] - boxes2[..., 2:] * 0.5,
+                        boxes2[..., :2] + boxes2[..., 2:] * 0.5], axis=-1)
+
+    left = tf.maximum(boxes1_coor[..., 0], boxes2_coor[..., 0])
+    up = tf.maximum(boxes1_coor[..., 1], boxes2_coor[..., 1])
+    right = tf.maximum(boxes1_coor[..., 2], boxes2_coor[..., 2])
+    down = tf.maximum(boxes1_coor[..., 3], boxes2_coor[..., 3])
+
+    c = (right - left) * (right - left) + (up - down) * (up - down)
+    iou = bbox_iou(boxes1, boxes2)
+
+    u = (boxes1[..., 0] - boxes2[..., 0]) * (boxes1[..., 0] - boxes2[..., 0]) + (boxes1[..., 1] - boxes2[..., 1]) * (boxes1[..., 1] - boxes2[..., 1])
+    d = u / c
+
+    ar_gt = boxes2[..., 2] / boxes2[..., 3]
+    ar_pred = boxes1[..., 2] / boxes1[..., 3]
+
+    ar_loss = 4 / (np.pi * np.pi) * (tf.atan(ar_gt) - tf.atan(ar_pred)) * (tf.atan(ar_gt) - tf.atan(ar_pred))
+    alpha = ar_loss / (1 - iou + ar_loss + 0.000001)
+    ciou_term = d + alpha * ar_loss
+
+    return iou - ciou_term
+
 def bbox_giou(boxes1, boxes2):
 
     boxes1 = tf.concat([boxes1[..., :2] - boxes1[..., 2:] * 0.5,
@@ -208,7 +234,6 @@ def bbox_giou(boxes1, boxes2):
     giou = iou - 1.0 * (enclose_area - union_area) / enclose_area
 
     return giou
-
 
 def compute_loss(pred, conv, label, bboxes, i=0):
 
