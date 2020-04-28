@@ -66,10 +66,12 @@ python main.py --output results_yolov4_tf
 ### Traning your own model
 ```bash
 # Prepare your dataset
-# In config.py set FISRT_STAGE_EPOCHS=0 if you want to train from scratch, run script:
+# If you want to train from scratch:
+In config.py set FISRT_STAGE_EPOCHS=0 
+# Run script:
 python train.py
 
-# If you want transfer learning
+# Transfer learning: 
 python train.py --weights ./data/yolov4.weights
 ```
 
