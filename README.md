@@ -64,9 +64,8 @@ python main.py --output results_yolov4_tf
 
 ### TODO
 * [ ] Training code
-* [ ] greedy NMS
-* [ ] Update scale xy
-* [ ] ciou
+* [x] Update scale xy
+* [x] ciou
 * [ ] Mosaic data augmentation
 * [x] Mish activation
 * [x] yolov4 tflite version
