@@ -63,11 +63,20 @@ cd ..
 python main.py --output results_yolov4_tf
 
 ```
+### Traning your own model
+```bash
+# Prepare your dataset
+# In config.py set FISRT_STAGE_EPOCHS=0 if you want to train from scratch, run script:
+python train.py
+
+# If you want transfer learning
+python train.py --weights ./data/yolov4.weights
+```
 
 ### TODO
-* [ ] Training code
+* [x] Training code
 * [x] Update scale xy
-* [x] ciou
+* [ ] ciou
 * [ ] Mosaic data augmentation
 * [x] Mish activation
 * [x] yolov4 tflite version
