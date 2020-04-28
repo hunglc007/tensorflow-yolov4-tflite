@@ -1,4 +1,6 @@
 # tensorflow-yolov4-tflite
+[![license](https://img.shields.io/github/license/mashape/apistatus.svg)](LICENSE)
+
 Yolo V4 Implemented in Tensorflow 2.0. Convert .weights to .tflite format for tensorflow lite.
 
 Download yolov4.weights file: https://drive.google.com/open?id=1cewMfusmPjYWbrnuJRuKhPMwRe_b9PaT
