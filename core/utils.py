@@ -359,6 +359,14 @@ def postprocess_boxes(pred_bbox, org_img_shape, input_size, score_threshold):
 
     return np.concatenate([coors, scores[:, np.newaxis], classes[:, np.newaxis]], axis=-1)
 
-
-
+def freeze_all(model, frozen=True):
+    model.trainable = not frozen
+    if isinstance(model, tf.keras.Model):
+        for l in model.layers:
+            freeze_all(l, frozen)
+def unfreeze_all(model, frozen=False):
+    model.trainable = not frozen
+    if isinstance(model, tf.keras.Model):
+        for l in model.layers:
+            unfreeze_all(l, frozen)
 

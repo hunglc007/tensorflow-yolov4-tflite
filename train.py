@@ -19,6 +19,7 @@ def main(_argv):
         tf.config.experimental.set_memory_growth(physical_devices[0], True)
 
     trainset = Dataset('train')
+    testset = Dataset('test')
     logdir = "./data/log"
     isfreeze = False
     steps_per_epoch = len(trainset)
@@ -111,6 +112,24 @@ def main(_argv):
                 tf.summary.scalar("loss/conf_loss", conf_loss, step=global_steps)
                 tf.summary.scalar("loss/prob_loss", prob_loss, step=global_steps)
             writer.flush()
+    def test_step(image_data, target):
+        with tf.GradientTape() as tape:
+            pred_result = model(image_data, training=True)
+            giou_loss = conf_loss = prob_loss = 0
+
+            # optimizing process
+            for i in range(3):
+                conv, pred = pred_result[i * 2], pred_result[i * 2 + 1]
+                loss_items = compute_loss(pred, conv, *target[i], i)
+                giou_loss += loss_items[0]
+                conf_loss += loss_items[1]
+                prob_loss += loss_items[2]
+
+            total_loss = giou_loss + conf_loss + prob_loss
+
+            tf.print("=> TEST STEP %4d   giou_loss: %4.2f   conf_loss: %4.2f   "
+                     "prob_loss: %4.2f   total_loss: %4.2f" % (global_steps, giou_loss, conf_loss,
+                                                               prob_loss, total_loss))
 
     for epoch in range(first_stage_epochs + second_stage_epochs):
         if epoch < first_stage_epochs:
@@ -127,6 +146,8 @@ def main(_argv):
                     unfreeze_all(freeze)
         for image_data, target in trainset:
             train_step(image_data, target)
+        for image_data, target in testset:
+            test_step(image_data, target)
         model.save_weights("./checkpoints/yolov4")
 
 if __name__ == '__main__':
