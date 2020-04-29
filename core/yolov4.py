@@ -8,12 +8,11 @@ import core.common as common
 import core.backbone as backbone
 from core.config import cfg
 
-
-NUM_CLASS       = len(utils.read_class_names(cfg.YOLO.CLASSES))
-STRIDES         = np.array(cfg.YOLO.STRIDES)
-IOU_LOSS_THRESH = cfg.YOLO.IOU_LOSS_THRESH
-XYSCALE = cfg.YOLO.XYSCALE
-ANCHORS = utils.get_anchors(cfg.YOLO.ANCHORS)
+# NUM_CLASS       = len(utils.read_class_names(cfg.YOLO.CLASSES))
+# STRIDES         = np.array(cfg.YOLO.STRIDES)
+# IOU_LOSS_THRESH = cfg.YOLO.IOU_LOSS_THRESH
+# XYSCALE = cfg.YOLO.XYSCALE
+# ANCHORS = utils.get_anchors(cfg.YOLO.ANCHORS)
 
 def YOLOv3(input_layer, NUM_CLASS):
     route_1, route_2, conv = backbone.darknet53(input_layer)
@@ -251,8 +250,7 @@ def bbox_giou(boxes1, boxes2):
 
     return giou
 
-# def compute_loss(pred, conv, label, bboxes, STRIDES, NUM_CLASS, IOU_LOSS_THRESH, i=0):
-def compute_loss(pred, conv, label, bboxes, i=0):
+def compute_loss(pred, conv, label, bboxes, STRIDES, NUM_CLASS, IOU_LOSS_THRESH, i=0):
     conv_shape  = tf.shape(conv)
     batch_size  = conv_shape[0]
     output_size = conv_shape[1]

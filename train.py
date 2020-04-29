@@ -43,6 +43,7 @@ def main(_argv):
         bbox_tensors = []
         for i, fm in enumerate(feature_maps):
             bbox_tensor = decode_train(fm, NUM_CLASS, STRIDES, ANCHORS, i)
+            bbox_tensors.append(fm)
             bbox_tensors.append(bbox_tensor)
         model = tf.keras.Model(input_layer, bbox_tensors)
     else:
@@ -51,6 +52,7 @@ def main(_argv):
             bbox_tensors = []
             for i, fm in enumerate(feature_maps):
                 bbox_tensor = decode_train(fm, NUM_CLASS, STRIDES, ANCHORS, i)
+                bbox_tensors.append(fm)
                 bbox_tensors.append(bbox_tensor)
             model = tf.keras.Model(input_layer, bbox_tensors)
         elif FLAGS.model == 'yolov4':
@@ -58,6 +60,7 @@ def main(_argv):
             bbox_tensors = []
             for i, fm in enumerate(feature_maps):
                 bbox_tensor = decode_train(fm, NUM_CLASS, STRIDES, ANCHORS, i, XYSCALE)
+                bbox_tensors.append(fm)
                 bbox_tensors.append(bbox_tensor)
             model = tf.keras.Model(input_layer, bbox_tensors)
 
@@ -89,8 +92,7 @@ def main(_argv):
             # optimizing process
             for i in range(3):
                 conv, pred = pred_result[i * 2], pred_result[i * 2 + 1]
-                # loss_items = compute_loss(pred, conv, target[i][0], target[i][1], STRIDES=STRIDES, NUM_CLASS=NUM_CLASS, IOU_LOSS_THRESH=IOU_LOSS_THRESH, i=i)
-                loss_items = compute_loss(pred, conv, *target[i], i)
+                loss_items = compute_loss(pred, conv, target[i][0], target[i][1], STRIDES=STRIDES, NUM_CLASS=NUM_CLASS, IOU_LOSS_THRESH=IOU_LOSS_THRESH, i=i)
                 giou_loss += loss_items[0]
                 conf_loss += loss_items[1]
                 prob_loss += loss_items[2]
@@ -129,7 +131,7 @@ def main(_argv):
             # optimizing process
             for i in range(3):
                 conv, pred = pred_result[i * 2], pred_result[i * 2 + 1]
-                loss_items = compute_loss(pred, conv, *target[i], STRIDES=STRIDES, NUM_CLASS=NUM_CLASS, IOU_LOSS_THRESH=IOU_LOSS_THRESH, i=i)
+                loss_items = compute_loss(pred, conv, target[i][0], target[i][1], STRIDES=STRIDES, NUM_CLASS=NUM_CLASS, IOU_LOSS_THRESH=IOU_LOSS_THRESH, i=i)
                 giou_loss += loss_items[0]
                 conf_loss += loss_items[1]
                 prob_loss += loss_items[2]
