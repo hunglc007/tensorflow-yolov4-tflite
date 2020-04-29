@@ -2,7 +2,7 @@ import time
 from absl import app, flags, logging
 from absl.flags import FLAGS
 import core.utils as utils
-from core.yolov4 import YOLOv4, decode
+from core.yolov4 import YOLOv4, YOLOv3, YOLOv3_tiny, decode
 from PIL import Image
 from core.config import cfg
 import cv2
@@ -13,7 +13,8 @@ flags.DEFINE_string('framework', 'tf', '(tf, tflite')
 flags.DEFINE_string('weights', './data/yolov4.weights',
                     'path to weights file')
 flags.DEFINE_integer('size', 608, 'resize images to')
-flags.DEFINE_boolean('tiny', False, 'yolov4 or yolov4-tiny')
+flags.DEFINE_boolean('tiny', False, 'yolo or yolo-tiny')
+flags.DEFINE_string('model', 'yolov4', 'yolov3 or yolov4')
 flags.DEFINE_string('image', './data/kite.jpg', 'path to input image')
 flags.DEFINE_string('output', 'result.png', 'path to output image')
 
@@ -23,7 +24,11 @@ def main(_argv):
         ANCHORS = utils.get_anchors(cfg.YOLO.ANCHORS_TINY, FLAGS.tiny)
     else:
         STRIDES = np.array(cfg.YOLO.STRIDES)
-        ANCHORS = utils.get_anchors(cfg.YOLO.ANCHORS, FLAGS.tiny)
+        if FLAGS.model == 'yolov4':
+            ANCHORS = utils.get_anchors(cfg.YOLO.ANCHORS, FLAGS.tiny)
+        else:
+            ANCHORS = utils.get_anchors(cfg.YOLO.ANCHORS_V3, FLAGS.tiny)
+    NUM_CLASS = len(utils.read_class_names(cfg.YOLO.CLASSES))
     XYSCALE = cfg.YOLO.XYSCALE
     input_size = FLAGS.size
     image_path = FLAGS.image
@@ -37,23 +42,30 @@ def main(_argv):
     if FLAGS.framework == 'tf':
         input_layer = tf.keras.layers.Input([input_size, input_size, 3])
         if FLAGS.tiny:
-            feature_maps = YOLOv4(input_layer)
+            feature_maps = YOLOv3_tiny(input_layer, NUM_CLASS)
             bbox_tensors = []
             for i, fm in enumerate(feature_maps):
-                bbox_tensor = decode(fm, i)
+                bbox_tensor = decode(fm, NUM_CLASS, i)
                 bbox_tensors.append(bbox_tensor)
-
             model = tf.keras.Model(input_layer, bbox_tensors)
             utils.load_weights_tiny(model, FLAGS.weights)
         else:
-            feature_maps = YOLOv4(input_layer)
-            bbox_tensors = []
-            for i, fm in enumerate(feature_maps):
-                bbox_tensor = decode(fm, i)
-                bbox_tensors.append(bbox_tensor)
-
-            model = tf.keras.Model(input_layer, bbox_tensors)
-            utils.load_weights(model, FLAGS.weights)
+            if FLAGS.model == 'yolov3':
+                feature_maps = YOLOv3(input_layer, NUM_CLASS)
+                bbox_tensors = []
+                for i, fm in enumerate(feature_maps):
+                    bbox_tensor = decode(fm, NUM_CLASS, i)
+                    bbox_tensors.append(bbox_tensor)
+                model = tf.keras.Model(input_layer, bbox_tensors)
+                utils.load_weights_v3(model, FLAGS.weights)
+            elif FLAGS.model == 'yolov4':
+                feature_maps = YOLOv4(input_layer, NUM_CLASS)
+                bbox_tensors = []
+                for i, fm in enumerate(feature_maps):
+                    bbox_tensor = decode(fm, NUM_CLASS, i)
+                    bbox_tensors.append(bbox_tensor)
+                model = tf.keras.Model(input_layer, bbox_tensors)
+                utils.load_weights(model, FLAGS.weights)
 
         model.summary()
         pred_bbox = model.predict(image_data)
@@ -70,7 +82,10 @@ def main(_argv):
         interpreter.invoke()
         pred_bbox = [interpreter.get_tensor(output_details[i]['index']) for i in range(len(output_details))]
 
-    pred_bbox = utils.postprocess_bbbox(pred_bbox, XYSCALE, ANCHORS, STRIDES)
+    if FLAGS.model == 'yolov4':
+        pred_bbox = utils.postprocess_bbbox(pred_bbox, ANCHORS, STRIDES, XYSCALE)
+    else:
+        pred_bbox = utils.postprocess_bbbox(pred_bbox, ANCHORS, STRIDES)
     bboxes = utils.postprocess_boxes(pred_bbox, original_image_size, input_size, 0.25)
     bboxes = utils.nms(bboxes, 0.213, method='nms')
 

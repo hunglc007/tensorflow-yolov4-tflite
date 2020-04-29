@@ -7,14 +7,15 @@ import numpy as np
 import tensorflow as tf
 import core.utils as utils
 from core.config import cfg
-from core.yolov4 import YOLOv4, decode
+from core.yolov4 import YOLOv4, YOLOv3, decode
 
-flags.DEFINE_string('weights', './data/yolov4.weights',
+flags.DEFINE_string('weights', '/media/user/Source/Code/VNPT/cv_models_quantization/tflite/yolov3_tflite/data/yolov3.weights',
                     'path to weights file')
 flags.DEFINE_string('framework', 'tf', 'select model type in (tf, tflite)'
                     'path to weights file')
+flags.DEFINE_string('model', 'yolov4', 'yolov3 or yolov4')
 flags.DEFINE_boolean('tiny', False, 'yolov3 or yolov3-tiny')
-flags.DEFINE_integer('size', 416, 'resize images to')
+flags.DEFINE_integer('size', 512, 'resize images to')
 flags.DEFINE_string('annotation_path', "./data/dataset/val2017.txt", 'annotation path')
 flags.DEFINE_string('write_image_path', "./data/detection/", 'write image path')
 
@@ -42,7 +43,7 @@ def main(_argv):
     if FLAGS.framework == "tf":
         input_layer = tf.keras.layers.Input([INPUT_SIZE, INPUT_SIZE, 3])
         if FLAGS.tiny:
-            feature_maps = YOLOv4(input_layer)
+            feature_maps = YOLOv3(input_layer)
             bbox_tensors = []
             for i, fm in enumerate(feature_maps):
                 bbox_tensor = decode(fm, i)
@@ -51,14 +52,14 @@ def main(_argv):
             model = tf.keras.Model(input_layer, bbox_tensors)
             utils.load_weights_tiny(model, FLAGS.weights)
         else:
-            feature_maps = YOLOv4(input_layer)
+            feature_maps = YOLOv3(input_layer)
             bbox_tensors = []
             for i, fm in enumerate(feature_maps):
                 bbox_tensor = decode(fm, i)
                 bbox_tensors.append(bbox_tensor)
 
             model = tf.keras.Model(input_layer, bbox_tensors)
-            utils.load_weights(model, FLAGS.weights)
+            utils.load_weights_v3(model, FLAGS.weights)
     else:
         # Load TFLite model and allocate tensors.
         interpreter = tf.lite.Interpreter(model_path=FLAGS.weights)
@@ -107,22 +108,12 @@ def main(_argv):
                 interpreter.set_tensor(input_details[0]['index'], image_data)
                 interpreter.invoke()
                 pred_bbox = [interpreter.get_tensor(output_details[i]['index']) for i in range(len(output_details))]
-            for i, pred in enumerate(pred_bbox):
-                conv_shape = pred.shape
-                output_size = conv_shape[1]
-                conv_raw_dxdy = pred[:, :, :, :, 0:2]
-                conv_raw_dwdh = pred[:, :, :, :, 2:4]
-                xy_grid = np.meshgrid(np.arange(output_size), np.arange(output_size))
-                xy_grid = np.expand_dims(np.stack(xy_grid, axis=-1), axis=2)  # [gx, gy, 1, 2]
+            if FLAGS.model == 'yolov3':
+                pred_bbox = utils.postprocess_bbbox(pred_bbox, ANCHORS, STRIDES)
+            elif FLAGS.model == 'yolov4':
+                XYSCALE = cfg.YOLO.XYSCALE
+                pred_bbox = utils.postprocess_bbbox(pred_bbox, ANCHORS, STRIDES, XYSCALE=XYSCALE)
 
-                xy_grid = np.tile(tf.expand_dims(xy_grid, axis=0), [1, 1, 1, 3, 1])
-                xy_grid = xy_grid.astype(np.float)
-
-                pred_xy = (tf.sigmoid(conv_raw_dxdy) + xy_grid) * STRIDES[i]
-                # pred_wh = (tf.exp(conv_raw_dwdh) * ANCHORS[i]) * STRIDES[i]
-                pred_wh = (tf.exp(conv_raw_dwdh) * ANCHORS[i])
-                pred[:, :, :, :, 0:4] = tf.concat([pred_xy, pred_wh], axis=-1)
-            pred_bbox = [tf.reshape(x, (-1, tf.shape(x)[-1])) for x in pred_bbox]
             pred_bbox = tf.concat(pred_bbox, axis=0)
             bboxes = utils.postprocess_boxes(pred_bbox, image_size, INPUT_SIZE, cfg.TEST.SCORE_THRESHOLD)
             bboxes = utils.nms(bboxes, cfg.TEST.IOU_THRESHOLD, method='nms')

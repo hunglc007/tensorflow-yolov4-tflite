@@ -15,19 +15,19 @@ IOU_LOSS_THRESH = cfg.YOLO.IOU_LOSS_THRESH
 XYSCALE = cfg.YOLO.XYSCALE
 ANCHORS = utils.get_anchors(cfg.YOLO.ANCHORS)
 
-def YOLOv3(input_layer):
+def YOLOv3(input_layer, NUM_CLASS):
     route_1, route_2, conv = backbone.darknet53(input_layer)
 
-    conv = common.convolutional(conv, (1, 1, 1024,  512))
-    conv = common.convolutional(conv, (3, 3,  512, 1024))
-    conv = common.convolutional(conv, (1, 1, 1024,  512))
-    conv = common.convolutional(conv, (3, 3,  512, 1024))
-    conv = common.convolutional(conv, (1, 1, 1024,  512))
+    conv = common.convolutional(conv, (1, 1, 1024, 512))
+    conv = common.convolutional(conv, (3, 3, 512, 1024))
+    conv = common.convolutional(conv, (1, 1, 1024, 512))
+    conv = common.convolutional(conv, (3, 3, 512, 1024))
+    conv = common.convolutional(conv, (1, 1, 1024, 512))
 
     conv_lobj_branch = common.convolutional(conv, (3, 3, 512, 1024))
-    conv_lbbox = common.convolutional(conv_lobj_branch, (1, 1, 1024, 3*(NUM_CLASS + 5)), activate=False, bn=False)
+    conv_lbbox = common.convolutional(conv_lobj_branch, (1, 1, 1024, 3 * (NUM_CLASS + 5)), activate=False, bn=False)
 
-    conv = common.convolutional(conv, (1, 1,  512,  256))
+    conv = common.convolutional(conv, (1, 1, 512, 256))
     conv = common.upsample(conv)
 
     conv = tf.concat([conv, route_2], axis=-1)
@@ -39,7 +39,7 @@ def YOLOv3(input_layer):
     conv = common.convolutional(conv, (1, 1, 512, 256))
 
     conv_mobj_branch = common.convolutional(conv, (3, 3, 256, 512))
-    conv_mbbox = common.convolutional(conv_mobj_branch, (1, 1, 512, 3*(NUM_CLASS + 5)), activate=False, bn=False)
+    conv_mbbox = common.convolutional(conv_mobj_branch, (1, 1, 512, 3 * (NUM_CLASS + 5)), activate=False, bn=False)
 
     conv = common.convolutional(conv, (1, 1, 256, 128))
     conv = common.upsample(conv)
@@ -53,11 +53,11 @@ def YOLOv3(input_layer):
     conv = common.convolutional(conv, (1, 1, 256, 128))
 
     conv_sobj_branch = common.convolutional(conv, (3, 3, 128, 256))
-    conv_sbbox = common.convolutional(conv_sobj_branch, (1, 1, 256, 3*(NUM_CLASS +5)), activate=False, bn=False)
+    conv_sbbox = common.convolutional(conv_sobj_branch, (1, 1, 256, 3 * (NUM_CLASS + 5)), activate=False, bn=False)
 
     return [conv_sbbox, conv_mbbox, conv_lbbox]
 
-def YOLOv4(input_layer):
+def YOLOv4(input_layer, NUM_CLASS):
     route_1, route_2, conv = backbone.cspdarknet53(input_layer)
 
     route = conv
@@ -115,7 +115,24 @@ def YOLOv4(input_layer):
 
     return [conv_sbbox, conv_mbbox, conv_lbbox]
 
-def decode(conv_output, i=0):
+def YOLOv3_tiny(input_layer, NUM_CLASS):
+    route_1, conv = backbone.darknet53_tiny(input_layer)
+
+    conv = common.convolutional(conv, (1, 1, 1024, 256))
+
+    conv_lobj_branch = common.convolutional(conv, (3, 3, 256, 512))
+    conv_lbbox = common.convolutional(conv_lobj_branch, (1, 1, 512, 3 * (NUM_CLASS + 5)), activate=False, bn=False)
+
+    conv = common.convolutional(conv, (1, 1, 256, 128))
+    conv = common.upsample(conv)
+    conv = tf.concat([conv, route_1], axis=-1)
+
+    conv_mobj_branch = common.convolutional(conv, (3, 3, 128, 256))
+    conv_mbbox = common.convolutional(conv_mobj_branch, (1, 1, 256, 3 * (NUM_CLASS + 5)), activate=False, bn=False)
+
+    return [conv_mbbox, conv_lbbox]
+
+def decode(conv_output, NUM_CLASS, i=0):
     """
     return tensor of shape [batch_size, output_size, output_size, anchor_per_scale, 5 + num_classes]
             contains (x, y, w, h, score, probability)
@@ -132,7 +149,7 @@ def decode(conv_output, i=0):
 
     return tf.concat([conv_raw_xywh, pred_conf, pred_prob], axis=-1)
 
-def decode_train(conv_output, i=0):
+def decode_train(conv_output, NUM_CLASS, STRIDES, ANCHORS, i=0, XYSCALE=[1,1,1]):
     conv_shape = tf.shape(conv_output)
     batch_size = conv_shape[0]
     output_size = conv_shape[1]
@@ -157,23 +174,6 @@ def decode_train(conv_output, i=0):
     pred_prob = tf.sigmoid(conv_raw_prob)
 
     return tf.concat([pred_xywh, pred_conf, pred_prob], axis=-1)
-
-def YOLOv3_tiny(input_layer):
-    route_1, conv = backbone.darknet53_tiny(input_layer)
-
-    conv = common.convolutional(conv, (1, 1, 1024, 256))
-
-    conv_lobj_branch = common.convolutional(conv, (3, 3, 256, 512))
-    conv_lbbox = common.convolutional(conv_lobj_branch, (1, 1, 512, 3 * (NUM_CLASS + 5)), activate=False, bn=False)
-
-    conv = common.convolutional(conv, (1, 1, 256, 128))
-    conv = common.upsample(conv)
-    conv = tf.concat([conv, route_1], axis=-1)
-
-    conv_mobj_branch = common.convolutional(conv, (3, 3, 128, 256))
-    conv_mbbox = common.convolutional(conv_mobj_branch, (1, 1, 256, 3 * (NUM_CLASS + 5)), activate=False, bn=False)
-
-    return [conv_mbbox, conv_lbbox]
 
 def bbox_iou(boxes1, boxes2):
 
@@ -251,8 +251,8 @@ def bbox_giou(boxes1, boxes2):
 
     return giou
 
+# def compute_loss(pred, conv, label, bboxes, STRIDES, NUM_CLASS, IOU_LOSS_THRESH, i=0):
 def compute_loss(pred, conv, label, bboxes, i=0):
-
     conv_shape  = tf.shape(conv)
     batch_size  = conv_shape[0]
     output_size = conv_shape[1]

@@ -10,9 +10,9 @@ def load_weights_tiny(model, weights_file):
     major, minor, revision, seen, _ = np.fromfile(wf, dtype=np.int32, count=5)
 
     j = 0
-    for i in range(1):
-        conv_layer_name = 'conv2d_%d' %i if i > 0 else 'conv2d'
-        bn_layer_name = 'batch_normalization_%d' %j if j > 0 else 'batch_normalization'
+    for i in range(13):
+        conv_layer_name = 'conv2d_%d' % i if i > 0 else 'conv2d'
+        bn_layer_name = 'batch_normalization_%d' % j if j > 0 else 'batch_normalization'
 
         conv_layer = model.get_layer(conv_layer_name)
         filters = conv_layer.filters
@@ -50,8 +50,8 @@ def load_weights_v3(model, weights_file):
 
     j = 0
     for i in range(75):
-        conv_layer_name = 'conv2d_%d' %i if i > 0 else 'conv2d'
-        bn_layer_name = 'batch_normalization_%d' %j if j > 0 else 'batch_normalization'
+        conv_layer_name = 'conv2d_%d' % i if i > 0 else 'conv2d'
+        bn_layer_name = 'batch_normalization_%d' % j if j > 0 else 'batch_normalization'
 
         conv_layer = model.get_layer(conv_layer_name)
         filters = conv_layer.filters
@@ -80,7 +80,7 @@ def load_weights_v3(model, weights_file):
         else:
             conv_layer.set_weights([conv_weights, conv_bias])
 
-    # assert len(wf.read()) == 0, 'failed to read all data'
+    assert len(wf.read()) == 0, 'failed to read all data'
     wf.close()
 
 def load_weights(model, weights_file):
@@ -296,7 +296,7 @@ def nms(bboxes, iou_threshold, sigma=0.3, method='nms'):
 def diounms_sort(bboxes, iou_threshold, sigma=0.3, method='nms', beta_nms=0.6):
     best_bboxes = []
     return best_bboxes
-def postprocess_bbbox(pred_bbox, XYSCALE, ANCHORS, STRIDES):
+def postprocess_bbbox(pred_bbox, ANCHORS, STRIDES, XYSCALE=[1,1,1]):
     for i, pred in enumerate(pred_bbox):
         conv_shape = pred.shape
         output_size = conv_shape[1]

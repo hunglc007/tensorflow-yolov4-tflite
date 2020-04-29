@@ -3,20 +3,22 @@ from absl import app, flags, logging
 from absl.flags import FLAGS
 import numpy as np
 import cv2
-from core.yolov4 import YOLOv4, decode
+from core.yolov4 import YOLOv4, YOLOv3, YOLOv3_tiny, decode
 import core.utils as utils
 import os
+from core.config import cfg
 
 flags.DEFINE_string('weights', './data/yolov4.weights', 'path to weights file')
 flags.DEFINE_string('output', './data/yolov4.tflite', 'path to output')
 flags.DEFINE_boolean('tiny', False, 'path to output')
 flags.DEFINE_integer('input_size', 416, 'path to output')
-flags.DEFINE_string('quantize_mode', "int8", 'quantize mode (int8, float16, full_int8)')
+flags.DEFINE_string('model', 'yolov4', 'yolov3 or yolov4')
+flags.DEFINE_string('quantize_mode', "full_int8", 'quantize mode (int8, float16, full_int8)')
 flags.DEFINE_string('dataset', "/media/user/Source/Data/coco_dataset/coco/5k.txt", 'path to dataset')
 
 def representative_data_gen():
   fimage = open(FLAGS.dataset).read().split()
-  for input_value in range(5):
+  for input_value in range(100):
     if os.path.exists(fimage[input_value]):
       original_image=cv2.imread(fimage[input_value])
       original_image = cv2.cvtColor(original_image, cv2.COLOR_BGR2RGB)
@@ -28,23 +30,33 @@ def representative_data_gen():
       continue
 
 def save_tflite():
+  NUM_CLASS = len(utils.read_class_names(cfg.YOLO.CLASSES))
   input_layer = tf.keras.layers.Input([FLAGS.input_size, FLAGS.input_size, 3])
   if FLAGS.tiny:
-    feature_maps = YOLOv4(input_layer)
+    feature_maps = YOLOv3_tiny(input_layer, NUM_CLASS)
     bbox_tensors = []
     for i, fm in enumerate(feature_maps):
-      bbox_tensor = decode(fm, i)
+      bbox_tensor = decode(fm, NUM_CLASS, i)
       bbox_tensors.append(bbox_tensor)
-
     model = tf.keras.Model(input_layer, bbox_tensors)
-    model.summary()
     utils.load_weights_tiny(model, FLAGS.weights)
   else:
-    feature_maps = YOLOv4(input_layer)
-    bbox_tensors = []
-    for i, fm in enumerate(feature_maps):
-      bbox_tensor = decode(fm, i)
-      bbox_tensors.append(bbox_tensor)
+    if FLAGS.model == 'yolov3':
+      feature_maps = YOLOv3(input_layer, NUM_CLASS)
+      bbox_tensors = []
+      for i, fm in enumerate(feature_maps):
+        bbox_tensor = decode(fm, NUM_CLASS, i)
+        bbox_tensors.append(bbox_tensor)
+      model = tf.keras.Model(input_layer, bbox_tensors)
+      utils.load_weights_v3(model, FLAGS.weights)
+    elif FLAGS.model == 'yolov4':
+      feature_maps = YOLOv4(input_layer, NUM_CLASS)
+      bbox_tensors = []
+      for i, fm in enumerate(feature_maps):
+        bbox_tensor = decode(fm, NUM_CLASS, i)
+        bbox_tensors.append(bbox_tensor)
+      model = tf.keras.Model(input_layer, bbox_tensors)
+      utils.load_weights(model, FLAGS.weights)
 
     model = tf.keras.Model(input_layer, bbox_tensors)
     model.summary()
@@ -53,19 +65,6 @@ def save_tflite():
   converter = tf.lite.TFLiteConverter.from_keras_model(model)
   if FLAGS.quantize_mode == 'int8':
     converter.optimizations = [tf.lite.Optimize.DEFAULT]
-    # converter.default_ranges_stats = (0, 6)
-    # converter.inference_type = tf.compat.v1.lite.constants.QUANTIZED_UINT8
-    # converter.output_format = tf.compat.v1.lite.constants.TFLITE
-    # converter.allow_custom_ops = True
-    # converter.quantized_input_stats = {"input0": (0., 1.)}
-
-    # converter.optimizations = [tf.lite.Optimize.DEFAULT]
-    # converter.inference_input_type = tf.compat.v1.lite.constants.QUANTIZED_UINT8
-    # converter.inference_output_type = tf.compat.v1.lite.constants.QUANTIZED_UINT8
-
-    # converter.target_spec.supported_ops = [tf.lite.OpsSet.TFLITE_BUILTINS_INT8]
-    # converter.inference_input_type = tf.uint8
-    # converter.inference_output_type = tf.uint8
   elif FLAGS.quantize_mode == 'float16':
     converter.optimizations = [tf.lite.Optimize.DEFAULT]
     converter.target_spec.supported_types = [tf.compat.v1.lite.constants.FLOAT16]
@@ -78,9 +77,6 @@ def save_tflite():
 
   tflite_model = converter.convert()
   open(FLAGS.output, 'wb').write(tflite_model)
-
-  # tflite_model = converter.convert()
-  # tf.GFile(FLAGS.output, "wb").write(tflite_model)
 
   logging.info("model saved to: {}".format(FLAGS.output))
 
