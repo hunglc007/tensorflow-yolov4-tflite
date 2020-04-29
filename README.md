@@ -79,6 +79,8 @@ python train.py --weights ./data/yolov4.weights
 ```
 
 ### TODO
+* [ ] YOLOv4 tflite on android
+* [ ] YOLOv4 tflite on ios
 * [x] Training code
 * [x] Update scale xy
 * [ ] ciou
