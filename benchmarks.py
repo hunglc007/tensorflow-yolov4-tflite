@@ -75,7 +75,7 @@ def main(_argv):
         exec_time = curr_time - prev_time
         if i == 0: continue
         sum += (1 / exec_time)
-        info = str(i) + " time:" + str(round(exec_time, 3)) + "average FPS:" + str(round(sum / i, 2)) + ", FPS: " + str(
+        info = str(i) + " time:" + str(round(exec_time, 3)) + " average FPS:" + str(round(sum / i, 2)) + ", FPS: " + str(
             round((1 / exec_time), 1))
         print(info)
 
