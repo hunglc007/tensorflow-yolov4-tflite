@@ -10,10 +10,11 @@ from core.config import cfg
 
 flags.DEFINE_boolean('tiny', False, 'yolo or yolo-tiny')
 flags.DEFINE_string('framework', 'tf', '(tf, tflite')
-flags.DEFINE_string('model', 'yolov3', 'yolov3 or yolov4')
-flags.DEFINE_string('weights', './data/yolov3.weights', 'path to weights file')
+flags.DEFINE_string('model', 'yolov4', 'yolov3 or yolov4')
+flags.DEFINE_string('weights', './data/yolov4.weights', 'path to weights file')
 flags.DEFINE_string('image', './data/kite.jpg', 'path to input image')
 flags.DEFINE_integer('size', 416, 'resize images to')
+
 
 def main(_argv):
     NUM_CLASS = len(utils.read_class_names(cfg.YOLO.CLASSES))
@@ -50,26 +51,32 @@ def main(_argv):
                 utils.load_weights(model, FLAGS.weights)
     logging.info('weights loaded')
 
+    @tf.function
+    def run_model(x):
+        return model(x)
+
     # Test the TensorFlow Lite model on random input data.
     sum = 0
+    original_image = cv2.imread(FLAGS.image)
+    original_image = cv2.cvtColor(original_image, cv2.COLOR_BGR2RGB)
+    original_image_size = original_image.shape[:2]
+    image_data = utils.image_preporcess(np.copy(original_image), [FLAGS.size, FLAGS.size])
+    image_data = image_data[np.newaxis, ...].astype(np.float32)
+    img_raw = tf.image.decode_image(
+        open(FLAGS.image, 'rb').read(), channels=3)
+    img_raw = tf.expand_dims(img_raw, 0)
+    img_raw = tf.image.resize(img_raw, (FLAGS.size, FLAGS.size))
     for i in range(1000):
-        img_raw = tf.image.decode_image(
-            open(FLAGS.image, 'rb').read(), channels=3)
-
-        original_image = cv2.imread(FLAGS.image)
-        original_image = cv2.cvtColor(original_image, cv2.COLOR_BGR2RGB)
-        original_image_size = original_image.shape[:2]
-        image_data = utils.image_preporcess(np.copy(original_image), [FLAGS.size, FLAGS.size])
-        image_data = image_data[np.newaxis, ...].astype(np.float32)
-
         prev_time = time.time()
-        pred_bbox = model.predict(image_data)
+        # pred_bbox = model.predict(image_data)
+        pred_bbox = run_model(image_data)
         # pred_bbox = pred_bbox.numpy()
         curr_time = time.time()
         exec_time = curr_time - prev_time
-        if i == 0:continue
-        sum += (1000 / (1000 * exec_time))
-        info = "average FPS:" + str(round(sum/i, 2)) + ", FPS: " + str(round((1000 / (1000 * exec_time)), 1))
+        if i == 0: continue
+        sum += (1 / exec_time)
+        info = str(i) + " time:" + str(round(exec_time, 3)) + "average FPS:" + str(round(sum / i, 2)) + ", FPS: " + str(
+            round((1 / exec_time), 1))
         print(info)
 
 
