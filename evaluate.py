@@ -7,13 +7,13 @@ import numpy as np
 import tensorflow as tf
 import core.utils as utils
 from core.config import cfg
-from core.yolov4 import YOLOv4, YOLOv3, decode
+from core.yolov4 import YOLOv4, YOLOv3, YOLOv3_tiny, decode
 
-flags.DEFINE_string('weights', '/media/user/Source/Code/VNPT/cv_models_quantization/tflite/yolov3_tflite/data/yolov3.weights',
+flags.DEFINE_string('weights', './data/yolov3.weights',
                     'path to weights file')
 flags.DEFINE_string('framework', 'tf', 'select model type in (tf, tflite)'
                     'path to weights file')
-flags.DEFINE_string('model', 'yolov4', 'yolov3 or yolov4')
+flags.DEFINE_string('model', 'yolov3', 'yolov3 or yolov4')
 flags.DEFINE_boolean('tiny', False, 'yolov3 or yolov3-tiny')
 flags.DEFINE_integer('size', 512, 'resize images to')
 flags.DEFINE_string('annotation_path', "./data/dataset/val2017.txt", 'annotation path')
@@ -40,26 +40,34 @@ def main(_argv):
     os.mkdir(cfg.TEST.DECTECTED_IMAGE_PATH)
 
     # Build Model
-    if FLAGS.framework == "tf":
+    if FLAGS.framework == 'tf':
         input_layer = tf.keras.layers.Input([INPUT_SIZE, INPUT_SIZE, 3])
         if FLAGS.tiny:
-            feature_maps = YOLOv3(input_layer)
+            feature_maps = YOLOv3_tiny(input_layer, NUM_CLASS)
             bbox_tensors = []
             for i, fm in enumerate(feature_maps):
-                bbox_tensor = decode(fm, i)
+                bbox_tensor = decode(fm, NUM_CLASS, i)
                 bbox_tensors.append(bbox_tensor)
-
             model = tf.keras.Model(input_layer, bbox_tensors)
             utils.load_weights_tiny(model, FLAGS.weights)
         else:
-            feature_maps = YOLOv3(input_layer)
-            bbox_tensors = []
-            for i, fm in enumerate(feature_maps):
-                bbox_tensor = decode(fm, i)
-                bbox_tensors.append(bbox_tensor)
+            if FLAGS.model == 'yolov3':
+                feature_maps = YOLOv3(input_layer, NUM_CLASS)
+                bbox_tensors = []
+                for i, fm in enumerate(feature_maps):
+                    bbox_tensor = decode(fm, NUM_CLASS, i)
+                    bbox_tensors.append(bbox_tensor)
+                model = tf.keras.Model(input_layer, bbox_tensors)
+                utils.load_weights_v3(model, FLAGS.weights)
+            elif FLAGS.model == 'yolov4':
+                feature_maps = YOLOv4(input_layer, NUM_CLASS)
+                bbox_tensors = []
+                for i, fm in enumerate(feature_maps):
+                    bbox_tensor = decode(fm, NUM_CLASS, i)
+                    bbox_tensors.append(bbox_tensor)
+                model = tf.keras.Model(input_layer, bbox_tensors)
+                utils.load_weights(model, FLAGS.weights)
 
-            model = tf.keras.Model(input_layer, bbox_tensors)
-            utils.load_weights_v3(model, FLAGS.weights)
     else:
         # Load TFLite model and allocate tensors.
         interpreter = tf.lite.Interpreter(model_path=FLAGS.weights)
@@ -69,6 +77,7 @@ def main(_argv):
         output_details = interpreter.get_output_details()
         print(input_details)
         print(output_details)
+
     num_lines = sum(1 for line in open(FLAGS.annotation_path))
     with open(cfg.TEST.ANNOT_PATH, 'r') as annotation_file:
         for num, line in enumerate(annotation_file):
