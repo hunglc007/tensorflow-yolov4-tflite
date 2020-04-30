@@ -86,7 +86,7 @@ python benchmarks.py --size 416 --model yolov4 --weights ./data/yolov4.weights
 | YoloV3 FPS  | 10.8    | 12.9    | 17.6    |
 | YoloV4 FPS  | 9.6     | 11.7    | 16.0    |
 
-#### Tesla P4
+#### Tesla T4
 
 | Detection   | 512x512 | 416x416 | 320x320 |
 |-------------|---------|---------|---------|
