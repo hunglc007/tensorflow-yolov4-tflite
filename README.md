@@ -66,8 +66,53 @@ cd mAP/extra
 python remove_space.py
 cd ..
 python main.py --output results_yolov4_tf
-
 ```
+#### mAP50 on COCO 2017 Dataset
+
+| Detection   | 512x512 | 416x416 | 320x320 |
+|-------------|---------|---------|---------|
+| YoloV3      | 55.43   |         |         |
+| YoloV4      | 61.96   | 57.33   |         |
+
+### Benchmark
+```bash
+python benchmarks.py --size 416 --model yolov4 --weights ./data/yolov4.weights
+```
+#### Tesla P100
+
+| Detection   | 512x512 | 416x416 | 320x320 |
+|-------------|---------|---------|---------|
+| YoloV3 FPS  | 40.6    | 49.4    | 61.3    |
+| YoloV4 FPS  | 33.4    | 41.7    | 50.0    |
+
+#### Tesla K80
+
+| Detection   | 512x512 | 416x416 | 320x320 |
+|-------------|---------|---------|---------|
+| YoloV3 FPS  | 10.8    | 12.9    | 17.6    |
+| YoloV4 FPS  | 9.6     | 11.7    | 16.0    |
+
+#### Tesla T4
+
+| Detection   | 512x512 | 416x416 | 320x320 |
+|-------------|---------|---------|---------|
+| YoloV3 FPS  | 27.6    | 32.3    | 45.1    |
+| YoloV4 FPS  | 24.0    | 30.3    | 40.1    |
+
+#### Tesla P4
+
+| Detection   | 512x512 | 416x416 | 320x320 |
+|-------------|---------|---------|---------|
+| YoloV3 FPS  | 20.2    | 24.2    | 31.2    |
+| YoloV4 FPS  | 16.2    | 20.2    | 26.5    |
+
+#### Macbook Pro 15 (2.3GHz i7)
+
+| Detection   | 512x512 | 416x416 | 320x320 |
+|-------------|---------|---------|---------|
+| YoloV3 FPS  |         |         |         |
+| YoloV4 FPS  |         |         |         |
+
 ### Traning your own model
 ```bash
 # Prepare your dataset
