@@ -9,11 +9,11 @@ import core.utils as utils
 from core.config import cfg
 from core.yolov4 import YOLOv4, YOLOv3, YOLOv3_tiny, decode
 
-flags.DEFINE_string('weights', './data/yolov3.weights',
+flags.DEFINE_string('weights', './data/yolov4.weights',
                     'path to weights file')
 flags.DEFINE_string('framework', 'tf', 'select model type in (tf, tflite)'
                     'path to weights file')
-flags.DEFINE_string('model', 'yolov3', 'yolov3 or yolov4')
+flags.DEFINE_string('model', 'yolov4', 'yolov3 or yolov4')
 flags.DEFINE_boolean('tiny', False, 'yolov3 or yolov3-tiny')
 flags.DEFINE_integer('size', 512, 'resize images to')
 flags.DEFINE_string('annotation_path', "./data/dataset/val2017.txt", 'annotation path')
