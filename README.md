@@ -66,8 +66,14 @@ cd mAP/extra
 python remove_space.py
 cd ..
 python main.py --output results_yolov4_tf
-
 ```
+#### mAP50 on COCO 2017 Dataset
+
+| Detection   | 512x512 | 416x416 | 320x320 |
+|-------------|---------|---------|---------|
+| YoloV3      | 55.43   |         |         |
+| YoloV4      | 61.96   | 57.33   |         |
+
 ### Benchmark
 ```bash
 python benchmarks.py --size 416 --model yolov4 --weights ./data/yolov4.weights
