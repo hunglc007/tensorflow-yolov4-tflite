@@ -75,7 +75,7 @@ def rename_class(current_class_name, new_class_name):
         for line in new_content:
           new_f.write("%s\n" % line)
 
-with open('../../data/coco.names') as f:
+with open('../../data/classes/coco.names') as f:
     for line in f:
         current_class_name = line.rstrip("\n")
         new_class_name = line.replace(' ', args.delimiter).rstrip("\n")
