@@ -13,7 +13,7 @@ flags.DEFINE_string('output', './data/yolov4.tflite', 'path to output')
 flags.DEFINE_boolean('tiny', False, 'path to output')
 flags.DEFINE_integer('input_size', 416, 'path to output')
 flags.DEFINE_string('model', 'yolov4', 'yolov3 or yolov4')
-flags.DEFINE_string('quantize_mode', "full_int8", 'quantize mode (int8, float16, full_int8)')
+flags.DEFINE_string('quantize_mode', "int8", 'quantize mode (int8, float16, full_int8)')
 flags.DEFINE_string('dataset', "/media/user/Source/Data/coco_dataset/coco/5k.txt", 'path to dataset')
 
 def representative_data_gen():
