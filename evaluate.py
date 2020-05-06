@@ -26,7 +26,10 @@ def main(_argv):
         ANCHORS = utils.get_anchors(cfg.YOLO.ANCHORS_TINY, FLAGS.tiny)
     else:
         STRIDES = np.array(cfg.YOLO.STRIDES)
-        ANCHORS = utils.get_anchors(cfg.YOLO.ANCHORS, FLAGS.tiny)
+        if FLAGS.model == 'yolov4':
+            ANCHORS = utils.get_anchors(cfg.YOLO.ANCHORS, FLAGS.tiny)
+        else:
+            ANCHORS = utils.get_anchors(cfg.YOLO.ANCHORS_V3, FLAGS.tiny)
     NUM_CLASS = len(utils.read_class_names(cfg.YOLO.CLASSES))
     CLASSES = utils.read_class_names(cfg.YOLO.CLASSES)
     predicted_dir_path = './mAP/predicted'
