@@ -124,6 +124,9 @@ python train.py
 # Transfer learning: 
 python train.py --weights ./data/yolov4.weights
 ```
+The performance is not fully reproduced yet, so I recommended to use alex's Darknet to train your own data and convert your .weights to tensorflow or tflite.
+
+
 
 ### TODO
 * [ ] YOLOv4 tflite on android
