@@ -85,7 +85,7 @@ python main.py --output results_yolov4_tf
 
 | Detection   | 512x512 | 416x416 | 320x320 |
 |-------------|---------|---------|---------|
-| YoloV3      | 55.43   |         |         |
+| YoloV3      | 55.43   | 52.32   |         |
 | YoloV4      | 61.96   | 57.33   |         |
 
 ### Benchmark
