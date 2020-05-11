@@ -7,9 +7,11 @@ from absl import app, flags, logging
 from absl.flags import FLAGS
 from core import utils
 from core.config import cfg
+from tensorflow.compat.v1 import ConfigProto
+from tensorflow.compat.v1 import InteractiveSession
 
 flags.DEFINE_boolean('tiny', False, 'yolo or yolo-tiny')
-flags.DEFINE_string('framework', 'tf', '(tf, tflite')
+flags.DEFINE_string('framework', 'tf', '(tf, tflite, trt')
 flags.DEFINE_string('model', 'yolov4', 'yolov3 or yolov4')
 flags.DEFINE_string('weights', './data/yolov4.weights', 'path to weights file')
 flags.DEFINE_string('image', './data/kite.jpg', 'path to input image')
@@ -17,6 +19,9 @@ flags.DEFINE_integer('size', 416, 'resize images to')
 
 
 def main(_argv):
+    config = ConfigProto()
+    config.gpu_options.allow_growth = True
+    session = InteractiveSession(config=config)
     NUM_CLASS = len(utils.read_class_names(cfg.YOLO.CLASSES))
     input_size = FLAGS.size
     physical_devices = tf.config.experimental.list_physical_devices('GPU')
@@ -49,6 +54,12 @@ def main(_argv):
                     bbox_tensors.append(bbox_tensor)
                 model = tf.keras.Model(input_layer, bbox_tensors)
                 utils.load_weights(model, FLAGS.weights)
+    elif FLAGS.framework == 'trt':
+        saved_model_loaded = tf.saved_model.load(FLAGS.weights, tags=[tag_constants.SERVING])
+        signature_keys = list(saved_model_loaded.signatures.keys())
+        print(signature_keys)
+        infer = saved_model_loaded.signatures['serving_default']
+
     logging.info('weights loaded')
 
     @tf.function
@@ -66,10 +77,14 @@ def main(_argv):
         open(FLAGS.image, 'rb').read(), channels=3)
     img_raw = tf.expand_dims(img_raw, 0)
     img_raw = tf.image.resize(img_raw, (FLAGS.size, FLAGS.size))
+    batched_input = tf.constant(images_data)
     for i in range(1000):
         prev_time = time.time()
         # pred_bbox = model.predict(image_data)
-        pred_bbox = run_model(image_data)
+        if FLAGS.framework == 'tf':
+            pred_bbox = run_model(image_data)
+        elif FLAGS.framework == 'trt':
+            pred_bbox = infer(batched_input)
         # pred_bbox = pred_bbox.numpy()
         curr_time = time.time()
         exec_time = curr_time - prev_time
