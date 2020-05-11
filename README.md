@@ -38,13 +38,10 @@ python detect.py --weights ./data/yolov4-int8.tflite --framework tflite --size 4
 # yolov4
 python convert_tflite.py --weights ./data/yolov4.weights --output ./data/yolov4.tflite
 
-# yolov4 quantize int8
-python convert_tflite.py --weights ./data/yolov4.weights --output ./data/yolov4-int8.tflite --quantize_mode int8
-
 # yolov4 quantize float16
 python convert_tflite.py --weights ./data/yolov4.weights --output ./data/yolov4-fp16.tflite --quantize_mode float16
 
-# yolov4 quantize int8 full (with all function is converted to int8)
+# yolov4 quantize int8
 python convert_tflite.py --weights ./data/yolov4.weights --output ./data/yolov4-fp16.tflite --quantize_mode full_int8 --dataset ./coco_dataset/coco/val207.txt
 ```
 ### Convert to TensorRT
