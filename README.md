@@ -2,7 +2,7 @@
 [![license](https://img.shields.io/github/license/mashape/apistatus.svg)](LICENSE)
 
 YOLOv4 Implemented in Tensorflow 2.0. 
-Convert YOLO v4 .weights to .pb and .tflite format for tensorflow and tensorflow lite.
+Convert YOLO v4, YOLOv3, YOLO tiny .weights to .pb, .tflite and trt format for tensorflow, tensorflow lite, tensorRT.
 
 Download yolov4.weights file: https://drive.google.com/open?id=1cewMfusmPjYWbrnuJRuKhPMwRe_b9PaT
 
@@ -47,6 +47,20 @@ python convert_tflite.py --weights ./data/yolov4.weights --output ./data/yolov4-
 # yolov4 quantize int8 full (with all function is converted to int8)
 python convert_tflite.py --weights ./data/yolov4.weights --output ./data/yolov4-fp16.tflite --quantize_mode full_int8 --dataset ./coco_dataset/coco/val207.txt
 ```
+### Convert to TensorRT
+```bash
+# yolov3
+python save_model.py --weights ./data/yolov3.weights --output ./checkpoints/yolov3.tf --input_size 416 --model yolov3
+python convert_trt.py --weights ./checkpoints/yolov3.tf --quantize_mode float16 --output ./checkpoints/yolov3-trt-fp16-416
+
+# yolov3-tiny
+python save_model.py --weights ./data/yolov3-tiny.weights --output ./checkpoints/yolov3-tiny.tf --input_size 416 --tiny
+python convert_trt.py --weights ./checkpoints/yolov3-tiny.tf --quantize_mode float16 --output ./checkpoints/yolov3-tiny-trt-fp16-416
+
+# yolov4
+python save_model.py --weights ./data/yolov4.weights --output ./checkpoints/yolov4.tf --input_size 416 --model yolov4
+python convert_trt.py --weights ./checkpoints/yolov4.tf --quantize_mode float16 --output ./checkpoints/yolov4-trt-fp16-416
+```
 
 ### Evaluate on COCO 2017 Dataset
 ```bash
@@ -71,13 +85,20 @@ python main.py --output results_yolov4_tf
 
 | Detection   | 512x512 | 416x416 | 320x320 |
 |-------------|---------|---------|---------|
-| YoloV3      | 55.43   |         |         |
+| YoloV3      | 55.43   | 52.32   |         |
 | YoloV4      | 61.96   | 57.33   |         |
 
 ### Benchmark
 ```bash
 python benchmarks.py --size 416 --model yolov4 --weights ./data/yolov4.weights
 ```
+#### TensorRT performance
+ 
+| YoloV4 416 images/s |   FP32   |   FP16   |   INT8   |
+|---------------------|----------|----------|----------|
+| Batch size 1        | 55       | 116      |          |
+| Batch size 8        | 70       | 152      |          |
+
 #### Tesla P100
 
 | Detection   | 512x512 | 416x416 | 320x320 |
@@ -124,11 +145,12 @@ python train.py
 # Transfer learning: 
 python train.py --weights ./data/yolov4.weights
 ```
-The training performance is not fully reproduced yet, so I recommended to use alex's Darknet to train your own data, then convert the .weights to tensorflow or tflite.
+The training performance is not fully reproduced yet, so I recommended to use Alex's [Darknet](https://github.com/AlexeyAB/darknet) to train your own data, then convert the .weights to tensorflow or tflite.
 
 
 
 ### TODO
+* [x] Convert YOLOv4 to TensorRT
 * [ ] YOLOv4 tflite on android
 * [ ] YOLOv4 tflite on ios
 * [x] Training code
