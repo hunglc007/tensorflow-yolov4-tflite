@@ -145,7 +145,7 @@ python train.py
 # Transfer learning: 
 python train.py --weights ./data/yolov4.weights
 ```
-The training performance is not fully reproduced yet, so I recommended to use alex's Darknet to train your own data, then convert the .weights to tensorflow or tflite.
+The training performance is not fully reproduced yet, so I recommended to use alex's Darknet[Darknet](https://github.com/AlexeyAB/darknet) to train your own data, then convert the .weights to tensorflow or tflite.
 
 
 
