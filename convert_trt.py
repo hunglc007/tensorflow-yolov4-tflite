@@ -59,7 +59,7 @@ def save_trt():
       input_saved_model_dir=FLAGS.weights, conversion_params=conversion_params)
     converter.convert()
 
-  converter.build(input_fn=representative_data_gen)
+  # converter.build(input_fn=representative_data_gen)
   converter.save(output_saved_model_dir=FLAGS.output)
   print('Done Converting to TF-TRT')
 
