@@ -5,6 +5,7 @@ import cv2
 from core.yolov4 import YOLOv4, YOLOv3_tiny, YOLOv3, decode
 from absl import app, flags, logging
 from absl.flags import FLAGS
+from tensorflow.python.saved_model import tag_constants
 from core import utils
 from core.config import cfg
 from tensorflow.compat.v1 import ConfigProto
