@@ -148,7 +148,7 @@ The training performance is not fully reproduced yet, so I recommended to use Al
 
 ### TODO
 * [x] Convert YOLOv4 to TensorRT
-* [ ] YOLOv4 tflite on android
+* [x] YOLOv4 tflite on android
 * [ ] YOLOv4 tflite on ios
 * [x] Training code
 * [x] Update scale xy
