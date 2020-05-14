@@ -61,6 +61,10 @@ def save_tflite():
   model.summary()
 
   converter = tf.lite.TFLiteConverter.from_keras_model(model)
+
+  if tf.__version__ >= '2.2.0':
+    converter.experimental_new_converter = False
+
   if FLAGS.quantize_mode == 'int8':
     converter.optimizations = [tf.lite.Optimize.DEFAULT]
   elif FLAGS.quantize_mode == 'float16':
