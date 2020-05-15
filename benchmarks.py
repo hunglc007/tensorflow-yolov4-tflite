@@ -78,7 +78,7 @@ def main(_argv):
         open(FLAGS.image, 'rb').read(), channels=3)
     img_raw = tf.expand_dims(img_raw, 0)
     img_raw = tf.image.resize(img_raw, (FLAGS.size, FLAGS.size))
-    batched_input = tf.constant(images_data)
+    batched_input = tf.constant(image_data)
     for i in range(1000):
         prev_time = time.time()
         # pred_bbox = model.predict(image_data)
