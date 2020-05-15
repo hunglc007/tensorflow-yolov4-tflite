@@ -1,7 +1,7 @@
 import tensorflow as tf
 from absl import app, flags, logging
 from absl.flags import FLAGS
-from core.yolov3 import YOLOv4, YOLOv3, YOLOv3_tiny, decode
+from core.yolov4 import YOLOv4, YOLOv3, YOLOv3_tiny, decode
 import core.utils as utils
 from core.config import cfg
 
