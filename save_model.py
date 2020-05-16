@@ -7,8 +7,8 @@ from core.config import cfg
 
 flags.DEFINE_string('weights', './data/yolov4.weights', 'path to weights file')
 flags.DEFINE_string('output', './checkpoints/yolov4-416', 'path to output')
-flags.DEFINE_boolean('tiny', False, 'path to output')
-flags.DEFINE_integer('input_size', 416, 'path to output')
+flags.DEFINE_boolean('tiny', False, 'is yolov3-tiny or not')
+flags.DEFINE_integer('input_size', 416, 'define input size of export model')
 flags.DEFINE_string('model', 'yolov4', 'yolov3 or yolov4')
 
 def save_tf():
