@@ -43,7 +43,7 @@ def save_tf():
       print("model option can be only 'yolov3' or 'yolov4'.")
       return
 
-    model.summary()
+  model.summary()
 
   model.save(FLAGS.output)
 
