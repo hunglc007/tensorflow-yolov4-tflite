@@ -39,10 +39,11 @@ def save_tf():
         bbox_tensors.append(bbox_tensor)
       model = tf.keras.Model(input_layer, bbox_tensors)
       utils.load_weights(model, FLAGS.weights)
+    else:
+      print("model option can be only 'yolov3' or 'yolov4'.")
+      return
 
-    model = tf.keras.Model(input_layer, bbox_tensors)
-    model.summary()
-    utils.load_weights(model, FLAGS.weights)
+  model.summary()
 
   model.save(FLAGS.output)
 
