@@ -45,7 +45,7 @@ def convert_annotation(list_txt, output_path, image_dir, anno_dir, class_names):
                 ymax = b.find('ymax').text
                 box_annotations.append(','.join([str(xmin), str(ymin), str(xmax), str(ymax), str(class_idx)]))
             
-            annotation = im_p + ' ' + ' '.join(box_annotations) + '\n'
+            annotation = os.path.abspath(im_p) + ' ' + ' '.join(box_annotations) + '\n'
 
             wf.write(annotation)
 
