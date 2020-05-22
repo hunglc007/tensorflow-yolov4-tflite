@@ -99,6 +99,7 @@ def main(_argv):
             pred_bbox = []
             result = infer(batched_input)
             for key, value in result.items():
+                value = value.numpy()
                 pred_bbox.append(value)
             if FLAGS.model == 'yolov4':
                 pred_bbox = utils.postprocess_bbbox(pred_bbox, ANCHORS, STRIDES, XYSCALE)
