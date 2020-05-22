@@ -20,10 +20,21 @@ flags.DEFINE_integer('size', 416, 'resize images to')
 
 
 def main(_argv):
+    if FLAGS.tiny:
+        STRIDES = np.array(cfg.YOLO.STRIDES_TINY)
+        ANCHORS = utils.get_anchors(cfg.YOLO.ANCHORS_TINY, FLAGS.tiny)
+    else:
+        STRIDES = np.array(cfg.YOLO.STRIDES)
+        if FLAGS.model == 'yolov4':
+            ANCHORS = utils.get_anchors(cfg.YOLO.ANCHORS, FLAGS.tiny)
+        else:
+            ANCHORS = utils.get_anchors(cfg.YOLO.ANCHORS_V3, FLAGS.tiny)
+    NUM_CLASS = len(utils.read_class_names(cfg.YOLO.CLASSES))
+    XYSCALE = cfg.YOLO.XYSCALE
+
     config = ConfigProto()
     config.gpu_options.allow_growth = True
     session = InteractiveSession(config=config)
-    NUM_CLASS = len(utils.read_class_names(cfg.YOLO.CLASSES))
     input_size = FLAGS.size
     physical_devices = tf.config.experimental.list_physical_devices('GPU')
     if len(physical_devices) > 0:
@@ -86,6 +97,12 @@ def main(_argv):
             pred_bbox = run_model(image_data)
         elif FLAGS.framework == 'trt':
             pred_bbox = infer(batched_input)
+            if FLAGS.model == 'yolov4':
+                pred_bbox = utils.postprocess_bbbox(pred_bbox, ANCHORS, STRIDES, XYSCALE)
+            else:
+                pred_bbox = utils.postprocess_bbbox(pred_bbox, ANCHORS, STRIDES)
+            bboxes = utils.postprocess_boxes(pred_bbox, original_image_size, input_size, 0.25)
+            bboxes = utils.nms(bboxes, 0.213, method='nms')
         # pred_bbox = pred_bbox.numpy()
         curr_time = time.time()
         exec_time = curr_time - prev_time
