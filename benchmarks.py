@@ -94,7 +94,17 @@ def main(_argv):
         prev_time = time.time()
         # pred_bbox = model.predict(image_data)
         if FLAGS.framework == 'tf':
-            pred_bbox = run_model(image_data)
+            pred_bbox = []
+            result = run_model(image_data)
+            for value in result:
+                value = value.numpy()
+                pred_bbox.append(value)
+            if FLAGS.model == 'yolov4':
+                pred_bbox = utils.postprocess_bbbox(pred_bbox, ANCHORS, STRIDES, XYSCALE)
+            else:
+                pred_bbox = utils.postprocess_bbbox(pred_bbox, ANCHORS, STRIDES)
+            bboxes = utils.postprocess_boxes(pred_bbox, original_image_size, input_size, 0.25)
+            bboxes = utils.nms(bboxes, 0.213, method='nms')
         elif FLAGS.framework == 'trt':
             pred_bbox = []
             result = infer(batched_input)
