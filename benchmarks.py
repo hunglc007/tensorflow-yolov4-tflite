@@ -96,7 +96,10 @@ def main(_argv):
         if FLAGS.framework == 'tf':
             pred_bbox = run_model(image_data)
         elif FLAGS.framework == 'trt':
-            pred_bbox = infer(batched_input)
+            pred_bbox = []
+            result = infer(batched_input)
+            for key, value in result.items():
+                pred_bbox.append(value)
             if FLAGS.model == 'yolov4':
                 pred_bbox = utils.postprocess_bbbox(pred_bbox, ANCHORS, STRIDES, XYSCALE)
             else:
