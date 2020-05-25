@@ -65,7 +65,11 @@ def main(_argv):
                     bbox_tensor = decode(fm, NUM_CLASS, i)
                     bbox_tensors.append(bbox_tensor)
                 model = tf.keras.Model(input_layer, bbox_tensors)
-                utils.load_weights(model, FLAGS.weights)
+
+                if FLAGS.weights.split(".")[len(FLAGS.weights.split(".")) - 1] == "weights":
+                    utils.load_weights(model, FLAGS.weights)
+                else:
+                    model.load_weights(FLAGS.weights).expect_partial()
 
         model.summary()
         pred_bbox = model.predict(image_data)
