@@ -111,7 +111,7 @@ def main(_argv):
             predict_result_path = os.path.join(predicted_dir_path, str(num) + '.txt')
             # Predict Process
             image_size = image.shape[:2]
-            image_data = utils.image_preporcess(np.copy(image), [INPUT_SIZE, INPUT_SIZE])
+            image_data = utils.image_preprocess(np.copy(image), [INPUT_SIZE, INPUT_SIZE])
             image_data = image_data[np.newaxis, ...].astype(np.float32)
 
             if FLAGS.framework == "tf":

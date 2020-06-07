@@ -170,7 +170,7 @@ class Dataset(object):
             image, bboxes = self.random_translate(np.copy(image), np.copy(bboxes))
 
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-        image, bboxes = utils.image_preporcess(np.copy(image), [self.train_input_size, self.train_input_size], np.copy(bboxes))
+        image, bboxes = utils.image_preprocess(np.copy(image), [self.train_input_size, self.train_input_size], np.copy(bboxes))
         return image, bboxes
 
     def bbox_iou(self, boxes1, boxes2):
