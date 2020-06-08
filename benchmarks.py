@@ -83,7 +83,7 @@ def main(_argv):
     original_image = cv2.imread(FLAGS.image)
     original_image = cv2.cvtColor(original_image, cv2.COLOR_BGR2RGB)
     original_image_size = original_image.shape[:2]
-    image_data = utils.image_preporcess(np.copy(original_image), [FLAGS.size, FLAGS.size])
+    image_data = utils.image_preprocess(np.copy(original_image), [FLAGS.size, FLAGS.size])
     image_data = image_data[np.newaxis, ...].astype(np.float32)
     img_raw = tf.image.decode_image(
         open(FLAGS.image, 'rb').read(), channels=3)

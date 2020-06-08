@@ -37,7 +37,7 @@ def main(_argv):
     original_image = cv2.cvtColor(original_image, cv2.COLOR_BGR2RGB)
     original_image_size = original_image.shape[:2]
 
-    image_data = utils.image_preporcess(np.copy(original_image), [input_size, input_size])
+    image_data = utils.image_preprocess(np.copy(original_image), [input_size, input_size])
     image_data = image_data[np.newaxis, ...].astype(np.float32)
     if FLAGS.framework == 'tf':
         input_layer = tf.keras.layers.Input([input_size, input_size, 3])

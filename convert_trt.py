@@ -23,7 +23,7 @@ def representative_data_gen():
     if os.path.exists(fimage[input_value]):
       original_image=cv2.imread(fimage[input_value])
       original_image = cv2.cvtColor(original_image, cv2.COLOR_BGR2RGB)
-      image_data = utils.image_preporcess(np.copy(original_image), [FLAGS.input_size, FLAGS.input_size])
+      image_data = utils.image_preprocess(np.copy(original_image), [FLAGS.input_size, FLAGS.input_size])
       img_in = image_data[np.newaxis, ...].astype(np.float32)
       batched_input = tf.constant(img_in)
       print(input_value)

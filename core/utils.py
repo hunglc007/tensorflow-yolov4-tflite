@@ -143,7 +143,7 @@ def get_anchors(anchors_path, tiny=False):
         return anchors.reshape(3, 3, 2)
 
 
-def image_preporcess(image, target_size, gt_boxes=None):
+def image_preprocess(image, target_size, gt_boxes=None):
 
     ih, iw    = target_size
     h,  w, _  = image.shape
