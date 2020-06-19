@@ -51,12 +51,12 @@ class Dataset(object):
         self.anchor_per_scale = cfg.YOLO.ANCHOR_PER_SCALE
         self.max_bbox_per_scale = 150
 
-        self.annotations = self.load_annotations(dataset_type)
+        self.annotations = self.load_annotations()
         self.num_samples = len(self.annotations)
         self.num_batchs = int(np.ceil(self.num_samples / self.batch_size))
         self.batch_count = 0
 
-    def load_annotations(self, dataset_type):
+    def load_annotations(self):
         with open(self.annot_path, "r") as f:
             txt = f.readlines()
             annotations = [
