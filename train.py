@@ -19,8 +19,8 @@ def main(_argv):
     if len(physical_devices) > 0:
         tf.config.experimental.set_memory_growth(physical_devices[0], True)
 
-    trainset = Dataset('train')
-    testset = Dataset('test')
+    trainset = Dataset(is_training=True)
+    testset = Dataset(is_training=False)
     logdir = "./data/log"
     isfreeze = False
     steps_per_epoch = len(trainset)

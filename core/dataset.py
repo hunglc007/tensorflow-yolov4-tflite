@@ -23,25 +23,17 @@ from core.config import cfg
 class Dataset(object):
     """implement Dataset here"""
 
-    def __init__(self, dataset_type):
+    def __init__(self, is_training: bool):
         self.annot_path = (
-            cfg.TRAIN.ANNOT_PATH
-            if dataset_type == "train"
-            else cfg.TEST.ANNOT_PATH
+            cfg.TRAIN.ANNOT_PATH if is_training else cfg.TEST.ANNOT_PATH
         )
         self.input_sizes = (
-            cfg.TRAIN.INPUT_SIZE
-            if dataset_type == "train"
-            else cfg.TEST.INPUT_SIZE
+            cfg.TRAIN.INPUT_SIZE if is_training else cfg.TEST.INPUT_SIZE
         )
         self.batch_size = (
-            cfg.TRAIN.BATCH_SIZE
-            if dataset_type == "train"
-            else cfg.TEST.BATCH_SIZE
+            cfg.TRAIN.BATCH_SIZE if is_training else cfg.TEST.BATCH_SIZE
         )
-        self.data_aug = (
-            cfg.TRAIN.DATA_AUG if dataset_type == "train" else cfg.TEST.DATA_AUG
-        )
+        self.data_aug = cfg.TRAIN.DATA_AUG if is_training else cfg.TEST.DATA_AUG
 
         self.train_input_sizes = cfg.TRAIN.INPUT_SIZE
         self.strides = np.array(cfg.YOLO.STRIDES)
