@@ -277,6 +277,7 @@ class Dataset(object):
                 [list(map(float, box.split(","))) for box in line[1:]]
             )
             bboxes = bboxes * np.array([width, height, width, height, 1])
+            bboxes = bboxes.astype(np.int64)
 
         if self.data_aug:
             image, bboxes = self.random_horizontal_flip(
