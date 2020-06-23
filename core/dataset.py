@@ -13,7 +13,7 @@ from core.config import cfg
 class Dataset(object):
     """implement Dataset here"""
 
-    def __init__(self, is_training: bool, dataset_type: str = "converted_coco"):
+    def __init__(self, is_training: bool, dataset_type: str = "converted_coco", tiny: bool = False):
         self.dataset_type = dataset_type
 
         self.annot_path = (
@@ -28,7 +28,9 @@ class Dataset(object):
         self.data_aug = cfg.TRAIN.DATA_AUG if is_training else cfg.TEST.DATA_AUG
 
         self.train_input_sizes = cfg.TRAIN.INPUT_SIZE
-        self.strides = np.array(cfg.YOLO.STRIDES)
+        self.strides = (
+            np.array(cfg.YOLO.STRIDES_TINY) if tiny else np.array(cfg.YOLO.STRIDES)
+        )
         self.classes = utils.read_class_names(cfg.YOLO.CLASSES)
         self.num_classes = len(self.classes)
         self.anchors = np.array(utils.get_anchors(cfg.YOLO.ANCHORS))
