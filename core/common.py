@@ -71,6 +71,18 @@ def residual_block(input_layer, input_channel, filter_num1, filter_num2, activat
     residual_output = short_cut + conv
     return residual_output
 
+# def block_tiny(input_layer, input_channel, filter_num1, activate_type='leaky'):
+#     conv = convolutional(input_layer, filters_shape=(3, 3, input_channel, filter_num1), activate_type=activate_type)
+#     short_cut = input_layer
+#     conv = convolutional(conv, filters_shape=(3, 3, input_channel, filter_num1), activate_type=activate_type)
+#
+#     input_data = tf.concat([conv, short_cut], axis=-1)
+#     return residual_output
+
+def route_group(input_layer, groups, group_id):
+    convs = tf.split(input_layer, num_or_size_splits=groups, axis=-1)
+    return convs[group_id]
+
 def upsample(input_layer):
     return tf.image.resize(input_layer, (input_layer.shape[1] * 2, input_layer.shape[2] * 2), method='nearest')
 
