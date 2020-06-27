@@ -303,7 +303,7 @@ def nms(bboxes, iou_threshold, sigma=0.3, method='nms'):
 def diounms_sort(bboxes, iou_threshold, sigma=0.3, method='nms', beta_nms=0.6):
     best_bboxes = []
     return best_bboxes
-def postprocess_bbbox(pred_bbox, ANCHORS, STRIDES, XYSCALE=[1,1,1], RESIZE=1):
+def postprocess_bbbox(pred_bbox, ANCHORS, STRIDES, XYSCALE=[1,1,1]):
     for i, pred in enumerate(pred_bbox):
         conv_shape = pred.shape
         output_size = conv_shape[1]
@@ -318,7 +318,7 @@ def postprocess_bbbox(pred_bbox, ANCHORS, STRIDES, XYSCALE=[1,1,1], RESIZE=1):
         # pred_xy = (tf.sigmoid(conv_raw_dxdy) + xy_grid) * STRIDES[i]
         pred_xy = ((tf.sigmoid(conv_raw_dxdy) * XYSCALE[i]) - 0.5 * (XYSCALE[i] - 1) + xy_grid) * STRIDES[i]
         # pred_wh = (tf.exp(conv_raw_dwdh) * ANCHORS[i]) * STRIDES[i]
-        pred_wh = (tf.exp(conv_raw_dwdh) * ANCHORS[i]) * RESIZE
+        pred_wh = (tf.exp(conv_raw_dwdh) * ANCHORS[i])
         pred[:, :, :, :, 0:4] = tf.concat([pred_xy, pred_wh], axis=-1)
 
     pred_bbox = [tf.reshape(x, (-1, tf.shape(x)[-1])) for x in pred_bbox]

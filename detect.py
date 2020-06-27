@@ -10,11 +10,11 @@ import numpy as np
 import tensorflow as tf
 
 flags.DEFINE_string('framework', 'tf', '(tf, tflite')
-flags.DEFINE_string('weights', './data/yolov4-tiny.weights',
+flags.DEFINE_string('weights', './data/yolov3-tiny.weights',
                     'path to weights file')
 flags.DEFINE_integer('size', 608, 'resize images to')
 flags.DEFINE_boolean('tiny', True, 'yolo or yolo-tiny')
-flags.DEFINE_string('model', 'yolov4', 'yolov3 or yolov4')
+flags.DEFINE_string('model', 'yolov3', 'yolov3 or yolov4')
 flags.DEFINE_string('image', './data/kite.jpg', 'path to input image')
 flags.DEFINE_string('output', 'result.png', 'path to output image')
 
@@ -93,7 +93,7 @@ def main(_argv):
 
     if FLAGS.model == 'yolov4':
         if FLAGS.tiny:
-            pred_bbox = utils.postprocess_bbbox(pred_bbox, ANCHORS, STRIDES, XYSCALE, RESIZE=1.5)
+            pred_bbox = utils.postprocess_bbbox(pred_bbox, ANCHORS, STRIDES, XYSCALE)
         else:
             pred_bbox = utils.postprocess_bbbox(pred_bbox, ANCHORS, STRIDES, XYSCALE)
     else:
