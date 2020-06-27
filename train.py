@@ -19,8 +19,8 @@ def main(_argv):
     if len(physical_devices) > 0:
         tf.config.experimental.set_memory_growth(physical_devices[0], True)
 
-    trainset = Dataset(is_training=True)
-    testset = Dataset(is_training=False)
+    trainset = Dataset(is_training=True, tiny=FLAGS.tiny)
+    testset = Dataset(is_training=False, tiny=FLAGS.tiny)
     logdir = "./data/log"
     isfreeze = False
     steps_per_epoch = len(trainset)
@@ -38,7 +38,12 @@ def main(_argv):
     XYSCALE = cfg.YOLO.XYSCALE
     ANCHORS = utils.get_anchors(cfg.YOLO.ANCHORS)
 
+    freeze_layouts = ['conv2d_93', 'conv2d_101', 'conv2d_109']
+
     if FLAGS.tiny:
+        freeze_layouts = ['conv2d_9', 'conv2d_12']
+        STRIDES = np.array(cfg.YOLO.STRIDES_TINY)
+
         feature_maps = YOLOv3_tiny(input_layer, NUM_CLASS)
         bbox_tensors = []
         for i, fm in enumerate(feature_maps):
@@ -90,7 +95,7 @@ def main(_argv):
             giou_loss = conf_loss = prob_loss = 0
 
             # optimizing process
-            for i in range(3):
+            for i in range(len(freeze_layouts)):
                 conv, pred = pred_result[i * 2], pred_result[i * 2 + 1]
                 loss_items = compute_loss(pred, conv, target[i][0], target[i][1], STRIDES=STRIDES, NUM_CLASS=NUM_CLASS, IOU_LOSS_THRESH=IOU_LOSS_THRESH, i=i)
                 giou_loss += loss_items[0]
@@ -129,7 +134,7 @@ def main(_argv):
             giou_loss = conf_loss = prob_loss = 0
 
             # optimizing process
-            for i in range(3):
+            for i in range(len(freeze_layouts)):
                 conv, pred = pred_result[i * 2], pred_result[i * 2 + 1]
                 loss_items = compute_loss(pred, conv, target[i][0], target[i][1], STRIDES=STRIDES, NUM_CLASS=NUM_CLASS, IOU_LOSS_THRESH=IOU_LOSS_THRESH, i=i)
                 giou_loss += loss_items[0]
@@ -146,13 +151,13 @@ def main(_argv):
         if epoch < first_stage_epochs:
             if not isfreeze:
                 isfreeze = True
-                for name in ['conv2d_93', 'conv2d_101', 'conv2d_109']:
+                for name in freeze_layouts:
                     freeze = model.get_layer(name)
                     freeze_all(freeze)
         elif epoch >= first_stage_epochs:
             if isfreeze:
                 isfreeze = False
-                for name in ['conv2d_93', 'conv2d_101', 'conv2d_109']:
+                for name in freeze_layouts:
                     freeze = model.get_layer(name)
                     unfreeze_all(freeze)
         for image_data, target in trainset:
