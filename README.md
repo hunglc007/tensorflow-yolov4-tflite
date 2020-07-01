@@ -42,6 +42,9 @@ If you want to run yolov3 or yolov3-tiny change ``--model yolov3`` in command
 ### Convert to tflite
 
 ```bash
+# Save tf model for tflite converting
+python save_model.py --weights ./data/yolov4.weights --output ./checkpoints/yolov4-416 --input_size 416 --model yolov4 --framework tflite
+
 # yolov4
 python convert_tflite.py --weights ./checkpoints/yolov4-416 --output ./data/yolov3-416.tflite
 
