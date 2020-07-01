@@ -16,14 +16,16 @@ import numpy as np
 from tensorflow.compat.v1 import ConfigProto
 from tensorflow.compat.v1 import InteractiveSession
 
-flags.DEFINE_string('framework', 'tflite', '(tf, tflite, trt')
-flags.DEFINE_string('weights', './checkpoints/yolov4-tiny-416-int8.tflite',
+flags.DEFINE_string('framework', 'tf', '(tf, tflite, trt')
+flags.DEFINE_string('weights', './checkpoints/yolov4-tiny-416',
                     'path to weights file')
 flags.DEFINE_integer('size', 416, 'resize images to')
 flags.DEFINE_boolean('tiny', True, 'yolo or yolo-tiny')
 flags.DEFINE_string('model', 'yolov4', 'yolov3 or yolov4')
 flags.DEFINE_string('image', './data/kite.jpg', 'path to input image')
 flags.DEFINE_string('output', 'result.png', 'path to output image')
+flags.DEFINE_float('iou', 0.45, 'iou threshold')
+flags.DEFINE_float('score', 0.25, 'score threshold')
 
 def main(_argv):
     config = ConfigProto()
@@ -75,8 +77,8 @@ def main(_argv):
             pred_conf, (tf.shape(pred_conf)[0], -1, tf.shape(pred_conf)[-1])),
         max_output_size_per_class=50,
         max_total_size=50,
-        iou_threshold=0.5,
-        score_threshold=0.25
+        iou_threshold=FLAGS.iou,
+        score_threshold=FLAGS.score
     )
     pred_bbox = [boxes.numpy(), scores.numpy(), classes.numpy(), valid_detections.numpy()]
     image = utils.draw_bbox(original_image, pred_bbox)

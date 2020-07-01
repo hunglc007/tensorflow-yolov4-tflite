@@ -11,7 +11,7 @@ from core.config import cfg
 flags.DEFINE_string('weights', './checkpoints/yolov3-416', 'path to weights file')
 flags.DEFINE_string('output', './checkpoints/yolov3-416-int8.tflite', 'path to output')
 flags.DEFINE_integer('input_size', 416, 'path to output')
-flags.DEFINE_string('quantize_mode', 'int8', 'quantize mode (int8, float16, float32)')
+flags.DEFINE_string('quantize_mode', 'float32', 'quantize mode (int8, float16, float32)')
 flags.DEFINE_string('dataset', "/Volumes/Elements/data/coco_dataset/coco/5k.txt", 'path to dataset')
 
 def representative_data_gen():
