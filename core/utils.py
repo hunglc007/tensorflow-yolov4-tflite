@@ -5,97 +5,26 @@ import numpy as np
 import tensorflow as tf
 from core.config import cfg
 
-def load_weights_tiny(model, weights_file, model_name):
-    if model_name == 'yolov3':
-        layer_size = 13
-        output_pos = [9, 12]
+def load_weights(model, weights_file, model_name='yolov4', is_tiny=False):
+    if is_tiny:
+        if model_name == 'yolov3':
+            layer_size = 13
+            output_pos = [9, 12]
+        else:
+            layer_size = 21
+            output_pos = [17, 20]
     else:
-        layer_size = 21
-        output_pos = [17, 20]
+        if model_name == 'yolov3':
+            layer_size = 75
+            output_pos = [58, 66, 74]
+        else:
+            layer_size = 110
+            output_pos = [93, 101, 109]
     wf = open(weights_file, 'rb')
     major, minor, revision, seen, _ = np.fromfile(wf, dtype=np.int32, count=5)
 
     j = 0
     for i in range(layer_size):
-        conv_layer_name = 'conv2d_%d' % i if i > 0 else 'conv2d'
-        print(conv_layer_name)
-        bn_layer_name = 'batch_normalization_%d' % j if j > 0 else 'batch_normalization'
-
-        conv_layer = model.get_layer(conv_layer_name)
-        filters = conv_layer.filters
-        k_size = conv_layer.kernel_size[0]
-        in_dim = conv_layer.input_shape[-1]
-
-        if i not in output_pos:
-            # darknet weights: [beta, gamma, mean, variance]
-            bn_weights = np.fromfile(wf, dtype=np.float32, count=4 * filters)
-            # tf weights: [gamma, beta, mean, variance]
-            bn_weights = bn_weights.reshape((4, filters))[[1, 0, 2, 3]]
-            bn_layer = model.get_layer(bn_layer_name)
-            j += 1
-        else:
-            conv_bias = np.fromfile(wf, dtype=np.float32, count=filters)
-
-        # darknet shape (out_dim, in_dim, height, width)
-        conv_shape = (filters, in_dim, k_size, k_size)
-        conv_weights = np.fromfile(wf, dtype=np.float32, count=np.product(conv_shape))
-        # tf shape (height, width, in_dim, out_dim)
-        conv_weights = conv_weights.reshape(conv_shape).transpose([2, 3, 1, 0])
-
-        if i not in output_pos:
-            conv_layer.set_weights([conv_weights])
-            bn_layer.set_weights(bn_weights)
-        else:
-            conv_layer.set_weights([conv_weights, conv_bias])
-
-    assert len(wf.read()) == 0, 'failed to read all data'
-    wf.close()
-
-def load_weights_v3(model, weights_file):
-    wf = open(weights_file, 'rb')
-    major, minor, revision, seen, _ = np.fromfile(wf, dtype=np.int32, count=5)
-
-    j = 0
-    for i in range(75):
-        conv_layer_name = 'conv2d_%d' % i if i > 0 else 'conv2d'
-        bn_layer_name = 'batch_normalization_%d' % j if j > 0 else 'batch_normalization'
-
-        conv_layer = model.get_layer(conv_layer_name)
-        filters = conv_layer.filters
-        k_size = conv_layer.kernel_size[0]
-        in_dim = conv_layer.input_shape[-1]
-
-        if i not in [58, 66, 74]:
-            # darknet weights: [beta, gamma, mean, variance]
-            bn_weights = np.fromfile(wf, dtype=np.float32, count=4 * filters)
-            # tf weights: [gamma, beta, mean, variance]
-            bn_weights = bn_weights.reshape((4, filters))[[1, 0, 2, 3]]
-            bn_layer = model.get_layer(bn_layer_name)
-            j += 1
-        else:
-            conv_bias = np.fromfile(wf, dtype=np.float32, count=filters)
-
-        # darknet shape (out_dim, in_dim, height, width)
-        conv_shape = (filters, in_dim, k_size, k_size)
-        conv_weights = np.fromfile(wf, dtype=np.float32, count=np.product(conv_shape))
-        # tf shape (height, width, in_dim, out_dim)
-        conv_weights = conv_weights.reshape(conv_shape).transpose([2, 3, 1, 0])
-
-        if i not in [58, 66, 74]:
-            conv_layer.set_weights([conv_weights])
-            bn_layer.set_weights(bn_weights)
-        else:
-            conv_layer.set_weights([conv_weights, conv_bias])
-
-    assert len(wf.read()) == 0, 'failed to read all data'
-    wf.close()
-
-def load_weights(model, weights_file):
-    wf = open(weights_file, 'rb')
-    major, minor, revision, seen, _ = np.fromfile(wf, dtype=np.int32, count=5)
-
-    j = 0
-    for i in range(110):
         conv_layer_name = 'conv2d_%d' %i if i > 0 else 'conv2d'
         bn_layer_name = 'batch_normalization_%d' %j if j > 0 else 'batch_normalization'
 
@@ -104,7 +33,7 @@ def load_weights(model, weights_file):
         k_size = conv_layer.kernel_size[0]
         in_dim = conv_layer.input_shape[-1]
 
-        if i not in [93, 101, 109]:
+        if i not in output_pos:
             # darknet weights: [beta, gamma, mean, variance]
             bn_weights = np.fromfile(wf, dtype=np.float32, count=4 * filters)
             # tf weights: [gamma, beta, mean, variance]
@@ -120,7 +49,7 @@ def load_weights(model, weights_file):
         # tf shape (height, width, in_dim, out_dim)
         conv_weights = conv_weights.reshape(conv_shape).transpose([2, 3, 1, 0])
 
-        if i not in [93, 101, 109]:
+        if i not in output_pos:
             conv_layer.set_weights([conv_weights])
             bn_layer.set_weights(bn_weights)
         else:
@@ -131,19 +60,30 @@ def load_weights(model, weights_file):
 
 
 def read_class_names(class_file_name):
-    '''loads class name from a file'''
     names = {}
     with open(class_file_name, 'r') as data:
         for ID, name in enumerate(data):
             names[ID] = name.strip('\n')
     return names
 
+def load_config(FLAGS):
+    if FLAGS.tiny:
+        STRIDES = np.array(cfg.YOLO.STRIDES_TINY)
+        ANCHORS = get_anchors(cfg.YOLO.ANCHORS_TINY, FLAGS.tiny)
+        XYSCALE = cfg.YOLO.XYSCALE_TINY if FLAGS.model == 'yolov4' else [1, 1]
+    else:
+        STRIDES = np.array(cfg.YOLO.STRIDES)
+        if FLAGS.model == 'yolov4':
+            ANCHORS = get_anchors(cfg.YOLO.ANCHORS, FLAGS.tiny)
+        elif FLAGS.model == 'yolov3':
+            ANCHORS = get_anchors(cfg.YOLO.ANCHORS_V3, FLAGS.tiny)
+        XYSCALE = cfg.YOLO.XYSCALE if FLAGS.model == 'yolov4' else [1, 1, 1]
+    NUM_CLASS = len(read_class_names(cfg.YOLO.CLASSES))
+
+    return STRIDES, ANCHORS, NUM_CLASS, XYSCALE
 
 def get_anchors(anchors_path, tiny=False):
-    '''loads the anchors from a file'''
-    with open(anchors_path) as f:
-        anchors = f.readline()
-    anchors = np.array(anchors.split(','), dtype=np.float32)
+    anchors = np.array(anchors_path)
     if tiny:
         return anchors.reshape(2, 3, 2)
     else:
@@ -174,10 +114,6 @@ def image_preprocess(image, target_size, gt_boxes=None):
 
 
 def draw_bbox(image, bboxes, classes=read_class_names(cfg.YOLO.CLASSES), show_label=True):
-    """
-    bboxes: [x_min, y_min, x_max, y_max, probability, cls_id] format coordinates.
-    """
-
     num_classes = len(classes)
     image_h, image_w, _ = image.shape
     hsv_tuples = [(1.0 * x / num_classes, 1., 1.) for x in range(num_classes)]
@@ -188,23 +124,31 @@ def draw_bbox(image, bboxes, classes=read_class_names(cfg.YOLO.CLASSES), show_la
     random.shuffle(colors)
     random.seed(None)
 
-    for i, bbox in enumerate(bboxes):
-        coor = np.array(bbox[:4], dtype=np.int32)
+    out_boxes, out_scores, out_classes, num_boxes = bboxes
+    for i in range(num_boxes[0]):
+        if int(out_classes[0][i]) < 0 or int(out_classes[0][i]) > num_classes: continue
+        coor = out_boxes[0][i]
+        coor[0] = int(coor[0] * image_h)
+        coor[2] = int(coor[2] * image_h)
+        coor[1] = int(coor[1] * image_w)
+        coor[3] = int(coor[3] * image_w)
+
         fontScale = 0.5
-        score = bbox[4]
-        class_ind = int(bbox[5])
+        score = out_scores[0][i]
+        class_ind = int(out_classes[0][i])
         bbox_color = colors[class_ind]
         bbox_thick = int(0.6 * (image_h + image_w) / 600)
-        c1, c2 = (coor[0], coor[1]), (coor[2], coor[3])
+        c1, c2 = (coor[1], coor[0]), (coor[3], coor[2])
         cv2.rectangle(image, c1, c2, bbox_color, bbox_thick)
 
         if show_label:
             bbox_mess = '%s: %.2f' % (classes[class_ind], score)
-            t_size = cv2.getTextSize(bbox_mess, 0, fontScale, thickness=bbox_thick//2)[0]
-            cv2.rectangle(image, c1, (c1[0] + t_size[0], c1[1] - t_size[1] - 3), bbox_color, -1)  # filled
+            t_size = cv2.getTextSize(bbox_mess, 0, fontScale, thickness=bbox_thick // 2)[0]
+            c3 = (c1[0] + t_size[0], c1[1] - t_size[1] - 3)
+            cv2.rectangle(image, c1, (np.float32(c3[0]), np.float32(c3[1])), bbox_color, -1) #filled
 
-            cv2.putText(image, bbox_mess, (c1[0], c1[1]-2), cv2.FONT_HERSHEY_SIMPLEX,
-                        fontScale, (0, 0, 0), bbox_thick//2, lineType=cv2.LINE_AA)
+            cv2.putText(image, bbox_mess, (c1[0], np.float32(c1[1] - 2)), cv2.FONT_HERSHEY_SIMPLEX,
+                        fontScale, (0, 0, 0), bbox_thick // 2, lineType=cv2.LINE_AA)
 
     return image
 
