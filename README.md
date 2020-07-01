@@ -29,7 +29,7 @@ python detect.py --weights ./checkpoints/yolov4-416 --size 416 --model yolov4 --
 python detect.py --weights ./checkpoints/yolov4-tiny-416 --size 416 --model yolov4 --image ./data/kite.jpg --tiny
 
 ```
-If you want to run yolov3 or yolov3-tiny add --model yolov3 into command
+If you want to run yolov3 or yolov3-tiny change ``--model yolov3`` in command
 
 #### Output
 
