@@ -246,6 +246,7 @@ def decode_trt(conv_output, output_size, NUM_CLASS, STRIDES, ANCHORS, i=0, XYSCA
     return pred_xywh, pred_prob
     # return tf.concat([pred_xywh, pred_conf, pred_prob], axis=-1)
 
+
 def filter_boxes(box_xywh, scores, score_threshold=0.4, input_shape = tf.constant([416,416])):
     scores_max = tf.math.reduce_max(scores, axis=-1)
 
@@ -272,32 +273,6 @@ def filter_boxes(box_xywh, scores, score_threshold=0.4, input_shape = tf.constan
     ], axis=-1)
     # return tf.concat([boxes, pred_conf], axis=-1)
     return (boxes, pred_conf)
-
-def bbox_ciou(boxes1, boxes2):
-    boxes1_coor = tf.concat([boxes1[..., :2] - boxes1[..., 2:] * 0.5,
-                        boxes1[..., :2] + boxes1[..., 2:] * 0.5], axis=-1)
-    boxes2_coor = tf.concat([boxes2[..., :2] - boxes2[..., 2:] * 0.5,
-                        boxes2[..., :2] + boxes2[..., 2:] * 0.5], axis=-1)
-
-    left = tf.maximum(boxes1_coor[..., 0], boxes2_coor[..., 0])
-    up = tf.maximum(boxes1_coor[..., 1], boxes2_coor[..., 1])
-    right = tf.maximum(boxes1_coor[..., 2], boxes2_coor[..., 2])
-    down = tf.maximum(boxes1_coor[..., 3], boxes2_coor[..., 3])
-
-    c = (right - left) * (right - left) + (up - down) * (up - down)
-    iou = utils.bbox_iou(boxes1, boxes2)
-
-    u = (boxes1[..., 0] - boxes2[..., 0]) * (boxes1[..., 0] - boxes2[..., 0]) + (boxes1[..., 1] - boxes2[..., 1]) * (boxes1[..., 1] - boxes2[..., 1])
-    d = u / c
-
-    ar_gt = boxes2[..., 2] / boxes2[..., 3]
-    ar_pred = boxes1[..., 2] / boxes1[..., 3]
-
-    ar_loss = 4 / (np.pi * np.pi) * (tf.atan(ar_gt) - tf.atan(ar_pred)) * (tf.atan(ar_gt) - tf.atan(ar_pred))
-    alpha = ar_loss / (1 - iou + ar_loss + 0.000001)
-    ciou_term = d + alpha * ar_loss
-
-    return iou - ciou_term
 
 
 def compute_loss(pred, conv, label, bboxes, STRIDES, NUM_CLASS, IOU_LOSS_THRESH, i=0):
