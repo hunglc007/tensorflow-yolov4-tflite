@@ -1,4 +1,4 @@
-tensorflow-gpu==2.1.0
+tensorflow-gpu==2.3.0rc0
 opencv-python==4.1.1.26
 lxml
 tqdm
@@ -6,4 +6,3 @@ absl-py
 matplotlib
 easydict
 pillow
-tensorflow_addons==0.9.1
