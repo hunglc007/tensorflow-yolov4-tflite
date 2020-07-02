@@ -273,25 +273,6 @@ def filter_boxes(box_xywh, scores, score_threshold=0.4, input_shape = tf.constan
     # return tf.concat([boxes, pred_conf], axis=-1)
     return (boxes, pred_conf)
 
-def bbox_iou(boxes1, boxes2):
-
-    boxes1_area = boxes1[..., 2] * boxes1[..., 3]
-    boxes2_area = boxes2[..., 2] * boxes2[..., 3]
-
-    boxes1_coor = tf.concat([boxes1[..., :2] - boxes1[..., 2:] * 0.5,
-                        boxes1[..., :2] + boxes1[..., 2:] * 0.5], axis=-1)
-    boxes2_coor = tf.concat([boxes2[..., :2] - boxes2[..., 2:] * 0.5,
-                        boxes2[..., :2] + boxes2[..., 2:] * 0.5], axis=-1)
-
-    left_up = tf.maximum(boxes1_coor[..., :2], boxes1_coor[..., :2])
-    right_down = tf.minimum(boxes2_coor[..., 2:], boxes2_coor[..., 2:])
-
-    inter_section = tf.maximum(right_down - left_up, 0.0)
-    inter_area = inter_section[..., 0] * inter_section[..., 1]
-    union_area = boxes1_area + boxes2_area - inter_area
-
-    return 1.0 * inter_area / union_area
-
 def bbox_ciou(boxes1, boxes2):
     boxes1_coor = tf.concat([boxes1[..., :2] - boxes1[..., 2:] * 0.5,
                         boxes1[..., :2] + boxes1[..., 2:] * 0.5], axis=-1)
@@ -304,7 +285,7 @@ def bbox_ciou(boxes1, boxes2):
     down = tf.maximum(boxes1_coor[..., 3], boxes2_coor[..., 3])
 
     c = (right - left) * (right - left) + (up - down) * (up - down)
-    iou = bbox_iou(boxes1, boxes2)
+    iou = utils.bbox_iou(boxes1, boxes2)
 
     u = (boxes1[..., 0] - boxes2[..., 0]) * (boxes1[..., 0] - boxes2[..., 0]) + (boxes1[..., 1] - boxes2[..., 1]) * (boxes1[..., 1] - boxes2[..., 1])
     d = u / c
@@ -372,7 +353,7 @@ def compute_loss(pred, conv, label, bboxes, STRIDES, NUM_CLASS, IOU_LOSS_THRESH,
     bbox_loss_scale = 2.0 - 1.0 * label_xywh[:, :, :, :, 2:3] * label_xywh[:, :, :, :, 3:4] / (input_size ** 2)
     giou_loss = respond_bbox * bbox_loss_scale * (1- giou)
 
-    iou = bbox_iou(pred_xywh[:, :, :, :, np.newaxis, :], bboxes[:, np.newaxis, np.newaxis, np.newaxis, :, :])
+    iou = utils.bbox_iou(pred_xywh[:, :, :, :, np.newaxis, :], bboxes[:, np.newaxis, np.newaxis, np.newaxis, :, :])
     max_iou = tf.expand_dims(tf.reduce_max(iou, axis=-1), axis=-1)
 
     respond_bgd = (1.0 - respond_bbox) * tf.cast( max_iou < IOU_LOSS_THRESH, tf.float32 )

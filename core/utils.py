@@ -153,24 +153,45 @@ def draw_bbox(image, bboxes, classes=read_class_names(cfg.YOLO.CLASSES), show_la
     return image
 
 
+def bbox_iou(bboxes1, bboxes2):
+    """
+    @param bboxes1: (a, b, ..., 4)
+    @param bboxes2: (A, B, ..., 4)
+        x:X is 1:n or n:n or n:1
+    @return (max(a,A), max(b,B), ...)
+    ex) (4,):(3,4) -> (3,)
+        (2,1,4):(2,3,4) -> (2,3)
+    """
+    bboxes1_area = bboxes1[..., 2] * bboxes1[..., 3]
+    bboxes2_area = bboxes2[..., 2] * bboxes2[..., 3]
 
-def bboxes_iou(boxes1, boxes2):
+    bboxes1_coor = tf.concat(
+        [
+            bboxes1[..., :2] - bboxes1[..., 2:] * 0.5,
+            bboxes1[..., :2] + bboxes1[..., 2:] * 0.5,
+        ],
+        axis=-1,
+    )
+    bboxes2_coor = tf.concat(
+        [
+            bboxes2[..., :2] - bboxes2[..., 2:] * 0.5,
+            bboxes2[..., :2] + bboxes2[..., 2:] * 0.5,
+        ],
+        axis=-1,
+    )
 
-    boxes1 = np.array(boxes1)
-    boxes2 = np.array(boxes2)
+    left_up = tf.maximum(bboxes1_coor[..., :2], bboxes2_coor[..., :2])
+    right_down = tf.minimum(bboxes1_coor[..., 2:], bboxes2_coor[..., 2:])
 
-    boxes1_area = (boxes1[..., 2] - boxes1[..., 0]) * (boxes1[..., 3] - boxes1[..., 1])
-    boxes2_area = (boxes2[..., 2] - boxes2[..., 0]) * (boxes2[..., 3] - boxes2[..., 1])
+    inter_section = tf.maximum(right_down - left_up, 0.0)
+    inter_area = inter_section[..., 0] * inter_section[..., 1]
 
-    left_up       = np.maximum(boxes1[..., :2], boxes2[..., :2])
-    right_down    = np.minimum(boxes1[..., 2:], boxes2[..., 2:])
+    union_area = bboxes1_area + bboxes2_area - inter_area
 
-    inter_section = np.maximum(right_down - left_up, 0.0)
-    inter_area    = inter_section[..., 0] * inter_section[..., 1]
-    union_area    = boxes1_area + boxes2_area - inter_area
-    ious          = np.maximum(1.0 * inter_area / union_area, np.finfo(np.float32).eps)
+    iou = tf.math.divide_no_nan(inter_area, union_area)
 
-    return ious
+    return iou
+
 
 def bboxes_ciou(boxes1, boxes2):
 
@@ -183,7 +204,7 @@ def bboxes_ciou(boxes1, boxes2):
     down = np.maximum(boxes1[..., 3], boxes2[..., 3])
 
     c = (right - left) * (right - left) + (up - down) * (up - down)
-    iou = bboxes_iou(boxes1, boxes2)
+    iou = bbox_iou(boxes1, boxes2)
 
     ax = (boxes1[..., 0] + boxes1[..., 2]) / 2
     ay = (boxes1[..., 1] + boxes1[..., 3]) / 2
@@ -226,7 +247,7 @@ def nms(bboxes, iou_threshold, sigma=0.3, method='nms'):
             best_bbox = cls_bboxes[max_ind]
             best_bboxes.append(best_bbox)
             cls_bboxes = np.concatenate([cls_bboxes[: max_ind], cls_bboxes[max_ind + 1:]])
-            iou = bboxes_iou(best_bbox[np.newaxis, :4], cls_bboxes[:, :4])
+            iou = bbox_iou(best_bbox[np.newaxis, :4], cls_bboxes[:, :4])
             weight = np.ones((len(iou),), dtype=np.float32)
 
             assert method in ['nms', 'soft-nms']

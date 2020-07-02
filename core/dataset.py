@@ -288,36 +288,6 @@ class Dataset(object):
         )
         return image, bboxes
 
-    def bbox_iou(self, boxes1, boxes2):
-        boxes1 = np.array(boxes1)
-        boxes2 = np.array(boxes2)
-
-        boxes1_area = boxes1[..., 2] * boxes1[..., 3]
-        boxes2_area = boxes2[..., 2] * boxes2[..., 3]
-
-        boxes1 = np.concatenate(
-            [
-                boxes1[..., :2] - boxes1[..., 2:] * 0.5,
-                boxes1[..., :2] + boxes1[..., 2:] * 0.5,
-            ],
-            axis=-1,
-        )
-        boxes2 = np.concatenate(
-            [
-                boxes2[..., :2] - boxes2[..., 2:] * 0.5,
-                boxes2[..., :2] + boxes2[..., 2:] * 0.5,
-            ],
-            axis=-1,
-        )
-
-        left_up = np.maximum(boxes1[..., :2], boxes2[..., :2])
-        right_down = np.minimum(boxes1[..., 2:], boxes2[..., 2:])
-
-        inter_section = np.maximum(right_down - left_up, 0.0)
-        inter_area = inter_section[..., 0] * inter_section[..., 1]
-        union_area = boxes1_area + boxes2_area - inter_area
-
-        return inter_area / union_area
 
     def preprocess_true_boxes(self, bboxes):
         label = [
@@ -366,7 +336,7 @@ class Dataset(object):
                 )
                 anchors_xywh[:, 2:4] = self.anchors[i]
 
-                iou_scale = self.bbox_iou(
+                iou_scale = utils.bbox_iou(
                     bbox_xywh_scaled[i][np.newaxis, :], anchors_xywh
                 )
                 iou.append(iou_scale)
