@@ -5,33 +5,28 @@ import os
 import shutil
 import numpy as np
 import tensorflow as tf
+from core.yolov4 import filter_boxes
+from tensorflow.python.saved_model import tag_constants
 import core.utils as utils
 from core.config import cfg
-from core.yolov4 import YOLOv4, YOLOv3, YOLOv3_tiny, decode
 
-flags.DEFINE_string('weights', './data/yolov4.weights',
+flags.DEFINE_string('weights', './checkpoints/yolov4-416',
                     'path to weights file')
-flags.DEFINE_string('framework', 'tf', 'select model type in (tf, tflite)'
+flags.DEFINE_string('framework', 'tf', 'select model type in (tf, tflite, trt)'
                     'path to weights file')
 flags.DEFINE_string('model', 'yolov4', 'yolov3 or yolov4')
 flags.DEFINE_boolean('tiny', False, 'yolov3 or yolov3-tiny')
-flags.DEFINE_integer('size', 512, 'resize images to')
+flags.DEFINE_integer('size', 416, 'resize images to')
 flags.DEFINE_string('annotation_path', "./data/dataset/val2017.txt", 'annotation path')
 flags.DEFINE_string('write_image_path', "./data/detection/", 'write image path')
+flags.DEFINE_float('iou', 0.5, 'iou threshold')
+flags.DEFINE_float('score', 0.25, 'score threshold')
 
 def main(_argv):
     INPUT_SIZE = FLAGS.size
-    if FLAGS.tiny:
-        STRIDES = np.array(cfg.YOLO.STRIDES_TINY)
-        ANCHORS = utils.get_anchors(cfg.YOLO.ANCHORS_TINY, FLAGS.tiny)
-    else:
-        STRIDES = np.array(cfg.YOLO.STRIDES)
-        if FLAGS.model == 'yolov4':
-            ANCHORS = utils.get_anchors(cfg.YOLO.ANCHORS, FLAGS.tiny)
-        else:
-            ANCHORS = utils.get_anchors(cfg.YOLO.ANCHORS_V3, FLAGS.tiny)
-    NUM_CLASS = len(utils.read_class_names(cfg.YOLO.CLASSES))
+    STRIDES, ANCHORS, NUM_CLASS, XYSCALE = utils.load_config(FLAGS)
     CLASSES = utils.read_class_names(cfg.YOLO.CLASSES)
+
     predicted_dir_path = './mAP/predicted'
     ground_truth_dir_path = './mAP/ground-truth'
     if os.path.exists(predicted_dir_path): shutil.rmtree(predicted_dir_path)
@@ -43,43 +38,16 @@ def main(_argv):
     os.mkdir(cfg.TEST.DECTECTED_IMAGE_PATH)
 
     # Build Model
-    if FLAGS.framework == 'tf':
-        input_layer = tf.keras.layers.Input([INPUT_SIZE, INPUT_SIZE, 3])
-        if FLAGS.tiny:
-            feature_maps = YOLOv3_tiny(input_layer, NUM_CLASS)
-            bbox_tensors = []
-            for i, fm in enumerate(feature_maps):
-                bbox_tensor = decode(fm, NUM_CLASS, i)
-                bbox_tensors.append(bbox_tensor)
-            model = tf.keras.Model(input_layer, bbox_tensors)
-            utils.load_weights_tiny(model, FLAGS.weights)
-        else:
-            if FLAGS.model == 'yolov3':
-                feature_maps = YOLOv3(input_layer, NUM_CLASS)
-                bbox_tensors = []
-                for i, fm in enumerate(feature_maps):
-                    bbox_tensor = decode(fm, NUM_CLASS, i)
-                    bbox_tensors.append(bbox_tensor)
-                model = tf.keras.Model(input_layer, bbox_tensors)
-                utils.load_weights_v3(model, FLAGS.weights)
-            elif FLAGS.model == 'yolov4':
-                feature_maps = YOLOv4(input_layer, NUM_CLASS)
-                bbox_tensors = []
-                for i, fm in enumerate(feature_maps):
-                    bbox_tensor = decode(fm, NUM_CLASS, i)
-                    bbox_tensors.append(bbox_tensor)
-                model = tf.keras.Model(input_layer, bbox_tensors)
-                utils.load_weights(model, FLAGS.weights)
-
-    else:
-        # Load TFLite model and allocate tensors.
+    if FLAGS.framework == 'tflite':
         interpreter = tf.lite.Interpreter(model_path=FLAGS.weights)
         interpreter.allocate_tensors()
-        # Get input and output tensors.
         input_details = interpreter.get_input_details()
         output_details = interpreter.get_output_details()
         print(input_details)
         print(output_details)
+    else:
+        saved_model_loaded = tf.saved_model.load(FLAGS.weights, tags=[tag_constants.SERVING])
+        infer = saved_model_loaded.signatures['serving_default']
 
     num_lines = sum(1 for line in open(FLAGS.annotation_path))
     with open(cfg.TEST.ANNOT_PATH, 'r') as annotation_file:
@@ -111,37 +79,56 @@ def main(_argv):
             predict_result_path = os.path.join(predicted_dir_path, str(num) + '.txt')
             # Predict Process
             image_size = image.shape[:2]
-            image_data = utils.image_preprocess(np.copy(image), [INPUT_SIZE, INPUT_SIZE])
+            # image_data = utils.image_preprocess(np.copy(image), [INPUT_SIZE, INPUT_SIZE])
+            image_data = cv2.resize(np.copy(image), (INPUT_SIZE, INPUT_SIZE))
+            image_data = image_data / 255.
             image_data = image_data[np.newaxis, ...].astype(np.float32)
 
-            if FLAGS.framework == "tf":
-                pred_bbox = model.predict(image_data)
-            else:
+            if FLAGS.framework == 'tflite':
                 interpreter.set_tensor(input_details[0]['index'], image_data)
                 interpreter.invoke()
-                pred_bbox = [interpreter.get_tensor(output_details[i]['index']) for i in range(len(output_details))]
-            if FLAGS.model == 'yolov3':
-                pred_bbox = utils.postprocess_bbbox(pred_bbox, ANCHORS, STRIDES)
-            elif FLAGS.model == 'yolov4':
-                XYSCALE = cfg.YOLO.XYSCALE
-                pred_bbox = utils.postprocess_bbbox(pred_bbox, ANCHORS, STRIDES, XYSCALE=XYSCALE)
+                pred = [interpreter.get_tensor(output_details[i]['index']) for i in range(len(output_details))]
+                if FLAGS.model == 'yolov4' and FLAGS.tiny == True:
+                    boxes, pred_conf = filter_boxes(pred[1], pred[0], score_threshold=0.25)
+                else:
+                    boxes, pred_conf = filter_boxes(pred[0], pred[1], score_threshold=0.25)
+            else:
+                batch_data = tf.constant(image_data)
+                pred_bbox = infer(batch_data)
+                for key, value in pred_bbox.items():
+                    boxes = value[:, :, 0:4]
+                    pred_conf = value[:, :, 4:]
 
-            pred_bbox = tf.concat(pred_bbox, axis=0)
-            bboxes = utils.postprocess_boxes(pred_bbox, image_size, INPUT_SIZE, cfg.TEST.SCORE_THRESHOLD)
-            bboxes = utils.nms(bboxes, cfg.TEST.IOU_THRESHOLD, method='nms')
+            boxes, scores, classes, valid_detections = tf.image.combined_non_max_suppression(
+                boxes=tf.reshape(boxes, (tf.shape(boxes)[0], -1, 1, 4)),
+                scores=tf.reshape(
+                    pred_conf, (tf.shape(pred_conf)[0], -1, tf.shape(pred_conf)[-1])),
+                max_output_size_per_class=50,
+                max_total_size=50,
+                iou_threshold=FLAGS.iou,
+                score_threshold=FLAGS.score
+            )
+            boxes, scores, classes, valid_detections = [boxes.numpy(), scores.numpy(), classes.numpy(), valid_detections.numpy()]
 
-            if cfg.TEST.DECTECTED_IMAGE_PATH is not None:
-                image = utils.draw_bbox(image, bboxes)
-                cv2.imwrite(cfg.TEST.DECTECTED_IMAGE_PATH + image_name, image)
+            # if cfg.TEST.DECTECTED_IMAGE_PATH is not None:
+            #     image_result = utils.draw_bbox(np.copy(image), [boxes, scores, classes, valid_detections])
+            #     cv2.imwrite(cfg.TEST.DECTECTED_IMAGE_PATH + image_name, image_result)
 
             with open(predict_result_path, 'w') as f:
-                for bbox in bboxes:
-                    coor = np.array(bbox[:4], dtype=np.int32)
-                    score = bbox[4]
-                    class_ind = int(bbox[5])
+                image_h, image_w, _ = image.shape
+                for i in range(valid_detections[0]):
+                    if int(classes[0][i]) < 0 or int(classes[0][i]) > NUM_CLASS: continue
+                    coor = boxes[0][i]
+                    coor[0] = int(coor[0] * image_h)
+                    coor[2] = int(coor[2] * image_h)
+                    coor[1] = int(coor[1] * image_w)
+                    coor[3] = int(coor[3] * image_w)
+
+                    score = scores[0][i]
+                    class_ind = int(classes[0][i])
                     class_name = CLASSES[class_ind]
                     score = '%.4f' % score
-                    xmin, ymin, xmax, ymax = list(map(str, coor))
+                    ymin, xmin, ymax, xmax = list(map(str, coor))
                     bbox_mess = ' '.join([class_name, score, xmin, ymin, xmax, ymax]) + '\n'
                     f.write(bbox_mess)
                     print('\t' + str(bbox_mess).strip())

@@ -5,6 +5,19 @@ import numpy as np
 import tensorflow as tf
 from core.config import cfg
 
+def load_freeze_layer(model='yolov4', tiny=False):
+    if tiny:
+        if model == 'yolov3':
+            freeze_layouts = ['conv2d_9', 'conv2d_12']
+        else:
+            freeze_layouts = ['conv2d_17', 'conv2d_20']
+    else:
+        if model == 'yolov3':
+            freeze_layouts = ['conv2d_58', 'conv2d_66', 'conv2d_74']
+        else:
+            freeze_layouts = ['conv2d_93', 'conv2d_101', 'conv2d_109']
+    return freeze_layouts
+
 def load_weights(model, weights_file, model_name='yolov4', is_tiny=False):
     if is_tiny:
         if model_name == 'yolov3':
@@ -89,7 +102,6 @@ def get_anchors(anchors_path, tiny=False):
     else:
         return anchors.reshape(3, 3, 2)
 
-
 def image_preprocess(image, target_size, gt_boxes=None):
 
     ih, iw    = target_size
@@ -111,7 +123,6 @@ def image_preprocess(image, target_size, gt_boxes=None):
         gt_boxes[:, [0, 2]] = gt_boxes[:, [0, 2]] * scale + dw
         gt_boxes[:, [1, 3]] = gt_boxes[:, [1, 3]] * scale + dh
         return image_paded, gt_boxes
-
 
 def draw_bbox(image, bboxes, classes=read_class_names(cfg.YOLO.CLASSES), show_label=True):
     num_classes = len(classes)
@@ -149,9 +160,7 @@ def draw_bbox(image, bboxes, classes=read_class_names(cfg.YOLO.CLASSES), show_la
 
             cv2.putText(image, bbox_mess, (c1[0], np.float32(c1[1] - 2)), cv2.FONT_HERSHEY_SIMPLEX,
                         fontScale, (0, 0, 0), bbox_thick // 2, lineType=cv2.LINE_AA)
-
     return image
-
 
 def bbox_iou(bboxes1, bboxes2):
     """
@@ -316,7 +325,6 @@ def bbox_ciou(bboxes1, bboxes2):
 
     return ciou
 
-
 def nms(bboxes, iou_threshold, sigma=0.3, method='nms'):
     """
     :param bboxes: (xmin, ymin, xmax, ymax, score, class)
@@ -353,72 +361,6 @@ def nms(bboxes, iou_threshold, sigma=0.3, method='nms'):
             cls_bboxes = cls_bboxes[score_mask]
 
     return best_bboxes
-
-def diounms_sort(bboxes, iou_threshold, sigma=0.3, method='nms', beta_nms=0.6):
-    best_bboxes = []
-    return best_bboxes
-def postprocess_bbbox(pred_bbox, ANCHORS, STRIDES, XYSCALE=[1,1,1]):
-    for i, pred in enumerate(pred_bbox):
-        conv_shape = pred.shape
-        output_size = conv_shape[1]
-        conv_raw_dxdy = pred[:, :, :, :, 0:2]
-        conv_raw_dwdh = pred[:, :, :, :, 2:4]
-        xy_grid = np.meshgrid(np.arange(output_size), np.arange(output_size))
-        xy_grid = np.expand_dims(np.stack(xy_grid, axis=-1), axis=2)  # [gx, gy, 1, 2]
-
-        xy_grid = np.tile(tf.expand_dims(xy_grid, axis=0), [1, 1, 1, 3, 1])
-        xy_grid = xy_grid.astype(np.float)
-
-        # pred_xy = (tf.sigmoid(conv_raw_dxdy) + xy_grid) * STRIDES[i]
-        pred_xy = ((tf.sigmoid(conv_raw_dxdy) * XYSCALE[i]) - 0.5 * (XYSCALE[i] - 1) + xy_grid) * STRIDES[i]
-        # pred_wh = (tf.exp(conv_raw_dwdh) * ANCHORS[i]) * STRIDES[i]
-        pred_wh = (tf.exp(conv_raw_dwdh) * ANCHORS[i])
-        pred[:, :, :, :, 0:4] = tf.concat([pred_xy, pred_wh], axis=-1)
-
-    pred_bbox = [tf.reshape(x, (-1, tf.shape(x)[-1])) for x in pred_bbox]
-    pred_bbox = tf.concat(pred_bbox, axis=0)
-    return pred_bbox
-def postprocess_boxes(pred_bbox, org_img_shape, input_size, score_threshold):
-
-    valid_scale=[0, np.inf]
-    pred_bbox = np.array(pred_bbox)
-
-    pred_xywh = pred_bbox[:, 0:4]
-    pred_conf = pred_bbox[:, 4]
-    pred_prob = pred_bbox[:, 5:]
-
-    # # (1) (x, y, w, h) --> (xmin, ymin, xmax, ymax)
-    pred_coor = np.concatenate([pred_xywh[:, :2] - pred_xywh[:, 2:] * 0.5,
-                                pred_xywh[:, :2] + pred_xywh[:, 2:] * 0.5], axis=-1)
-    # # (2) (xmin, ymin, xmax, ymax) -> (xmin_org, ymin_org, xmax_org, ymax_org)
-    org_h, org_w = org_img_shape
-    resize_ratio = min(input_size / org_w, input_size / org_h)
-
-    dw = (input_size - resize_ratio * org_w) / 2
-    dh = (input_size - resize_ratio * org_h) / 2
-
-    pred_coor[:, 0::2] = 1.0 * (pred_coor[:, 0::2] - dw) / resize_ratio
-    pred_coor[:, 1::2] = 1.0 * (pred_coor[:, 1::2] - dh) / resize_ratio
-
-    # # (3) clip some boxes those are out of range
-    pred_coor = np.concatenate([np.maximum(pred_coor[:, :2], [0, 0]),
-                                np.minimum(pred_coor[:, 2:], [org_w - 1, org_h - 1])], axis=-1)
-    invalid_mask = np.logical_or((pred_coor[:, 0] > pred_coor[:, 2]), (pred_coor[:, 1] > pred_coor[:, 3]))
-    pred_coor[invalid_mask] = 0
-
-    # # (4) discard some invalid boxes
-    bboxes_scale = np.sqrt(np.multiply.reduce(pred_coor[:, 2:4] - pred_coor[:, 0:2], axis=-1))
-    scale_mask = np.logical_and((valid_scale[0] < bboxes_scale), (bboxes_scale < valid_scale[1]))
-
-    # # (5) discard some boxes with low scores
-    classes = np.argmax(pred_prob, axis=-1)
-    scores = pred_conf * pred_prob[np.arange(len(pred_coor)), classes]
-    # scores = pred_prob[np.arange(len(pred_coor)), classes]
-    score_mask = scores > score_threshold
-    mask = np.logical_and(scale_mask, score_mask)
-    coors, scores, classes = pred_coor[mask], scores[mask], classes[mask]
-
-    return np.concatenate([coors, scores[:, np.newaxis], classes[:, np.newaxis]], axis=-1)
 
 def freeze_all(model, frozen=True):
     model.trainable = not frozen
