@@ -38,14 +38,12 @@ def save_tf():
         output_tensors = decode(fm, FLAGS.input_size // 32, NUM_CLASS, STRIDES, ANCHORS, i, XYSCALE, FLAGS.framework)
       bbox_tensors.append(output_tensors[0])
       prob_tensors.append(output_tensors[1])
-  pred_bbox = [tf.reshape(x, (tf.shape(x)[0], -1, tf.shape(x)[-1])) for x in bbox_tensors]
-  pred_bbox = tf.concat(pred_bbox, axis=1)
-  pred_prob = [tf.reshape(x, (tf.shape(x)[0], -1, tf.shape(x)[-1])) for x in prob_tensors]
-  pred_prob = tf.concat(pred_prob, axis=1)
+  pred_bbox = tf.concat(bbox_tensors, axis=1)
+  pred_prob = tf.concat(prob_tensors, axis=1)
   if FLAGS.framework == 'tflite':
     pred = (pred_bbox, pred_prob)
   else:
-    boxes, pred_conf = filter_boxes(pred_bbox, pred_prob, score_threshold=FLAGS.score_thres)
+    boxes, pred_conf = filter_boxes(pred_bbox, pred_prob, score_threshold=FLAGS.score_thres, input_shape=tf.constant([FLAGS.input_size, FLAGS.input_size]))
     pred = tf.concat([boxes, pred_conf], axis=-1)
   model = tf.keras.Model(input_layer, pred)
   utils.load_weights(model, FLAGS.weights, FLAGS.model, FLAGS.tiny)
