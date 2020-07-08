@@ -52,7 +52,9 @@ def main(_argv):
             frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             image = Image.fromarray(frame)
         else:
-            raise ValueError("No image! Try with another video format")
+            print('Video has ended or failed, try a different video format!')
+            break
+    
         frame_size = frame.shape[:2]
         image_data = cv2.resize(frame, (input_size, input_size))
         image_data = image_data / 255.
