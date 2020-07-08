@@ -1,4 +1,4 @@
-name: yolov4
+name: yolov4-gpu
 
 dependencies:
   - python==3.7
