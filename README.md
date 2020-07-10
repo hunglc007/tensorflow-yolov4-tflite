@@ -33,7 +33,7 @@ Make sure to use CUDA Toolkit version 10.1 as it is the proper version for the T
 https://developer.nvidia.com/cuda-10.1-download-archive-update2
 
 ### Performance
-<p align="center"><img src="data/performance.png" width="640"\></p>
+<p align="center"><img src="data/helpers/performance.png" width="640"\></p>
 
 ### Demo
 
@@ -56,10 +56,10 @@ If you want to run yolov3 or yolov3-tiny change ``--model yolov3`` in command
 #### Output
 
 ##### Yolov4 original weight
-<p align="center"><img src="result.png" width="640"\></p>
+<p align="center"><img src="data/helpers/result.png" width="640"\></p>
 
 ##### Yolov4 tflite int8
-<p align="center"><img src="result-int8.png" width="640"\></p>
+<p align="center"><img src="data/helpers/result-int8.png" width="640"\></p>
 
 ### Convert to tflite
 
