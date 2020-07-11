@@ -3,9 +3,7 @@
 
 YOLOv4, YOLOv4-tiny Implemented in Tensorflow 2.0. 
 Convert YOLO v4, YOLOv3, YOLO tiny .weights to .pb, .tflite and trt format for tensorflow, tensorflow lite, tensorRT.
-
 <p align="center"><img src="data/helpers/demo.gif"\></p>
-
 ## Getting Started
 ### Conda (Recommended)
 
@@ -96,7 +94,7 @@ You can find the outputted image(s) showing the detections saved within the 'det
 
 ### Result Video
 Video saves wherever you point --output flag to. If you don't set the flag then your video will not be saved with detections on it.
-![Demo of YOLOv4 Using TensorFlow](data/helpers/demo.gif)
+<p align="center"><img src="data/helpers/demo.gif"\></p>
 
 ## YOLOv4 Using TensorFlow Lite (.tflite model)
 Can also implement YOLOv4 using TensorFlow Lite. TensorFlow Lite is a much smaller model and perfect for mobile or edge devices (raspberry pi, etc).
