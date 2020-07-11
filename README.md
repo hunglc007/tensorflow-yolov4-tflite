@@ -4,7 +4,7 @@
 YOLOv4, YOLOv4-tiny Implemented in Tensorflow 2.0. 
 Convert YOLO v4, YOLOv3, YOLO tiny .weights to .pb, .tflite and trt format for tensorflow, tensorflow lite, tensorRT.
 
-![Demo of YOLOv4 Using TensorFlow](data/helpers/demo.gif)
+<p align="center"><img src="data/helpers/demo.gif"\></p>
 
 ## Getting Started
 ### Conda (Recommended)
