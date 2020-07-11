@@ -46,9 +46,9 @@ python save_model.py --weights ./data/yolov4.weights --output ./checkpoints/yolo
 python save_model.py --weights ./data/yolov4-tiny.weights --output ./checkpoints/yolov4-tiny-416 --input_size 416 --model yolov4 --tiny
 
 # Run demo tensorflow
-python detect.py --weights ./checkpoints/yolov4-416 --size 416 --model yolov4 --images ./data/kite.jpg
+python detect.py --weights ./checkpoints/yolov4-416 --size 416 --model yolov4 --images ./data/images/kite.jpg
 
-python detect.py --weights ./checkpoints/yolov4-tiny-416 --size 416 --model yolov4 --images ./data/kite.jpg --tiny
+python detect.py --weights ./checkpoints/yolov4-tiny-416 --size 416 --model yolov4 --images ./data/images/kite.jpg --tiny
 
 ```
 If you want to run yolov3 or yolov3-tiny change ``--model yolov3`` in command
@@ -77,7 +77,7 @@ python convert_tflite.py --weights ./checkpoints/yolov4-416 --output ./checkpoin
 python convert_tflite.py --weights ./checkpoints/yolov4-416 --output ./checkpoints/yolov4-416-int8.tflite --quantize_mode int8 --dataset ./coco_dataset/coco/val207.txt
 
 # Run demo tflite model
-python detect.py --weights ./checkpoints/yolov4-416.tflite --size 416 --model yolov4 --image ./data/kite.jpg --framework tflite
+python detect.py --weights ./checkpoints/yolov4-416.tflite --size 416 --model yolov4 --images ./data/images/kite.jpg --framework tflite
 ```
 Yolov4 and Yolov4-tiny int8 quantization have some issues. I will try to fix that. You can try Yolov3 and Yolov3-tiny int8 quantization 
 ### Convert to TensorRT
