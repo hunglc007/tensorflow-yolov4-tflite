@@ -4,6 +4,7 @@
 YOLOv4, YOLOv4-tiny Implemented in Tensorflow 2.0. 
 Convert YOLO v4, YOLOv3, YOLO tiny .weights to .pb, .tflite and trt format for tensorflow, tensorflow lite, tensorRT.
 <p align="center"><img src="data/helpers/demo.gif"\></p>
+
 ## Getting Started
 ### Conda (Recommended)
 
@@ -89,6 +90,7 @@ If you want to run yolov3 or yolov3-tiny change ``--model yolov3`` and .weights 
 You can find the outputted image(s) showing the detections saved within the 'detections' folder.
 #### Pre-trained YOLOv4 Model Example
 <p align="center"><img src="data/helpers/result.png" width="640"\></p>
+
 #### Custom YOLOv4 Model Example (see video link above to train this model)
 <p align="center"><img src="data/helpers/custom_result.png" width="640"\></p>
 
