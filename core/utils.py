@@ -68,7 +68,7 @@ def load_weights(model, weights_file, model_name='yolov4', is_tiny=False):
         else:
             conv_layer.set_weights([conv_weights, conv_bias])
 
-    assert len(wf.read()) == 0, 'failed to read all data'
+    # assert len(wf.read()) == 0, 'failed to read all data'
     wf.close()
 
 
