@@ -160,13 +160,13 @@ def YOLOv3_tiny(input_layer, NUM_CLASS):
 
     return [conv_mbbox, conv_lbbox]
 
-def decode(conv_output, output_size, NUM_CLASS, STRIDES, ANCHORS, i, XYSCALE=[1,1,1], FRAMEWORK='tf'):
+def decode(conv_output, output_width, output_height, NUM_CLASS, STRIDES, ANCHORS, i, XYSCALE=[1,1,1], FRAMEWORK='tf'):
     if FRAMEWORK == 'trt':
-        return decode_trt(conv_output, output_size, NUM_CLASS, STRIDES, ANCHORS, i=i, XYSCALE=XYSCALE)
+        return decode_trt(conv_output, output_width, output_height, NUM_CLASS, STRIDES, ANCHORS, i=i, XYSCALE=XYSCALE)
     elif FRAMEWORK == 'tflite':
-        return decode_tflite(conv_output, output_size, NUM_CLASS, STRIDES, ANCHORS, i=i, XYSCALE=XYSCALE)
+        return decode_tflite(conv_output, output_width, output_height, NUM_CLASS, STRIDES, ANCHORS, i=i, XYSCALE=XYSCALE)
     else:
-        return decode_tf(conv_output, output_size, NUM_CLASS, STRIDES, ANCHORS, i=i, XYSCALE=XYSCALE)
+        return decode_tf(conv_output, output_width, output_height, NUM_CLASS, STRIDES, ANCHORS, i=i, XYSCALE=XYSCALE)
 
 def decode_train(conv_output, output_size, NUM_CLASS, STRIDES, ANCHORS, i=0, XYSCALE=[1, 1, 1]):
     conv_output = tf.reshape(conv_output,
@@ -191,15 +191,15 @@ def decode_train(conv_output, output_size, NUM_CLASS, STRIDES, ANCHORS, i=0, XYS
 
     return tf.concat([pred_xywh, pred_conf, pred_prob], axis=-1)
 
-def decode_tf(conv_output, output_size, NUM_CLASS, STRIDES, ANCHORS, i=0, XYSCALE=[1, 1, 1]):
+def decode_tf(conv_output, output_width, output_height, NUM_CLASS, STRIDES, ANCHORS, i=0, XYSCALE=[1, 1, 1]):
     batch_size = tf.shape(conv_output)[0]
     conv_output = tf.reshape(conv_output,
-                             (batch_size, output_size, output_size, 3, 5 + NUM_CLASS))
+                             (batch_size, output_width, output_height, 3, 5 + NUM_CLASS))
 
     conv_raw_dxdy, conv_raw_dwdh, conv_raw_conf, conv_raw_prob = tf.split(conv_output, (2, 2, 1, NUM_CLASS),
                                                                           axis=-1)
 
-    xy_grid = tf.meshgrid(tf.range(output_size), tf.range(output_size))
+    xy_grid = tf.meshgrid(tf.range(output_height), tf.range(output_width))
     xy_grid = tf.expand_dims(tf.stack(xy_grid, axis=-1), axis=2)  # [gx, gy, 1, 2]
     xy_grid = tf.tile(tf.expand_dims(xy_grid, axis=0), [batch_size, 1, 1, 3, 1])
 
@@ -220,7 +220,7 @@ def decode_tf(conv_output, output_size, NUM_CLASS, STRIDES, ANCHORS, i=0, XYSCAL
     return pred_xywh, pred_prob
     # return tf.concat([pred_xywh, pred_conf, pred_prob], axis=-1)
 
-def decode_tflite(conv_output, output_size, NUM_CLASS, STRIDES, ANCHORS, i=0, XYSCALE=[1,1,1]):
+def decode_tflite(conv_output, output_width, output_height, NUM_CLASS, STRIDES, ANCHORS, i=0, XYSCALE=[1,1,1]):
     conv_raw_dxdy_0, conv_raw_dwdh_0, conv_raw_score_0,\
     conv_raw_dxdy_1, conv_raw_dwdh_1, conv_raw_score_1,\
     conv_raw_dxdy_2, conv_raw_dwdh_2, conv_raw_score_2 = tf.split(conv_output, (2, 2, 1+NUM_CLASS, 2, 2, 1+NUM_CLASS,
@@ -239,7 +239,7 @@ def decode_tflite(conv_output, output_size, NUM_CLASS, STRIDES, ANCHORS, i=0, XY
         conv_raw_dwdh[idx] = tf.reshape(dwdh, (1, -1, 2))
     pred_wh = tf.concat(conv_raw_dwdh, axis=1)
 
-    xy_grid = tf.meshgrid(tf.range(output_size), tf.range(output_size))
+    xy_grid = tf.meshgrid(tf.range(output_height), tf.range(output_width))
     xy_grid = tf.stack(xy_grid, axis=-1)  # [gx, gy, 2]
     xy_grid = tf.expand_dims(xy_grid, axis=0)
     xy_grid = tf.cast(xy_grid, tf.float32)
@@ -254,13 +254,13 @@ def decode_tflite(conv_output, output_size, NUM_CLASS, STRIDES, ANCHORS, i=0, XY
     return pred_xywh, pred_prob
     # return tf.concat([pred_xywh, pred_conf, pred_prob], axis=-1)
 
-def decode_trt(conv_output, output_size, NUM_CLASS, STRIDES, ANCHORS, i=0, XYSCALE=[1,1,1]):
+def decode_trt(conv_output, output_width, output_height, NUM_CLASS, STRIDES, ANCHORS, i=0, XYSCALE=[1,1,1]):
     batch_size = tf.shape(conv_output)[0]
-    conv_output = tf.reshape(conv_output, (batch_size, output_size, output_size, 3, 5 + NUM_CLASS))
+    conv_output = tf.reshape(conv_output, (batch_size, output_width, output_height, 3, 5 + NUM_CLASS))
 
     conv_raw_dxdy, conv_raw_dwdh, conv_raw_conf, conv_raw_prob = tf.split(conv_output, (2, 2, 1, NUM_CLASS), axis=-1)
 
-    xy_grid = tf.meshgrid(tf.range(output_size), tf.range(output_size))
+    xy_grid = tf.meshgrid(tf.range(output_height), tf.range(output_width))
     xy_grid = tf.expand_dims(tf.stack(xy_grid, axis=-1), axis=2)  # [gx, gy, 1, 2]
     xy_grid = tf.tile(tf.expand_dims(xy_grid, axis=0), [batch_size, 1, 1, 3, 1])
 
@@ -274,7 +274,7 @@ def decode_trt(conv_output, output_size, NUM_CLASS, STRIDES, ANCHORS, i=0, XYSCA
     # pred_xy = ((tf.sigmoid(conv_raw_dxdy) * XYSCALE[i]) - 0.5 * (XYSCALE[i] - 1) + xy_grid) * \
     #           STRIDES[i]
     pred_xy = (tf.reshape(tf.sigmoid(conv_raw_dxdy), (-1, 2)) * XYSCALE[i] - 0.5 * (XYSCALE[i] - 1) + tf.reshape(xy_grid, (-1, 2))) * STRIDES[i]
-    pred_xy = tf.reshape(pred_xy, (batch_size, output_size, output_size, 3, 2))
+    pred_xy = tf.reshape(pred_xy, (batch_size, output_width, output_height, 3, 2))
     pred_wh = (tf.exp(conv_raw_dwdh) * ANCHORS[i])
     pred_xywh = tf.concat([pred_xy, pred_wh], axis=-1)
 

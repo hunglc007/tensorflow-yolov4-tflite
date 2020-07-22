@@ -16,14 +16,14 @@ flags.DEFINE_string('framework', 'tf', 'select model type in (tf, tflite, trt)'
                     'path to weights file')
 flags.DEFINE_string('model', 'yolov4', 'yolov3 or yolov4')
 flags.DEFINE_boolean('tiny', False, 'yolov3 or yolov3-tiny')
-flags.DEFINE_integer('size', 416, 'resize images to')
+flags.DEFINE_string('size', '416', 'resize images to. Use single value %d to make it square or use %dx%d format to make it rectangle')
 flags.DEFINE_string('annotation_path', "./data/dataset/val2017.txt", 'annotation path')
 flags.DEFINE_string('write_image_path', "./data/detection/", 'write image path')
 flags.DEFINE_float('iou', 0.5, 'iou threshold')
 flags.DEFINE_float('score', 0.25, 'score threshold')
 
 def main(_argv):
-    INPUT_SIZE = FLAGS.size
+    INPUT_WITH, INPUT_HEIGHT = utils.input_size(FLAGS.size)
     STRIDES, ANCHORS, NUM_CLASS, XYSCALE = utils.load_config(FLAGS)
     CLASSES = utils.read_class_names(cfg.YOLO.CLASSES)
 
@@ -80,7 +80,7 @@ def main(_argv):
             # Predict Process
             image_size = image.shape[:2]
             # image_data = utils.image_preprocess(np.copy(image), [INPUT_SIZE, INPUT_SIZE])
-            image_data = cv2.resize(np.copy(image), (INPUT_SIZE, INPUT_SIZE))
+            image_data = cv2.resize(np.copy(image), (INPUT_WITH, INPUT_HEIGHT))
             image_data = image_data / 255.
             image_data = image_data[np.newaxis, ...].astype(np.float32)
 

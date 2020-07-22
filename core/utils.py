@@ -373,3 +373,8 @@ def unfreeze_all(model, frozen=False):
         for l in model.layers:
             unfreeze_all(l, frozen)
 
+def input_size(size_flag: str):
+    w, *h = [int(v) for v in size_flag.split('x', 1)]
+    h = w if not h else h[0]
+    return w, h
+

@@ -16,7 +16,7 @@ from tensorflow.compat.v1 import InteractiveSession
 flags.DEFINE_string('framework', 'tf', '(tf, tflite, trt')
 flags.DEFINE_string('weights', './checkpoints/yolov4-416',
                     'path to weights file')
-flags.DEFINE_integer('size', 416, 'resize images to')
+flags.DEFINE_string('size', '416', 'resize images to. Use single value %d to make it square or use %dx%d format to make it rectangle')
 flags.DEFINE_boolean('tiny', False, 'yolo or yolo-tiny')
 flags.DEFINE_string('model', 'yolov4', 'yolov3 or yolov4')
 flags.DEFINE_string('image', './data/kite.jpg', 'path to input image')
@@ -29,14 +29,14 @@ def main(_argv):
     config.gpu_options.allow_growth = True
     session = InteractiveSession(config=config)
     STRIDES, ANCHORS, NUM_CLASS, XYSCALE = utils.load_config(FLAGS)
-    input_size = FLAGS.size
+    input_width, input_height = utils.input_size(FLAGS.size)
     image_path = FLAGS.image
 
     original_image = cv2.imread(image_path)
     original_image = cv2.cvtColor(original_image, cv2.COLOR_BGR2RGB)
 
     # image_data = utils.image_preprocess(np.copy(original_image), [input_size, input_size])
-    image_data = cv2.resize(original_image, (input_size, input_size))
+    image_data = cv2.resize(original_image, (input_width, input_height))
     image_data = image_data / 255.
     # image_data = image_data[np.newaxis, ...].astype(np.float32)
 
@@ -56,9 +56,9 @@ def main(_argv):
         interpreter.invoke()
         pred = [interpreter.get_tensor(output_details[i]['index']) for i in range(len(output_details))]
         if FLAGS.model == 'yolov3' and FLAGS.tiny == True:
-            boxes, pred_conf = filter_boxes(pred[1], pred[0], score_threshold=0.25, input_shape=tf.constant([input_size, input_size]))
+            boxes, pred_conf = filter_boxes(pred[1], pred[0], score_threshold=0.25, input_shape=tf.constant([input_height, input_width]))
         else:
-            boxes, pred_conf = filter_boxes(pred[0], pred[1], score_threshold=0.25, input_shape=tf.constant([input_size, input_size]))
+            boxes, pred_conf = filter_boxes(pred[0], pred[1], score_threshold=0.25, input_shape=tf.constant([input_height, input_width]))
     else:
         saved_model_loaded = tf.saved_model.load(FLAGS.weights, tags=[tag_constants.SERVING])
         infer = saved_model_loaded.signatures['serving_default']
