@@ -178,7 +178,17 @@ public class YoloV4Classifier implements Classifier {
     // Number of threads in the java app
     private static final int NUM_THREADS = 4;
     private static boolean isNNAPI = false;
-    private static boolean isGPU = false;
+    private static boolean isGPU = true;
+
+    // tiny or not
+    private static boolean isTiny = true;
+
+    // config yolov4 tiny
+    private static final int[] OUTPUT_WIDTH_TINY = new int[]{2535, 2535};
+    private static final int[][] MASKS_TINY = new int[][]{{3, 4, 5}, {1, 2, 3}};
+    private static final int[] ANCHORS_TINY = new int[]{
+            23, 27, 37, 58, 81, 82, 81, 82, 135, 169, 344, 319};
+    private static final float[] XYSCALE_TINY = new float[]{1.05f, 1.05f};
 
     private boolean isModelQuantized;
 
@@ -294,9 +304,8 @@ public class YoloV4Classifier implements Classifier {
         return byteBuffer;
     }
 
-    public ArrayList<Recognition> recognizeImage(Bitmap bitmap) {
-        ByteBuffer byteBuffer = convertBitmapToByteBuffer(bitmap);
-
+    private ArrayList<Recognition> getDetections(ByteBuffer byteBuffer, Bitmap bitmap) {
+        ArrayList<Recognition> detections = new ArrayList<Recognition>();
         Map<Integer, Object> outputMap = new HashMap<>();
         for (int i = 0; i < OUTPUT_WIDTH.length; i++) {
             float[][][][][] out = new float[1][OUTPUT_WIDTH[i]][OUTPUT_WIDTH[i]][3][5 + labels.size()];
@@ -307,8 +316,6 @@ public class YoloV4Classifier implements Classifier {
 
         Object[] inputArray = {byteBuffer};
         tfLite.runForMultipleInputsOutputs(inputArray, outputMap);
-
-        ArrayList<Recognition> detections = new ArrayList<Recognition>();
 
         for (int i = 0; i < OUTPUT_WIDTH.length; i++) {
             int gridWidth = OUTPUT_WIDTH[i];
@@ -364,9 +371,69 @@ public class YoloV4Classifier implements Classifier {
             }
             Log.d("YoloV4Classifier", "out[" + i + "] detect end");
         }
+        return detections;
+    }
 
+    /**
+     * For yolov4-tiny, the situation would be a little different from the yolov4, it only has two
+     * output. Both has three dimenstion. The first one is a tensor with dimension [1, 2535,4], containing all the bounding boxes.
+     * The second one is a tensor with dimension [1, 2535, class_num], containing all the classes score.
+     * @param byteBuffer input ByteBuffer, which contains the image information
+     * @param bitmap pixel disenty used to resize the output images
+     * @return an array list containing the recognitions
+     */
+    private ArrayList<Recognition> getDetectionsForTiny(ByteBuffer byteBuffer, Bitmap bitmap) {
+        ArrayList<Recognition> detections = new ArrayList<Recognition>();
+        Map<Integer, Object> outputMap = new HashMap<>();
+        outputMap.put(0, new float[1][OUTPUT_WIDTH_TINY[0]][4]);
+        outputMap.put(1, new float[1][OUTPUT_WIDTH_TINY[1]][labels.size()]);
+        Object[] inputArray = {byteBuffer};
+        tfLite.runForMultipleInputsOutputs(inputArray, outputMap);
+
+        int gridWidth = OUTPUT_WIDTH_TINY[0];
+        float[][][] bboxes = (float [][][]) outputMap.get(0);
+        float[][][] out_score = (float[][][]) outputMap.get(1);
+
+        for (int i = 0; i < gridWidth;i++){
+            float maxClass = 0;
+            int detectedClass = -1;
+            final float[] classes = new float[labels.size()];
+            for (int c = 0;c< labels.size();c++){
+                classes [c] = out_score[0][i][c];
+            }
+            for (int c = 0;c<labels.size();++c){
+                if (classes[c] > maxClass){
+                    detectedClass = c;
+                    maxClass = classes[c];
+                }
+            }
+            final float score = maxClass;
+            if (score > getObjThresh()){
+                final float xPos = bboxes[0][i][0];
+                final float yPos = bboxes[0][i][1];
+                final float w = bboxes[0][i][2];
+                final float h = bboxes[0][i][3];
+                final RectF rectF = new RectF(
+                        Math.max(0, xPos - w / 2),
+                        Math.max(0, yPos - h / 2),
+                        Math.min(bitmap.getWidth() - 1, xPos + w / 2),
+                        Math.min(bitmap.getHeight() - 1, yPos + h / 2));
+            detections.add(new Recognition("" + i, labels.get(detectedClass),score,rectF,detectedClass ));
+            }
+        }
+        return detections;
+    }
+
+    public ArrayList<Recognition> recognizeImage(Bitmap bitmap) {
+        ByteBuffer byteBuffer = convertBitmapToByteBuffer(bitmap);
+        ArrayList<Recognition> detections;
+        //check whether the tiny version is specified
+        if (isTiny) {
+            detections = getDetectionsForTiny(byteBuffer, bitmap);
+        } else {
+            detections = getDetections(byteBuffer, bitmap);
+        }
         final ArrayList<Recognition> recognitions = nms(detections);
-
         return recognitions;
     }
 
