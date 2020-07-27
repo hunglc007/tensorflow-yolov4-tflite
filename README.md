@@ -45,6 +45,7 @@ If you want to use yolov4-tiny.weights, a smaller model that is faster at runnin
 
 ## Using Custom Trained YOLOv4 Weights
 <strong>Learn How To Train Custom YOLOv4 Weights here: https://www.youtube.com/watch?v=mmj3nxGT2YQ </strong>
+
 USE MY LICENSE PLATE TRAINED CUSTOM WEIGHTS: https://drive.google.com/file/d/1EUPtbtdF0bjRtNjGv436vDY28EN5DXDH/view?usp=sharing
 
 Copy and paste your custom .weights file into the 'data' folder and copy and paste your custom .names into the 'data/classes/' folder.
