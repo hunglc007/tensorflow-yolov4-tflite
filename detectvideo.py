@@ -25,6 +25,7 @@ flags.DEFINE_float('iou', 0.45, 'iou threshold')
 flags.DEFINE_float('score', 0.25, 'score threshold')
 flags.DEFINE_string('output', None, 'path to output video')
 flags.DEFINE_string('output_format', 'XVID', 'codec used in VideoWriter when saving video to file')
+flags.DEFINE_boolean('dis_cv2_window', False, 'disable cv2 window during the process') # this is good for the .ipynb
 
 def main(_argv):
     config = ConfigProto()
@@ -102,10 +103,12 @@ def main(_argv):
         result = np.asarray(image)
         info = "time: %.2f ms" %(1000*exec_time)
         print(info)
-        # cv2.namedWindow("result", cv2.WINDOW_AUTOSIZE)
-        # result = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
-        # cv2.imshow("result", result)
-        # if cv2.waitKey(1) & 0xFF == ord('q'): break
+
+        if not FLAGS.dis_cv2_window:
+            cv2.namedWindow("result", cv2.WINDOW_AUTOSIZE)
+            result = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+            cv2.imshow("result", result)
+            if cv2.waitKey(1) & 0xFF == ord('q'): break
 
         if FLAGS.output:
             result = cv2.cvtColor(result, cv2.COLOR_RGB2BGR)
