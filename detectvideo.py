@@ -65,7 +65,7 @@ def main(_argv):
             image = Image.fromarray(frame)
         else:
             if frame_id == vid.get(cv2.CAP_PROP_FRAME_COUNT):
-                print("Video processed")
+                print("Video processing complete")
                 break
             raise ValueError("No image! Try with another video format")
         
