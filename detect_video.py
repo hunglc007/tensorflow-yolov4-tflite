@@ -25,6 +25,7 @@ flags.DEFINE_string('output', None, 'path to output video')
 flags.DEFINE_string('output_format', 'XVID', 'codec used in VideoWriter when saving video to file')
 flags.DEFINE_float('iou', 0.45, 'iou threshold')
 flags.DEFINE_float('score', 0.25, 'score threshold')
+flags.DEFINE_boolean('dont_show', False, 'dont show video output')
 
 def main(_argv):
     config = ConfigProto()
@@ -109,7 +110,9 @@ def main(_argv):
         result = np.asarray(image)
         cv2.namedWindow("result", cv2.WINDOW_AUTOSIZE)
         result = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
-        cv2.imshow("result", result)
+        
+        if not FLAGS.dont_show:
+            cv2.imshow("result", result)
         
         if FLAGS.output:
             out.write(result)
