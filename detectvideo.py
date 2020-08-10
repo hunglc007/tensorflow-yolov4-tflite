@@ -109,16 +109,15 @@ def main(_argv):
         info = "time: %.2f ms" %(1000*exec_time)
         print(info)
 
+        result = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
         if not FLAGS.dis_cv2_window:
             cv2.namedWindow("result", cv2.WINDOW_AUTOSIZE)
-            result = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
             cv2.imshow("result", result)
             if cv2.waitKey(1) & 0xFF == ord('q'): break
 
         if FLAGS.output:
-            result = cv2.cvtColor(result, cv2.COLOR_RGB2BGR)
             out.write(result)
-        
+
         frame_id += 1
 
 if __name__ == '__main__':
