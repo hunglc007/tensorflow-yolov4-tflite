@@ -18,7 +18,9 @@ def load_freeze_layer(model='yolov4', tiny=False):
             freeze_layouts = ['conv2d_93', 'conv2d_101', 'conv2d_109']
     return freeze_layouts
 
-def load_weights(model, weights_file, model_name='yolov4', is_tiny=False):
+
+def load_weights(model, weights_file, model_name='yolov4', is_tiny=False, include_top=True):
+    output_filters = 255
     if is_tiny:
         if model_name == 'yolov3':
             layer_size = 13
@@ -53,11 +55,12 @@ def load_weights(model, weights_file, model_name='yolov4', is_tiny=False):
             bn_weights = bn_weights.reshape((4, filters))[[1, 0, 2, 3]]
             bn_layer = model.get_layer(bn_layer_name)
             j += 1
+            conv_shape = (filters, in_dim, k_size, k_size)
         else:
-            conv_bias = np.fromfile(wf, dtype=np.float32, count=filters)
+            conv_bias = np.fromfile(wf, dtype=np.float32, count=output_filters)
+            conv_shape = (output_filters, in_dim, k_size, k_size)
 
         # darknet shape (out_dim, in_dim, height, width)
-        conv_shape = (filters, in_dim, k_size, k_size)
         conv_weights = np.fromfile(wf, dtype=np.float32, count=np.product(conv_shape))
         # tf shape (height, width, in_dim, out_dim)
         conv_weights = conv_weights.reshape(conv_shape).transpose([2, 3, 1, 0])
@@ -66,7 +69,8 @@ def load_weights(model, weights_file, model_name='yolov4', is_tiny=False):
             conv_layer.set_weights([conv_weights])
             bn_layer.set_weights(bn_weights)
         else:
-            conv_layer.set_weights([conv_weights, conv_bias])
+            if include_top:
+                conv_layer.set_weights([conv_weights, conv_bias])
 
     # assert len(wf.read()) == 0, 'failed to read all data'
     wf.close()
