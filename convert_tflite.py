@@ -11,7 +11,7 @@ from core.config import cfg
 flags.DEFINE_string('weights', './checkpoints/yolov4-416', 'path to weights file')
 flags.DEFINE_string('output', './checkpoints/yolov4-416-fp32.tflite', 'path to output')
 flags.DEFINE_integer('input_size', 416, 'path to output')
-flags.DEFINE_string('quantize_mode', 'float32', 'quantize mode (int8, float16, float32)')
+flags.DEFINE_string('quantize_mode', 'float32', 'quantize mode (int8, float16, float32, mixedint)')
 flags.DEFINE_string('dataset', "/Volumes/Elements/data/coco_dataset/coco/5k.txt", 'path to dataset')
 
 def representative_data_gen():
@@ -42,6 +42,12 @@ def save_tflite():
   elif FLAGS.quantize_mode == 'int8':
     # https://www.tensorflow.org/lite/performance/post_training_quantization#integer_only
     converter.optimizations = [tf.lite.Optimize.DEFAULT]
+    converter.allow_custom_ops = True
+    converter.representative_dataset = representative_data_gen
+  elif FLAGS.quantize_mode == 'mixedint':
+    # https://www.tensorflow.org/lite/performance/post_training_quantization#integer_only_16-bit_activations_with_8-bit_weights_experimental
+    converter.optimizations = [tf.lite.Optimize.DEFAULT]
+    converter.target_spec.supported_ops = [tf.lite.OpsSet.TFLITE_BUILTINS, tf.lite.OpsSet.SELECT_TF_OPS, tf.lite.OpsSet.EXPERIMENTAL_TFLITE_BUILTINS_ACTIVATIONS_INT16_WEIGHTS_INT8]
     converter.allow_custom_ops = True
     converter.representative_dataset = representative_data_gen
   else:
