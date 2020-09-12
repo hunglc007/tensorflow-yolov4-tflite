@@ -43,17 +43,17 @@ If you want to run yolov3 or yolov3-tiny change ``--model yolov3`` in command
 
 ```bash
 # Save tf model for tflite converting
-python save_model.py --weights ./data/yolov4.weights --output ./checkpoints/yolov4-416 --input_size 416 --model yolov4 --framework tflite
+python save_model.py --weights ./data/yolov4.weights --output ./checkpoints/yolov4-tflite-416 --input_size 416 --model yolov4 --framework tflite
 
 # yolov4
-python convert_tflite.py --weights ./checkpoints/yolov4-416 --output ./checkpoints/yolov4-416.tflite
+python convert_tflite.py --weights ./checkpoints/yolov4-tflite-416 --output ./checkpoints/yolov4-416.tflite
 
 # yolov4 quantize float16
-python convert_tflite.py --weights ./checkpoints/yolov4-416 --output ./checkpoints/yolov4-416-fp16.tflite --quantize_mode float16
+python convert_tflite.py --weights ./checkpoints/yolov4-tflite-416 --output ./checkpoints/yolov4-416-fp16.tflite --quantize_mode float16
 
 # yolov4 quantize int8
 #  - You need to download COCO 2017 dataset using `scripts/get_coco_dataset_2017.sh` and change the absolute file paths in data/dataset/val2017.txt, don't use relative paths
-python convert_tflite.py --weights ./checkpoints/yolov4-416 --output ./checkpoints/yolov4-416-int8.tflite --quantize_mode int8 --dataset ./data/dataset/val2017.txt
+python convert_tflite.py --weights ./checkpoints/yolov4-tflite-416 --output ./checkpoints/yolov4-416-int8.tflite --quantize_mode int8 --dataset ./data/dataset/val2017.txt
 
 # Run demo tflite model
 python detect.py --weights ./checkpoints/yolov4-416.tflite --size 416 --model yolov4 --image ./data/kite.jpg --framework tflite
