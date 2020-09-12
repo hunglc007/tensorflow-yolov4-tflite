@@ -28,19 +28,24 @@ def representative_data_gen():
       continue
 
 def save_tflite():
-  converter = tf.lite.TFLiteConverter.from_saved_model(FLAGS.weights)
+  model = tf.keras.models.load_model(FLAGS.weights)
+  model.compile()
+  converter = tf.lite.TFLiteConverter.from_keras_model(model)
 
-  if FLAGS.quantize_mode == 'float16':
+  if FLAGS.quantize_mode == 'float32':
+    pass
+  elif FLAGS.quantize_mode == 'float16':
     converter.optimizations = [tf.lite.Optimize.DEFAULT]
     converter.target_spec.supported_types = [tf.compat.v1.lite.constants.FLOAT16]
     converter.target_spec.supported_ops = [tf.lite.OpsSet.TFLITE_BUILTINS, tf.lite.OpsSet.SELECT_TF_OPS]
     converter.allow_custom_ops = True
   elif FLAGS.quantize_mode == 'int8':
-    converter.target_spec.supported_ops = [tf.lite.OpsSet.TFLITE_BUILTINS_INT8]
+    # https://www.tensorflow.org/lite/performance/post_training_quantization#integer_only
     converter.optimizations = [tf.lite.Optimize.DEFAULT]
-    converter.target_spec.supported_ops = [tf.lite.OpsSet.TFLITE_BUILTINS, tf.lite.OpsSet.SELECT_TF_OPS]
     converter.allow_custom_ops = True
     converter.representative_dataset = representative_data_gen
+  else:
+    raise ValueError("Unkown quantize_mode: " + str(FLAGS.quantize_mode))
 
   tflite_model = converter.convert()
   open(FLAGS.output, 'wb').write(tflite_model)
