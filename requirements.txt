@@ -1,4 +1,4 @@
-opencv-python==4.1.1.26
+opencv-python==4.1.2.30
 lxml
 tqdm
 tensorflow==2.3.0rc0
