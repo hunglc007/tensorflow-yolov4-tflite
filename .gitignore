@@ -1,0 +1,10 @@
+bin
+checkpoints
+core/__pycache__/
+data/coco
+data/*.weights
+data/*.zip
+lib/
+lib64
+pyvenv.cfg
+share/
