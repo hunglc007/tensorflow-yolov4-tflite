@@ -48,17 +48,30 @@ python save_model.py --weights ./data/yolov4.weights --output ./checkpoints/yolo
 # yolov4
 python convert_tflite.py --weights ./checkpoints/yolov4-tflite-416 --output ./checkpoints/yolov4-416.tflite
 
+```
+
+### Quantization
+
+```bash
+
 # yolov4 quantize float16
 python convert_tflite.py --weights ./checkpoints/yolov4-tflite-416 --output ./checkpoints/yolov4-416-fp16.tflite --quantize_mode float16
 
-# yolov4 quantize int8
+# yolov4 quantize int8 (use fp16 for non quantizable ops, fp32 for input/outputs)
 #  - You need to download COCO 2017 dataset using `scripts/get_coco_dataset_2017.sh` and change the absolute file paths in data/dataset/val2017.txt, don't use relative paths
 python convert_tflite.py --weights ./checkpoints/yolov4-tflite-416 --output ./checkpoints/yolov4-416-int8.tflite --quantize_mode int8 --dataset ./data/dataset/val2017.txt
+
+# yolov4 quantize mixedint (use int8 for weights, int16 for activations, fp16 for non quantizable ops, fp32 for input/outputs)
+# https://www.tensorflow.org/lite/performance/post_training_quantization#integer_only_16-bit_activations_with_8-bit_weights_experimental
+python convert_tflite.py --weights ./checkpoints/yolov4-tflite-416 --output ./checkpoints/yolov4-416-int8.tflite --quantize_mode mixedint --dataset ./data/dataset/val2017.txt
 
 # Run demo tflite model
 python detect.py --weights ./checkpoints/yolov4-416.tflite --size 416 --model yolov4 --image ./data/kite.jpg --framework tflite
 ```
+
 Yolov4 and Yolov4-tiny int8 quantization have some issues. I will try to fix that. You can try Yolov3 and Yolov3-tiny int8 quantization 
+
+
 ### Convert to TensorRT
 ```bash# yolov3
 python save_model.py --weights ./data/yolov3.weights --output ./checkpoints/yolov3.tf --input_size 416 --model yolov3
