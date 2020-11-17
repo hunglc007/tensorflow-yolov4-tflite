@@ -13,7 +13,7 @@ from core import utils
 
 flags.DEFINE_string('model', 'yolov4', 'yolov4, yolov3')
 flags.DEFINE_string('image_path_prefix', cfg.TRAIN.IMAGE_PATH_PREFIX, 'dataset image path prefix')
-flags.DEFINE_string('weights', './scripts/yolov4.weights', 'pretrained weights')
+flags.DEFINE_string('weights', cfg.YOLO.WEIGHTS_PATH, 'pretrained weights')
 flags.DEFINE_boolean('tiny', False, 'yolo or yolo-tiny')
 
 
