@@ -3,7 +3,9 @@ import random
 import colorsys
 import numpy as np
 import tensorflow as tf
+
 from core.config import cfg
+
 
 def load_freeze_layer(model='yolov4', tiny=False):
     if tiny:
@@ -17,6 +19,7 @@ def load_freeze_layer(model='yolov4', tiny=False):
         else:
             freeze_layouts = ['conv2d_93', 'conv2d_101', 'conv2d_109']
     return freeze_layouts
+
 
 def load_weights(model, weights_file, model_name='yolov4', is_tiny=False):
     if is_tiny:
@@ -79,6 +82,7 @@ def read_class_names(class_file_name):
             names[ID] = name.strip('\n')
     return names
 
+
 def load_config(FLAGS):
     if FLAGS.tiny:
         STRIDES = np.array(cfg.YOLO.STRIDES_TINY)
@@ -95,12 +99,14 @@ def load_config(FLAGS):
 
     return STRIDES, ANCHORS, NUM_CLASS, XYSCALE
 
+
 def get_anchors(anchors_path, tiny=False):
     anchors = np.array(anchors_path)
     if tiny:
         return anchors.reshape(2, 3, 2)
     else:
         return anchors.reshape(3, 3, 2)
+
 
 def image_preprocess(image, target_size, gt_boxes=None):
 
@@ -123,6 +129,7 @@ def image_preprocess(image, target_size, gt_boxes=None):
         gt_boxes[:, [0, 2]] = gt_boxes[:, [0, 2]] * scale + dw
         gt_boxes[:, [1, 3]] = gt_boxes[:, [1, 3]] * scale + dh
         return image_paded, gt_boxes
+
 
 def draw_bbox(image, bboxes, classes=read_class_names(cfg.YOLO.CLASSES), show_label=True):
     num_classes = len(classes)
@@ -161,6 +168,7 @@ def draw_bbox(image, bboxes, classes=read_class_names(cfg.YOLO.CLASSES), show_la
             cv2.putText(image, bbox_mess, (c1[0], np.float32(c1[1] - 2)), cv2.FONT_HERSHEY_SIMPLEX,
                         fontScale, (0, 0, 0), bbox_thick // 2, lineType=cv2.LINE_AA)
     return image
+
 
 def bbox_iou(bboxes1, bboxes2):
     """
@@ -325,6 +333,7 @@ def bbox_ciou(bboxes1, bboxes2):
 
     return ciou
 
+
 def nms(bboxes, iou_threshold, sigma=0.3, method='nms'):
     """
     :param bboxes: (xmin, ymin, xmax, ymax, score, class)
@@ -362,11 +371,14 @@ def nms(bboxes, iou_threshold, sigma=0.3, method='nms'):
 
     return best_bboxes
 
+
 def freeze_all(model, frozen=True):
     model.trainable = not frozen
     if isinstance(model, tf.keras.Model):
         for l in model.layers:
             freeze_all(l, frozen)
+
+
 def unfreeze_all(model, frozen=False):
     model.trainable = not frozen
     if isinstance(model, tf.keras.Model):

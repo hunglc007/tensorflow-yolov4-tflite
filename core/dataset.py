@@ -6,8 +6,9 @@ import cv2
 import random
 import numpy as np
 import tensorflow as tf
-import core.utils as utils
+
 from core.config import cfg
+import core.utils as utils
 
 
 class Dataset(object):
@@ -15,6 +16,7 @@ class Dataset(object):
 
     def __init__(self, FLAGS, is_training: bool, dataset_type: str = "converted_coco"):
         self.tiny = FLAGS.tiny
+        self.image_path_prefix = FLAGS.image_path_prefix
         self.strides, self.anchors, NUM_CLASS, XYSCALE = utils.load_config(FLAGS)
         self.dataset_type = dataset_type
 
@@ -253,7 +255,7 @@ class Dataset(object):
 
     def parse_annotation(self, annotation):
         line = annotation.split()
-        image_path = line[0]
+        image_path = self.image_path_prefix + line[0]
         if not os.path.exists(image_path):
             raise KeyError("%s does not exist ... " % image_path)
         image = cv2.imread(image_path)
@@ -285,7 +287,6 @@ class Dataset(object):
             np.copy(bboxes),
         )
         return image, bboxes
-
 
     def preprocess_true_boxes(self, bboxes):
         label = [
