@@ -68,11 +68,13 @@ def main(_argv):
             bbox_tensors.append(bbox_tensor)
 
     model = tf.keras.Model(input_layer, bbox_tensors)
-    model.summary()
 
     # freeze layers before the head
-    utils.freeze_before(model, "conv2d_93")
+    # utils.freeze_before(model, "conv2d_93")
     # utils.print_layers_trainable(model)
+
+    model.summary()
+
 
     if FLAGS.weights == None:
         print("Training from scratch")
@@ -150,18 +152,18 @@ def main(_argv):
                                                                prob_loss, total_loss))
 
     for epoch in range(first_stage_epochs + second_stage_epochs):
-        # if epoch < first_stage_epochs:
-        #     if not isfreeze:
-        #         isfreeze = True
-        #         for name in freeze_layers:
-        #             freeze = model.get_layer(name)
-        #             utils.freeze_all(freeze)
-        # elif epoch >= first_stage_epochs:
-        #     if isfreeze:
-        #         isfreeze = False
-        #         for name in freeze_layers:
-        #             freeze = model.get_layer(name)
-        #             utils.unfreeze_all(freeze)
+        if epoch < first_stage_epochs:
+            if not isfreeze:
+                isfreeze = True
+                for name in freeze_layers:
+                    freeze = model.get_layer(name)
+                    utils.freeze_all(freeze)
+        elif epoch >= first_stage_epochs:
+            if isfreeze:
+                isfreeze = False
+                for name in freeze_layers:
+                    freeze = model.get_layer(name)
+                    utils.unfreeze_all(freeze)
         for image_data, target in trainset:
             train_step(image_data, target)
         for image_data, target in testset:

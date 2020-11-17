@@ -130,5 +130,6 @@ dmypy.json
 
 # Custom
 **/log/**
-
 **/**.weights
+**/checkpoints/**
+**/testdata/**
