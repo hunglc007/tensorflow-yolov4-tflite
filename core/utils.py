@@ -372,6 +372,17 @@ def nms(bboxes, iou_threshold, sigma=0.3, method='nms'):
     return best_bboxes
 
 
+def freeze_before(model, fine_tune_at):
+    # Freeze all the layers before the `fine_tune_at` layer
+    train = False
+    for l in model.layers:
+        # after "convn_136", train will be true
+        # so any layers at convn_136 and after that will be true
+        if l.name == fine_tune_at:
+            train = True
+        l.trainable =  train
+
+
 def freeze_all(model, frozen=True):
     model.trainable = not frozen
     if isinstance(model, tf.keras.Model):
@@ -385,3 +396,7 @@ def unfreeze_all(model, frozen=False):
         for l in model.layers:
             unfreeze_all(l, frozen)
 
+
+def print_layers_trainable(model):
+    for l in model.layers:
+        print("layer ", l.name, " trainable: ", l.trainable)
