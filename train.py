@@ -6,7 +6,7 @@ import shutil
 import tensorflow as tf
 
 from core.config import cfg
-from core.dataset import Dataset
+from core.dataset import TinyDataset as Dataset
 from core.yolo import YOLO, decode, compute_loss, decode_train
 from core import utils
 
@@ -16,10 +16,10 @@ flags.DEFINE_string('model', 'yolov4', 'yolov4, yolov3')
 flags.DEFINE_string('image_path_prefix', './data', 'dataset image path prefix')
 # flags.DEFINE_string('image_path_prefix', cfg.TRAIN.IMAGE_PATH_PREFIX, 'dataset image path prefix')
 
-flags.DEFINE_string('weights', "./data/yolov4.weights", 'pretrained weights')
+flags.DEFINE_string('weights', "./data/yolov4-tiny.weights", 'pretrained weights')
 # flags.DEFINE_string('weights', cfg.YOLO.WEIGHTS_PATH, 'pretrained weights')
 
-flags.DEFINE_boolean('tiny', False, 'yolo or yolo-tiny')
+flags.DEFINE_boolean('tiny', True, 'yolo or yolo-tiny')
 
 
 def main(_argv):
