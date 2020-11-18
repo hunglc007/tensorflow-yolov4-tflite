@@ -112,10 +112,10 @@ def main(_argv):
         print(info)
 
         result = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
-        if not FLAGS.dis_cv2_window:
-            cv2.namedWindow("result", cv2.WINDOW_AUTOSIZE)
-            cv2.imshow("result", result)
-            if cv2.waitKey(1) & 0xFF == ord('q'): break
+        # if not FLAGS.dis_cv2_window:
+        #     cv2.namedWindow("result", cv2.WINDOW_AUTOSIZE)
+        #     cv2.imshow("result", result)
+        #     if cv2.waitKey(1) & 0xFF == ord('q'): break
 
         if FLAGS.output:
             out.write(result)
