@@ -9,3 +9,6 @@ Some part of the code is refactored to my own needs and the project *will also b
 
 > **From [sainimohit23/yolov3-CSGO's README.md](https://github.com/sainimohit23/YOLOv3-Counter-Strike-Global-Offensive)**  
 > 0 is CT and 1 is T
+
+**Save Model**  
+> python save_model.py --weights = checkpoints/yolov4
