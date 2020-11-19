@@ -151,12 +151,9 @@ def main(_argv):
                 conf_loss += loss_items[1]
                 prob_loss += loss_items[2]
 
-            total_loss = giou_loss + conf_loss + prob_loss
+            giou_loss + conf_loss + prob_loss
+            return giou_loss, conf_loss, prob_loss
 
-            if global_steps > FLAGS.print_per_epoch:
-                tf.print("=> TEST STEP %4d   giou_loss: %4.2f   conf_loss: %4.2f   "
-                        "prob_loss: %4.2f   total_loss: %4.2f" % (global_steps, giou_loss, conf_loss,
-                                                                prob_loss, total_loss))
 
     for epoch in range(first_stage_epochs + second_stage_epochs):
         if epoch < first_stage_epochs:
@@ -171,10 +168,39 @@ def main(_argv):
                 for name in freeze_layers:
                     freeze = model.get_layer(name)
                     utils.unfreeze_all(freeze)
+
+
+        # Train Image
         for image_data, target in trainset:
             train_step(image_data, target)
+
+
+        # Test Image
+        test_N = 0
+        overall_test_total_loss = 0
+        overall_test_giou_loss = 0
+        overall_test_conf_loss = 0
+        overall_test_prob_loss = 0
         for image_data, target in testset:
-            test_step(image_data, target)
+            test_giou_loss, test_conf_loss, test_prob_loss = test_step(image_data, target)
+
+            test_N += 1            
+            overall_test_total_loss += (test_giou_loss + test_conf_loss + test_prob_loss)
+            overall_test_giou_loss += test_giou_loss
+            overall_test_conf_loss += test_conf_loss
+            overall_test_prob_loss += test_prob_loss
+
+        # print average loss for this test case
+        overall_test_total_loss = overall_test_total_loss / test_N
+        overall_test_giou_loss = overall_test_giou_loss / test_N
+        overall_test_conf_loss = overall_test_conf_loss / test_N
+        overall_test_prob_loss = overall_test_prob_loss / test_N
+
+        tf.print("=> TEST STEP %4d   average giou_loss: %4.2f   average conf_loss: %4.2f   "
+                    "average prob_loss: %4.2f   average total_loss: %4.2f\n" % (global_steps, overall_test_giou_loss, overall_test_conf_loss,
+                                                            overall_test_prob_loss, overall_test_total_loss))
+
+
         model.save_weights(cfg.YOLO.CHECKPOINT_PATH)
 
 
