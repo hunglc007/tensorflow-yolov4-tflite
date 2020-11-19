@@ -52,7 +52,7 @@ def save_tf():
     pred = tf.concat([boxes, pred_conf], axis=-1)
   model = tf.keras.Model(input_layer, pred)
   # utils.load_weights(model, FLAGS.weights, FLAGS.model, FLAGS.tiny)
-  model.load_weights(cfg.YOLO.CHECKPOINT_PATH)
+  model.load_weights(FLAGS.weights)
   model.summary()
   model.save(FLAGS.output)
 
