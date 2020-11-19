@@ -1,3 +1,6 @@
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+
 import tensorflow as tf
 from absl import app, flags, logging
 from absl.flags import FLAGS
@@ -14,8 +17,6 @@ flags.DEFINE_float('score_thres', 0.2, 'define score threshold')
 flags.DEFINE_string('framework', 'tf', 'define what framework do you want to convert (tf, trt, tflite)')
 flags.DEFINE_string('model', 'yolov4', 'yolov3 or yolov4')
 
-
-CHECKPOINT_PATH = "./checkpoints/yolov4"
 
 def save_tf():
   STRIDES, ANCHORS, NUM_CLASS, XYSCALE = utils.load_config(FLAGS)
@@ -51,7 +52,7 @@ def save_tf():
     pred = tf.concat([boxes, pred_conf], axis=-1)
   model = tf.keras.Model(input_layer, pred)
   # utils.load_weights(model, FLAGS.weights, FLAGS.model, FLAGS.tiny)
-  model.load_weights(CHECKPOINT_PATH)
+  model.load_weights(cfg.YOLO.CHECKPOINT_PATH)
   model.summary()
   model.save(FLAGS.output)
 

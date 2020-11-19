@@ -1,27 +1,23 @@
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+
 from absl import app, flags, logging
 from absl.flags import FLAGS
 import numpy as np
-import os
 import shutil
 import tensorflow as tf
 
 from core.config import cfg
-from core.dataset import TinyDataset as Dataset
+from core.dataset import Dataset, TinyDataset
 from core.yolo import YOLO, decode, compute_loss, decode_train
 from core import utils
 
 
 flags.DEFINE_string('model', 'yolov4', 'yolov4, yolov3')
-
 flags.DEFINE_string('image_path_prefix', cfg.TRAIN.IMAGE_PATH_PREFIX, 'dataset image path prefix')
-
 flags.DEFINE_string('weights', cfg.YOLO.WEIGHTS_PATH, 'pretrained weights')
-
 flags.DEFINE_boolean('tiny', False, 'yolo or yolo-tiny')
-
-
-PRINT_TRAIN_PER_X_STEP = 20
-CHECKPOINT_PATH = "./checkpoints/yolov4"
+flags.DEFINE_integer('print_per_epoch', 10, 'print training result per how many epoch')
 
 
 def main(_argv):
@@ -29,8 +25,13 @@ def main(_argv):
     # if len(physical_devices) > 0:
     #     tf.config.experimental.set_memory_growth(physical_devices[0], True)
 
-    trainset = Dataset(FLAGS, is_training=True)
-    testset = Dataset(FLAGS, is_training=False)
+    if FLAGS.tiny:
+        trainset = TinyDataset(FLAGS, is_training=True)
+        testset = TinyDataset(FLAGS, is_training=False)
+    else:
+        trainset = Dataset(FLAGS, is_training=True)
+        testset = Dataset(FLAGS, is_training=False)
+
     logdir = "./data/log"
     isfreeze = False
     steps_per_epoch = len(trainset)
@@ -112,7 +113,7 @@ def main(_argv):
             gradients = tape.gradient(total_loss, model.trainable_variables)
             optimizer.apply_gradients(zip(gradients, model.trainable_variables))
 
-            if global_steps % PRINT_TRAIN_PER_X_STEP == 0:
+            if global_steps % FLAGS.print_per_epoch == 0:
                 tf.print("=> STEP %4d/%4d   lr: %.6f   giou_loss: %4.2f   conf_loss: %4.2f   "
                         "prob_loss: %4.2f   total_loss: %4.2f" % (global_steps, total_steps, optimizer.lr.numpy(),
                                                                 giou_loss, conf_loss,
@@ -152,9 +153,10 @@ def main(_argv):
 
             total_loss = giou_loss + conf_loss + prob_loss
 
-            tf.print("=> TEST STEP %4d   giou_loss: %4.2f   conf_loss: %4.2f   "
-                     "prob_loss: %4.2f   total_loss: %4.2f" % (global_steps, giou_loss, conf_loss,
-                                                               prob_loss, total_loss))
+            if global_steps > FLAGS.print_per_epoch:
+                tf.print("=> TEST STEP %4d   giou_loss: %4.2f   conf_loss: %4.2f   "
+                        "prob_loss: %4.2f   total_loss: %4.2f" % (global_steps, giou_loss, conf_loss,
+                                                                prob_loss, total_loss))
 
     for epoch in range(first_stage_epochs + second_stage_epochs):
         if epoch < first_stage_epochs:
@@ -173,7 +175,7 @@ def main(_argv):
             train_step(image_data, target)
         for image_data, target in testset:
             test_step(image_data, target)
-        model.save_weights(CHECKPOINT_PATH)
+        model.save_weights(cfg.YOLO.CHECKPOINT_PATH)
 
 
 if __name__ == '__main__':

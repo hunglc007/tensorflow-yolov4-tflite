@@ -11,6 +11,7 @@ cfg                           = __C
 # YOLO options
 __C.YOLO                      = edict()
 
+__C.YOLO.CHECKPOINT_PATH      = "./checkpoints/yolov4"
 __C.YOLO.WEIGHTS_PATH         = "./yolov4.weights"
 __C.YOLO.CLASSES              = "./data/classes/csgo.names"
 __C.YOLO.ANCHORS              = [12,16, 19,36, 40,28, 36,75, 76,55, 72,146, 142,110, 192,243, 459,401]
@@ -25,20 +26,19 @@ __C.YOLO.IOU_LOSS_THRESH      = 0.5
 
 
 # Train options
-__C.TRAIN                     = edict()
+__C.TRAIN                         = edict()
 
-__C.TRAIN.IMAGE_PATH_PREFIX   = "./data/dataset"
-__C.TRAIN.ANNOT_PATH          = "./data/dataset/csgo.txt"
-__C.TRAIN.BATCH_SIZE          = 2
-# __C.TRAIN.INPUT_SIZE            = [320, 352, 384, 416, 448, 480, 512, 544, 576, 608]
-__C.TRAIN.INPUT_SIZE          = 416
-__C.TRAIN.DATA_AUG            = True
-__C.TRAIN.LR_INIT             = 1e-3
-__C.TRAIN.LR_END              = 1e-6
-__C.TRAIN.WARMUP_EPOCHS       = 2
-__C.TRAIN.FISRT_STAGE_EPOCHS    = 20
-__C.TRAIN.SECOND_STAGE_EPOCHS   = 30
-
+__C.TRAIN.IMAGE_PATH_PREFIX       = "./data/dataset"
+__C.TRAIN.ANNOT_PATH              = "./data/dataset/csgo.txt"
+__C.TRAIN.BATCH_SIZE              = 2
+# __C.TRAIN.INPUT_SIZE              = [320, 352, 384, 416, 448, 480, 512, 544, 576, 608]
+__C.TRAIN.INPUT_SIZE              = 416
+__C.TRAIN.DATA_AUG                = True
+__C.TRAIN.LR_INIT                 = 1e-3
+__C.TRAIN.LR_END                  = 1e-6
+__C.TRAIN.WARMUP_EPOCHS           = 2
+__C.TRAIN.FISRT_STAGE_EPOCHS      = 20
+__C.TRAIN.SECOND_STAGE_EPOCHS     = 30
 
 
 # TEST options
