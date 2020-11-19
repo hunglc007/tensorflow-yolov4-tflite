@@ -13,13 +13,15 @@ from core import utils
 
 flags.DEFINE_string('model', 'yolov4', 'yolov4, yolov3')
 
-flags.DEFINE_string('image_path_prefix', './data', 'dataset image path prefix')
-# flags.DEFINE_string('image_path_prefix', cfg.TRAIN.IMAGE_PATH_PREFIX, 'dataset image path prefix')
+flags.DEFINE_string('image_path_prefix', cfg.TRAIN.IMAGE_PATH_PREFIX, 'dataset image path prefix')
 
-flags.DEFINE_string('weights', "./data/yolov4-tiny.weights", 'pretrained weights')
-# flags.DEFINE_string('weights', cfg.YOLO.WEIGHTS_PATH, 'pretrained weights')
+flags.DEFINE_string('weights', cfg.YOLO.WEIGHTS_PATH, 'pretrained weights')
 
-flags.DEFINE_boolean('tiny', True, 'yolo or yolo-tiny')
+flags.DEFINE_boolean('tiny', False, 'yolo or yolo-tiny')
+
+
+PRINT_TRAIN_PER_X_STEP = 20
+CHECKPOINT_PATH = "./checkpoints/yolov4"
 
 
 def main(_argv):
@@ -109,10 +111,13 @@ def main(_argv):
 
             gradients = tape.gradient(total_loss, model.trainable_variables)
             optimizer.apply_gradients(zip(gradients, model.trainable_variables))
-            tf.print("=> STEP %4d/%4d   lr: %.6f   giou_loss: %4.2f   conf_loss: %4.2f   "
-                     "prob_loss: %4.2f   total_loss: %4.2f" % (global_steps, total_steps, optimizer.lr.numpy(),
-                                                               giou_loss, conf_loss,
-                                                               prob_loss, total_loss))
+
+            if global_steps % PRINT_TRAIN_PER_X_STEP == 0:
+                tf.print("=> STEP %4d/%4d   lr: %.6f   giou_loss: %4.2f   conf_loss: %4.2f   "
+                        "prob_loss: %4.2f   total_loss: %4.2f" % (global_steps, total_steps, optimizer.lr.numpy(),
+                                                                giou_loss, conf_loss,
+                                                                prob_loss, total_loss))
+
             # update learning rate
             global_steps.assign_add(1)
             if global_steps < warmup_steps:
@@ -168,7 +173,7 @@ def main(_argv):
             train_step(image_data, target)
         for image_data, target in testset:
             test_step(image_data, target)
-        model.save_weights("./checkpoints/yolov4")
+        model.save_weights(CHECKPOINT_PATH)
 
 
 if __name__ == '__main__':
