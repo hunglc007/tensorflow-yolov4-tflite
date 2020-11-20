@@ -28,8 +28,9 @@ def YOLO(input_layer, NUM_CLASS, model='yolov4', is_tiny=False):
 
 
 def YOLOv4(input_layer, NUM_CLASS):
-    route_1, route_2, conv = backbone.cspdarknet53(input_layer)
+    route_1, route_2, conv = backbone.csp_darknet53(input_layer)
 
+    # Neck
     route = conv
     conv = common.convolutional(conv, (1, 1, 512, 256))
     conv = common.upsample(conv)
@@ -87,7 +88,7 @@ def YOLOv4(input_layer, NUM_CLASS):
 
 
 def YOLOv4_tiny(input_layer, NUM_CLASS):
-    route_1, conv = backbone.cspdarknet53_tiny(input_layer)
+    route_1, conv = backbone.csp_darknet53_tiny(input_layer)
 
     conv = common.convolutional(conv, (1, 1, 512, 256))
 

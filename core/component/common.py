@@ -19,6 +19,22 @@ class BatchNormalization(tf.keras.layers.BatchNormalization):
 
 
 def convolutional(input_layer, filters_shape, downsample=False, activate=True, bn=True, activate_type='leaky'):
+    """
+    Applies successively Conv2D -> BN (by default) -> Leaky ReLU (by default) or Mish activation
+
+    Args:
+        input_layer   : tf.Tensor
+        filters_shape : (kernel_size, kernel_size, input_channel, output_channel)
+        downsample    : downsampling the image (padding valid with strides 2)
+        activate      : apply activation or not
+        bn            : apply batch normalization or not
+        activate_type : either `leaky` or `mish`
+
+    Returns:
+        tf.Tensor
+    """
+    assert activate_type in ["leaky", "mish"]
+
     if downsample:
         input_layer = tf.keras.layers.ZeroPadding2D(((1, 0), (1, 0)))(input_layer)
         padding = 'valid'
@@ -42,11 +58,28 @@ def convolutional(input_layer, filters_shape, downsample=False, activate=True, b
 
 
 def mish(x):
+    """
+    Mish activation method.
+    https://krutikabapat.github.io/Swish-Vs-Mish-Latest-Activation-Functions/
+    """
     return x * tf.math.tanh(tf.math.softplus(x))
     # return tf.keras.layers.Lambda(lambda x: x*tf.tanh(tf.math.log(1+tf.exp(x))))(x)
 
 
 def residual_block(input_layer, input_channel, filter_num1, filter_num2, activate_type='leaky'):
+    """
+    Applies residual connection.
+
+    Args:
+        input_layer   : tf.Tensor
+        input_channel : number of input channels to first convolution layer
+        filter_num1   : number of output channels from first conv layer and input channels to second conv layer
+        filter_num2   : number of output channels from second convolution layer
+        activate_type : indicate activation type (either `leaky` or `mish`)
+
+    Returns:
+        tf.Tensor
+    """
     short_cut = input_layer
     conv = convolutional(input_layer, filters_shape=(1, 1, input_channel, filter_num1), activate_type=activate_type)
     conv = convolutional(conv       , filters_shape=(3, 3, filter_num1,   filter_num2), activate_type=activate_type)
