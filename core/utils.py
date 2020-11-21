@@ -7,20 +7,6 @@ import tensorflow as tf
 from core.config import cfg
 
 
-def load_freeze_layer(model='yolov4', tiny=False):
-    if tiny:
-        if model == 'yolov3':
-            freeze_layouts = ['conv2d_9', 'conv2d_12']
-        else:
-            freeze_layouts = ['conv2d_17', 'conv2d_20']
-    else:
-        if model == 'yolov3':
-            freeze_layouts = ['conv2d_58', 'conv2d_66', 'conv2d_74']
-        else:
-            freeze_layouts = ['conv2d_93', 'conv2d_101', 'conv2d_109']
-    return freeze_layouts
-
-
 def load_weights(model, weights_file, model_name='yolov4', is_tiny=False):
     if is_tiny:
         if model_name == 'yolov3':
@@ -370,6 +356,20 @@ def nms(bboxes, iou_threshold, sigma=0.3, method='nms'):
             cls_bboxes = cls_bboxes[score_mask]
 
     return best_bboxes
+
+
+def load_freeze_layer(model='yolov4', tiny=False):
+    if tiny:
+        if model == 'yolov3':
+            freeze_layouts = ['conv2d_9', 'conv2d_12']
+        else:
+            freeze_layouts = ['conv2d_17', 'conv2d_20']
+    else:
+        if model == 'yolov3':
+            freeze_layouts = ['conv2d_58', 'conv2d_66', 'conv2d_74']
+        else:
+            freeze_layouts = ['conv2d_93', 'conv2d_101', 'conv2d_109']
+    return freeze_layouts
 
 
 def freeze_before(model, fine_tune_at):

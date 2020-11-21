@@ -9,7 +9,7 @@ import tensorflow as tf
 
 from core.config import cfg
 from core.dataset import Dataset, TinyDataset
-from core.yolo import YOLO, decode, compute_loss, decode_train
+from core.model import YOLO, decode, compute_loss, decode_train
 from core import utils
 
 
@@ -93,6 +93,7 @@ def main(_argv):
     if os.path.exists(logdir): shutil.rmtree(logdir)
     writer = tf.summary.create_file_writer(logdir)
 
+
     # define training step function
     # @tf.function
     def train_step(image_data, target):
@@ -137,6 +138,7 @@ def main(_argv):
                 tf.summary.scalar("loss/conf_loss", conf_loss, step=global_steps)
                 tf.summary.scalar("loss/prob_loss", prob_loss, step=global_steps)
             writer.flush()
+
 
     def test_step(image_data, target):
         with tf.GradientTape() as tape:
