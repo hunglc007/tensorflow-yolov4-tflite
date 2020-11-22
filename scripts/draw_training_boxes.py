@@ -11,11 +11,8 @@ import numpy as np
 
 
 # Config
-# old dataset (copy from dataset text file)
-# EXAMPLE_ANNOTATION = './data/csgo-images-old/122.jpg 346,111,431,288,1 409,177,436,230,1 '
-
-# new dataset (copy from dataset text file)
-EXAMPLE_ANNOTATION = './data/csgo-images/csgo000235.jpg 650,158,682,215,1 525,184,542,198,1 445,348,481,413,1 312,181,329,212,0 391,189,404,215,0 405,158,416,181,0 333,157,343,179,0'
+# dataset (copy from dataset text file)
+EXAMPLE_ANNOTATION = './data/csgo-images/csgo001318.jpg 417,385,496,554,1 1435,387,1609,684,0 '
 
 
 def swap_dimension(coord):
