@@ -19,7 +19,7 @@ flags.DEFINE_string('model', 'yolov4', 'yolov4, yolov3')
 flags.DEFINE_string('image_path_prefix', cfg.TRAIN.IMAGE_PATH_PREFIX, 'dataset image path prefix')
 flags.DEFINE_string('weights', cfg.YOLO.WEIGHTS_PATH, 'pretrained weights')
 flags.DEFINE_boolean('tiny', False, 'yolo or yolo-tiny')
-flags.DEFINE_integer('print_per_epoch', 10, 'print training result per how many epoch')
+flags.DEFINE_integer('print_per_step', 10, 'print training result per how many epoch')
 
 
 def main(_argv):
@@ -78,7 +78,7 @@ def main(_argv):
     # utils.freeze_before(model, "conv2d_93")
     # utils.print_layers_trainable(model)
 
-    model.summary()
+    # model.summary()
 
 
     if FLAGS.weights == None:
@@ -116,7 +116,7 @@ def main(_argv):
             gradients = tape.gradient(total_loss, model.trainable_variables)
             optimizer.apply_gradients(zip(gradients, model.trainable_variables))
 
-            if global_steps % FLAGS.print_per_epoch == 0:
+            if global_steps % FLAGS.print_per_step == 0:
                 tf.print("=> STEP %4d/%4d   lr: %.6f   giou_loss: %4.2f   conf_loss: %4.2f   "
                         "prob_loss: %4.2f   total_loss: %4.2f" % (global_steps, total_steps, optimizer.lr.numpy(),
                                                                 giou_loss, conf_loss,
