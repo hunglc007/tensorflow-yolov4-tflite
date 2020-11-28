@@ -7,6 +7,12 @@ import numpy as np
 import shutil
 import tensorflow as tf
 
+os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'true'
+physical_devices = tf.config.experimental.list_physical_devices('GPU')
+print(physical_devices)
+if len(physical_devices) > 0:
+    tf.config.experimental.set_memory_growth(physical_devices[0], True)
+
 import __init__
 
 from core.config import cfg
@@ -23,10 +29,6 @@ flags.DEFINE_integer('print_per_step', 10, 'print training result per how many e
 
 
 def main(_argv):
-    # physical_devices = tf.config.experimental.list_physical_devices('GPU')
-    # if len(physical_devices) > 0:
-    #     tf.config.experimental.set_memory_growth(physical_devices[0], True)
-
     if FLAGS.tiny:
         trainset = TinyDataset(FLAGS, is_training=True)
         testset = TinyDataset(FLAGS, is_training=False)

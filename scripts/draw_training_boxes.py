@@ -1,4 +1,4 @@
-"""
+"""csgo001145.jpg
 Script to debug the drawing of training dataset.
 """
 
@@ -13,7 +13,8 @@ import random
 # Config
 # dataset (copy from dataset text file)
 DATA_DIR = "./data"
-ANNOTATION_PATH = "./data/dataset/csgo.txt"
+ANNOTATION_PATH = "./data/dataset/csgo-large.txt"
+SPECIFIC_ANNOTATION = None # "./data/csgo-images-large/csgo000589.jpg 446,243,456,263,1"
 
 
 def get_random_image(data_dir, annotation_path):
@@ -87,7 +88,11 @@ def draw_bbox(image_path, coor, num_classes = 2):
 
 
 if __name__ == '__main__':
-    example_annotation = get_random_image(DATA_DIR, ANNOTATION_PATH)
+    if SPECIFIC_ANNOTATION is None:
+        example_annotation = get_random_image(DATA_DIR, ANNOTATION_PATH)
+    else:
+        print("Using user given annotation for drawing insted of random.")
+        example_annotation = SPECIFIC_ANNOTATION
     print(example_annotation)
 
     image_path, coord = read_from_annotation(example_annotation)
