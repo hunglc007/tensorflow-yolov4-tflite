@@ -5,6 +5,7 @@ if len(physical_devices) > 0:
 from absl import app, flags, logging
 from absl.flags import FLAGS
 import core.utils as utils
+from core.config import cfg
 from core.yolov4 import filter_boxes
 from tensorflow.python.saved_model import tag_constants
 from PIL import Image
@@ -83,8 +84,18 @@ def main(_argv):
             score_threshold=FLAGS.score
         )
         pred_bbox = [boxes.numpy(), scores.numpy(), classes.numpy(), valid_detections.numpy()]
-        image = utils.draw_bbox(original_image, pred_bbox)
-        # image = utils.draw_bbox(image_data*255, pred_bbox)
+
+        # read in all class names from config
+        class_names = utils.read_class_names(cfg.YOLO.CLASSES)
+
+        # by default allow all classes in .names file
+        allowed_classes = list(class_names.values())
+        
+        # custom allowed classes (uncomment line below to allow detections for only people)
+        #allowed_classes = ['person']
+
+        image = utils.draw_bbox(original_image, pred_bbox, allowed_classes = allowed_classes)
+
         image = Image.fromarray(image.astype(np.uint8))
         if not FLAGS.dont_show:
             image.show()
