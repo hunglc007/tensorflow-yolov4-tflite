@@ -138,7 +138,7 @@ def draw_bbox(image, bboxes, classes=read_class_names(cfg.YOLO.CLASSES), show_la
     out_boxes, out_scores, out_classes, num_boxes = bboxes
     for i in range(num_boxes[0]):
         if int(out_classes[0][i]) < 0 or int(out_classes[0][i]) > num_classes: continue
-        coor = out_boxes[0][i]
+        coor = out_boxes[0][i].copy()
         coor[0] = int(coor[0] * image_h)
         coor[2] = int(coor[2] * image_h)
         coor[1] = int(coor[1] * image_w)
@@ -372,4 +372,3 @@ def unfreeze_all(model, frozen=False):
     if isinstance(model, tf.keras.Model):
         for l in model.layers:
             unfreeze_all(l, frozen)
-
