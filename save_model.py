@@ -21,13 +21,25 @@ def save_tf():
   bbox_tensors = []
   prob_tensors = []
   if FLAGS.tiny:
-    for i, fm in enumerate(feature_maps):
-      if i == 0:
-        output_tensors = decode(fm, FLAGS.input_size // 16, NUM_CLASS, STRIDES, ANCHORS, i, XYSCALE, FLAGS.framework)
-      else:
-        output_tensors = decode(fm, FLAGS.input_size // 32, NUM_CLASS, STRIDES, ANCHORS, i, XYSCALE, FLAGS.framework)
-      bbox_tensors.append(output_tensors[0])
-      prob_tensors.append(output_tensors[1])
+    if FLAGS.model ==  'yolov4-tiny-3l':
+      for i, fm in enumerate(feature_maps):
+        # import pdb; pdb.set_trace()
+        if i == 0:
+          output_tensors = decode(fm, FLAGS.input_size // 8, NUM_CLASS, STRIDES, ANCHORS, i, XYSCALE, FLAGS.framework)
+        elif i == 1:
+          output_tensors = decode(fm, FLAGS.input_size // 16, NUM_CLASS, STRIDES, ANCHORS, i, XYSCALE, FLAGS.framework)
+        else:
+          output_tensors = decode(fm, FLAGS.input_size // 32, NUM_CLASS, STRIDES, ANCHORS, i, XYSCALE, FLAGS.framework)
+        bbox_tensors.append(output_tensors[0])
+        prob_tensors.append(output_tensors[1])    
+    else:
+      for i, fm in enumerate(feature_maps):
+        if i == 0:
+          output_tensors = decode(fm, FLAGS.input_size // 16, NUM_CLASS, STRIDES, ANCHORS, i, XYSCALE, FLAGS.framework)
+        else:
+          output_tensors = decode(fm, FLAGS.input_size // 32, NUM_CLASS, STRIDES, ANCHORS, i, XYSCALE, FLAGS.framework)
+        bbox_tensors.append(output_tensors[0])
+        prob_tensors.append(output_tensors[1])  
   else:
     for i, fm in enumerate(feature_maps):
       if i == 0:
