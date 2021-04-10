@@ -35,8 +35,11 @@ def main(_argv):
     input_size = FLAGS.size
     video_path = FLAGS.video
 
-    print("Video from: ", video_path )
-    vid = cv2.VideoCapture(video_path)
+    print("Video from: ", video_path)
+    try:
+        vid = cv2.VideoCapture(int(video_path)) # webcam
+    except:
+        vid = cv2.VideoCapture(video_path) # file
 
     if FLAGS.framework == 'tflite':
         interpreter = tf.lite.Interpreter(model_path=FLAGS.weights)
@@ -48,7 +51,7 @@ def main(_argv):
     else:
         saved_model_loaded = tf.saved_model.load(FLAGS.weights, tags=[tag_constants.SERVING])
         infer = saved_model_loaded.signatures['serving_default']
-    
+
     if FLAGS.output:
         # by default VideoCapture returns float instead of int
         width = int(vid.get(cv2.CAP_PROP_FRAME_WIDTH))
@@ -68,7 +71,7 @@ def main(_argv):
                 print("Video processing complete")
                 break
             raise ValueError("No image! Try with another video format")
-        
+
         frame_size = frame.shape[:2]
         image_data = cv2.resize(frame, (input_size, input_size))
         image_data = image_data / 255.
@@ -111,6 +114,8 @@ def main(_argv):
 
         result = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
         if not FLAGS.dis_cv2_window:
+            result = cv2.putText(result, info, (0, 30),
+                                 cv2.FONT_HERSHEY_COMPLEX_SMALL, 1, (0, 0, 255), 2)
             cv2.namedWindow("result", cv2.WINDOW_AUTOSIZE)
             cv2.imshow("result", result)
             if cv2.waitKey(1) & 0xFF == ord('q'): break
