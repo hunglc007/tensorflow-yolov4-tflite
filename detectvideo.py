@@ -46,8 +46,7 @@ def main(_argv):
         print(input_details)
         print(output_details)
     else:
-        saved_model_loaded = tf.saved_model.load(FLAGS.weights, tags=[tag_constants.SERVING])
-        infer = saved_model_loaded.signatures['serving_default']
+        infer = tf.keras.models.load_model(FLAGS.weights)
     
     if FLAGS.output:
         # by default VideoCapture returns float instead of int
@@ -88,9 +87,8 @@ def main(_argv):
         else:
             batch_data = tf.constant(image_data)
             pred_bbox = infer(batch_data)
-            for key, value in pred_bbox.items():
-                boxes = value[:, :, 0:4]
-                pred_conf = value[:, :, 4:]
+            boxes = pred_bbox[:, :, 0:4]
+            pred_conf = pred_bbox[:, :, 4:]
 
         boxes, scores, classes, valid_detections = tf.image.combined_non_max_suppression(
             boxes=tf.reshape(boxes, (tf.shape(boxes)[0], -1, 1, 4)),
