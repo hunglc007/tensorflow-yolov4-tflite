@@ -1,4 +1,14 @@
 <resources>
     <string name="tfe_od_app_name" translation_description="Object Detection demo app [CHAR_LIMIT=40]">TFL Detect</string>
-    <string name="tfe_od_camera_error" translation_description="Error regarding camera support[CHAR_LIMIT=40]">This device doesn\'t support Camera2 API.</string>
+
+    <string name="activity_camera_tfl_logo_desc">TensorFlow Lite logo</string>
+
+    <string name="activity_main_button_camera">Camera</string>
+    <string name="activity_main_button_detect">Detect</string>
+
+    <string name="bottom_sheet_frame_text">Frame</string>
+    <string name="bottom_sheet_crop_text">Crop</string>
+    <string name="bottom_sheet_time_text">Detection Time</string>
+    <string name="bottom_sheet_resolution_placeholder">640*480</string>
+    <string name="bottom_sheet_time_placeholder">200 ms</string>
 </resources>
