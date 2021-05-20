@@ -11,7 +11,6 @@ import android.view.View
 class TrackingOverlayView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
     private var mTracker: MultiBoxTracker? = null
 
-
     override fun draw(canvas: Canvas) {
         super.draw(canvas)
         mTracker?.draw(canvas)

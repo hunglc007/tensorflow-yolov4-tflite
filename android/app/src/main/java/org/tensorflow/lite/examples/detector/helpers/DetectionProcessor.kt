@@ -57,7 +57,7 @@ class DetectionProcessor(
             previewWidth,
             previewHeight,
             ((rotation + 1) % 4) * 90,
-            showScore = SHOW_SCORE
+            mShowScore = SHOW_SCORE
         )
         trackingOverlay.setTracker(mTracker)
     }

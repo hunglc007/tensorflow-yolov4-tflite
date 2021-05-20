@@ -20,7 +20,7 @@ interface Detector {
          * A unique identifier for what has been recognized. Specific to the detected class,
          * not the instance of the [Detection] object.
          */
-        private val id: String,
+        private val mId: String,
         /**
          * Display name for the [Detection].
          */
@@ -36,7 +36,7 @@ interface Detector {
         val detectedClass: Int
     ) : Comparable<Detection> {
         override fun toString(): String {
-            var resultString = "[$id] $className "
+            var resultString = "[$mId] $className "
             resultString += "(%.1f%%) ".format(score * 100.0f)
             resultString += "$boundingBox"
             return resultString

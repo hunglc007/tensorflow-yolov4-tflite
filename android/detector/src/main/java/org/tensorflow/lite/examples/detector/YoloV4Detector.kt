@@ -21,8 +21,8 @@ import kotlin.math.min
 @Suppress("UNNECESSARY_NOT_NULL_ASSERTION")
 internal class YoloV4Detector(
     assetManager: AssetManager,
-    private val detectionModel: DetectionModel,
-    private val minimumScore: Float,
+    private val mDetectionModel: DetectionModel,
+    private val mMinimumScore: Float,
 ) : Detector {
 
     private companion object {
@@ -33,53 +33,50 @@ internal class YoloV4Detector(
 
     }
 
-    private val inputSize: Int = detectionModel.inputSize
+    private val mInputSize: Int = mDetectionModel.inputSize
 
     // Config values.
-    // Pre-allocated buffers.
-    private val labels: List<String>
-    private val interpreter: Interpreter
+    private val mLabels: List<String>
+    private val mInterpreter: Interpreter
     private val mNmsThresh = 0.6f
 
-    private val intValues = IntArray(inputSize * inputSize)
-
-    private val byteBuffer: Array<ByteBuffer>
-
-    private val outputMap: MutableMap<Int, Array<Array<FloatArray>>> = HashMap()
+    // Pre-allocated buffers.
+    private val intValues = IntArray(mInputSize * mInputSize)
+    private val mByteBuffer: Array<ByteBuffer>
+    private val mOutputMap: MutableMap<Int, Array<Array<FloatArray>>> = HashMap()
 
     init {
-
-        val labelsFilename = detectionModel.labelFilePath
+        val labelsFilename = mDetectionModel.labelFilePath
             .split("file:///android_asset/")
             .toTypedArray()[1]
 
-        labels = assetManager.open(labelsFilename)
+        mLabels = assetManager.open(labelsFilename)
             .use { it.readBytes() }
             .decodeToString()
             .trim()
             .split("\n")
             .map { it.trim() }
 
-        interpreter = initializeInterpreter(assetManager)
+        mInterpreter = initializeInterpreter(assetManager)
 
-        val numBytesPerChannel = if (detectionModel.isQuantized) {
+        val numBytesPerChannel = if (mDetectionModel.isQuantized) {
             1 // Quantized (int8)
         } else {
             4 // Floating point (fp32)
         }
 
         // input size * input size * pixel count (RGB) * pixel size (int8/fp32)
-        byteBuffer = arrayOf(
-            ByteBuffer.allocateDirect(inputSize * inputSize * 3 * numBytesPerChannel)
+        mByteBuffer = arrayOf(
+            ByteBuffer.allocateDirect(mInputSize * mInputSize * 3 * numBytesPerChannel)
         )
-        byteBuffer[0].order(ByteOrder.nativeOrder())
+        mByteBuffer[0].order(ByteOrder.nativeOrder())
 
-        outputMap[0] = arrayOf(Array(detectionModel.outputSize) { FloatArray(numBytesPerChannel) })
-        outputMap[1] = arrayOf(Array(detectionModel.outputSize) { FloatArray(labels.size) })
+        mOutputMap[0] = arrayOf(Array(mDetectionModel.outputSize) { FloatArray(numBytesPerChannel) })
+        mOutputMap[1] = arrayOf(Array(mDetectionModel.outputSize) { FloatArray(mLabels.size) })
     }
 
     override fun getDetectionModel(): DetectionModel {
-        return detectionModel
+        return mDetectionModel
     }
 
     override fun runDetection(bitmap: Bitmap): List<Detection> {
@@ -105,7 +102,7 @@ internal class YoloV4Detector(
             }
         }
 
-        return assetManager.openFd(detectionModel.modelFilename).use { fileDescriptor ->
+        return assetManager.openFd(mDetectionModel.modelFilename).use { fileDescriptor ->
             val fileInputStream = FileInputStream(fileDescriptor.fileDescriptor)
             val fileByteBuffer = fileInputStream.channel.map(
                 FileChannel.MapMode.READ_ONLY,
@@ -122,36 +119,36 @@ internal class YoloV4Detector(
      */
     private fun convertBitmapToByteBuffer(bitmap: Bitmap) {
         val startTime = SystemClock.uptimeMillis()
-        val scaledBitmap = Bitmap.createScaledBitmap(bitmap, inputSize, inputSize, true)
+        val scaledBitmap = Bitmap.createScaledBitmap(bitmap, mInputSize, mInputSize, true)
 
-        scaledBitmap.getPixels(intValues, 0, inputSize, 0, 0, inputSize, inputSize)
+        scaledBitmap.getPixels(intValues, 0, mInputSize, 0, 0, mInputSize, mInputSize)
         scaledBitmap.recycle()
 
-        byteBuffer[0].clear()
+        mByteBuffer[0].clear()
         for (pixel in intValues) {
             val r = (pixel and 0xFF) / 255.0f
             val g = (pixel shr 8 and 0xFF) / 255.0f
             val b = (pixel shr 16 and 0xFF) / 255.0f
 
-            byteBuffer[0].putFloat(r)
-            byteBuffer[0].putFloat(g)
-            byteBuffer[0].putFloat(b)
+            mByteBuffer[0].putFloat(r)
+            mByteBuffer[0].putFloat(g)
+            mByteBuffer[0].putFloat(b)
         }
         Log.v(TAG, "ByteBuffer conversion time : ${SystemClock.uptimeMillis() - startTime} ms")
     }
 
     private fun getDetections(imageWidth: Int, imageHeight: Int): List<Detection> {
-        interpreter.runForMultipleInputsOutputs(byteBuffer, outputMap as Map<Int, Any>)
+        mInterpreter.runForMultipleInputsOutputs(mByteBuffer, mOutputMap as Map<Int, Any>)
 
-        val boundingBoxes = outputMap[0]!![0]
-        val outScore = outputMap[1]!![0]
+        val boundingBoxes = mOutputMap[0]!![0]
+        val outScore = mOutputMap[1]!![0]
 
         return outScore.zip(boundingBoxes)
             .mapIndexedNotNull { index, (classScores, boundingBoxes) ->
-                val bestClassIndex: Int = labels.indices.maxByOrNull { classScores[it] }!!
+                val bestClassIndex: Int = mLabels.indices.maxByOrNull { classScores[it] }!!
                 val bestScore = classScores[bestClassIndex]
 
-                if (bestScore <= minimumScore) {
+                if (bestScore <= mMinimumScore) {
                     return@mapIndexedNotNull null
                 }
 
@@ -167,8 +164,8 @@ internal class YoloV4Detector(
                 )
 
                 return@mapIndexedNotNull Detection(
-                    id = index.toString(),
-                    className = labels[bestClassIndex],
+                    mId = index.toString(),
+                    className = mLabels[bestClassIndex],
                     detectedClass = bestClassIndex,
                     score = bestScore,
                     boundingBox = rectF
@@ -179,7 +176,7 @@ internal class YoloV4Detector(
     private fun nms(detections: List<Detection>): List<Detection> {
         val nmsList: MutableList<Detection> = mutableListOf()
 
-        for (labelIndex in labels.indices) {
+        for (labelIndex in mLabels.indices) {
             val priorityQueue = PriorityQueue<Detection>(50)
             priorityQueue.addAll(detections.filter { it.detectedClass == labelIndex })
 

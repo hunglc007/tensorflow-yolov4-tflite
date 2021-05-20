@@ -19,7 +19,7 @@ class MultiBoxTracker(
     private val mFrameWidth: Int,
     private val mFrameHeight: Int,
     private val mOrientation: Int,
-    private val showScore: Boolean = true
+    private val mShowScore: Boolean = true
 ) {
 
     private companion object {
@@ -120,14 +120,14 @@ class MultiBoxTracker(
                 trackedDetection.boxPaint
             )
 
-            val labelString = if (showScore && trackedDetection.title.isNotBlank()) {
+            val labelString = if (mShowScore && trackedDetection.title.isNotBlank()) {
                 "%s %.2f%%".format(
                     trackedDetection.title,
                     100 * trackedDetection.score
                 )
             } else if (trackedDetection.title.isNotBlank()) {
                 trackedDetection.title
-            } else if (showScore) {
+            } else if (mShowScore) {
                 "%.2f%%".format(100 * trackedDetection.score)
             } else ""
 

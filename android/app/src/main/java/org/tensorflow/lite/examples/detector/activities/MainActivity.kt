@@ -39,20 +39,20 @@ open class MainActivity : AppCompatActivity() {
     private lateinit var mDetector: Detector
     private var mDetectionProcessor: DetectionProcessor? = null
 
-    private lateinit var sourceBitmap: Bitmap
-    private lateinit var cropBitmap: Bitmap
+    private lateinit var mSourceBitmap: Bitmap
+    private lateinit var mCropBitmap: Bitmap
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mBinding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(mBinding.root)
 
-        sourceBitmap = assets.open("kite.jpg").use { inputStream ->
+        mSourceBitmap = assets.open("kite.jpg").use { inputStream ->
             BitmapFactory.decodeStream(inputStream)
         }
 
-        cropBitmap = processBitmap(sourceBitmap, DETECTION_MODEL.inputSize)
-        mBinding.imageView.setImageBitmap(cropBitmap)
+        mCropBitmap = processBitmap(mSourceBitmap, DETECTION_MODEL.inputSize)
+        mBinding.imageView.setImageBitmap(mCropBitmap)
 
         setUpDetector()
         lifecycleScope.launch(Dispatchers.Main) {
@@ -104,7 +104,7 @@ open class MainActivity : AppCompatActivity() {
 
         mBinding.detectButton.setOnClickListener {
             lifecycleScope.launch(Dispatchers.Default) {
-                mDetectionProcessor?.processImage(cropBitmap)
+                mDetectionProcessor?.processImage(mCropBitmap)
             }
         }
     }
