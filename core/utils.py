@@ -23,6 +23,9 @@ def load_weights(model, weights_file, model_name='yolov4', is_tiny=False):
         if model_name == 'yolov3':
             layer_size = 13
             output_pos = [9, 12]
+        elif model_name == 'yolov4-tiny-3l':
+            layer_size = 24
+            output_pos = [17, 20, 23]
         else:
             layer_size = 21
             output_pos = [17, 20]
@@ -81,24 +84,32 @@ def read_class_names(class_file_name):
 
 def load_config(FLAGS):
     if FLAGS.tiny:
-        STRIDES = np.array(cfg.YOLO.STRIDES_TINY)
-        ANCHORS = get_anchors(cfg.YOLO.ANCHORS_TINY, FLAGS.tiny)
-        XYSCALE = cfg.YOLO.XYSCALE_TINY if FLAGS.model == 'yolov4' else [1, 1]
+        if FLAGS.model == 'yolov4-tiny-3l':
+            STRIDES = np.array(cfg.YOLO.STRIDES_TINY_3l)
+            ANCHORS = get_anchors(cfg.YOLO.ANCHORS_TINY_3l, FLAGS.tiny, FLAGS.model)
+            XYSCALE = cfg.YOLO.XYSCALE_TINY_3l
+        else:
+            STRIDES = np.array(cfg.YOLO.STRIDES_TINY)
+            ANCHORS = get_anchors(cfg.YOLO.ANCHORS_TINY, FLAGS.tiny, FLAGS.model)
+            XYSCALE = cfg.YOLO.XYSCALE_TINY if FLAGS.model == 'yolov4' else [1, 1]
     else:
         STRIDES = np.array(cfg.YOLO.STRIDES)
         if FLAGS.model == 'yolov4':
-            ANCHORS = get_anchors(cfg.YOLO.ANCHORS, FLAGS.tiny)
+            ANCHORS = get_anchors(cfg.YOLO.ANCHORS, FLAGS.tiny, FLAGS.model)
         elif FLAGS.model == 'yolov3':
-            ANCHORS = get_anchors(cfg.YOLO.ANCHORS_V3, FLAGS.tiny)
+            ANCHORS = get_anchors(cfg.YOLO.ANCHORS_V3, FLAGS.tiny, FLAGS.model)
         XYSCALE = cfg.YOLO.XYSCALE if FLAGS.model == 'yolov4' else [1, 1, 1]
     NUM_CLASS = len(read_class_names(cfg.YOLO.CLASSES))
 
     return STRIDES, ANCHORS, NUM_CLASS, XYSCALE
 
-def get_anchors(anchors_path, tiny=False):
+def get_anchors(anchors_path, tiny=False, model='yolov4'):
     anchors = np.array(anchors_path)
     if tiny:
-        return anchors.reshape(2, 3, 2)
+        if model == 'yolov4-tiny-3l':
+            return anchors.reshape(3, 3, 2)
+        else:
+            return anchors.reshape(2, 3, 2)
     else:
         return anchors.reshape(3, 3, 2)
 

@@ -28,6 +28,11 @@ python detect.py --weights ./checkpoints/yolov4-416 --size 416 --model yolov4 --
 
 python detect.py --weights ./checkpoints/yolov4-tiny-416 --size 416 --model yolov4 --image ./data/kite.jpg --tiny
 
+# yolov4-tiny-3l
+python save_model.py --weights ./data/yolov4-tiny-3l-608_5000.weights  --output ./checkpoints/yolov4-tiny-3l-608 --input_size 608 --model yolov4-tiny-3l --tiny
+
+# Run yolov4-tiny-3l tensorflow model
+python detect.py --weights ./checkpoints/yolov4-tiny-3l-608 --size 608 --model yolov4 --images ./data/images/kite.jpg --tiny
 ```
 If you want to run yolov3 or yolov3-tiny change ``--model yolov3`` in command
 
@@ -47,6 +52,15 @@ python save_model.py --weights ./data/yolov4.weights --output ./checkpoints/yolo
 
 # yolov4
 python convert_tflite.py --weights ./checkpoints/yolov4-416 --output ./checkpoints/yolov4-416.tflite
+
+# yolov4-tiny
+python save_model.py --weights ./data/yolov4-tiny-3l-608_5000.weights  --output ./checkpoints/yolov4-tiny-3l-608 --input_size 608 --model yolov4-tiny-3l --tiny -framework tflite
+
+# convert custom yolov4-tiny-3l tflite model
+python convert_tflite.py --weights ./checkpoints/yolov4-tiny-3l-608 --output ./checkpoints/yolov4-tiny-3l-608.tflite
+
+# yolov4-tiny-3l quantize float16
+python convert_tflite.py --weights ./checkpoints/yolov4-tiny-3l-608 --output ./checkpoints/yolov4-tiny-3l-fp16.tflite --quantize_mode float16
 
 # yolov4 quantize float16
 python convert_tflite.py --weights ./checkpoints/yolov4-416 --output ./checkpoints/yolov4-416-fp16.tflite --quantize_mode float16

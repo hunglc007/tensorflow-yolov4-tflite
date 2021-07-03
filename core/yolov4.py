@@ -18,6 +18,13 @@ def YOLO(input_layer, NUM_CLASS, model='yolov4', is_tiny=False):
     if is_tiny:
         if model == 'yolov4':
             return YOLOv4_tiny(input_layer, NUM_CLASS)
+        elif model == 'yolov4-tiny-3l':
+            print("#"*100)
+            print("\n"*5)
+            print("loading tiny-3l")
+            print("\n"*5)
+            print("#"*100)
+            return YOLOv4_tiny_3l(input_layer, NUM_CLASS)
         elif model == 'yolov3':
             return YOLOv3_tiny(input_layer, NUM_CLASS)
     else:
@@ -142,6 +149,29 @@ def YOLOv4_tiny(input_layer, NUM_CLASS):
     conv_mbbox = common.convolutional(conv_mobj_branch, (1, 1, 256, 3 * (NUM_CLASS + 5)), activate=False, bn=False)
 
     return [conv_mbbox, conv_lbbox]
+
+def YOLOv4_tiny_3l(input_layer, NUM_CLASS):
+    route_1, route_2, conv = backbone.cspdarknet53_tiny_3l(input_layer)
+
+    conv = common.convolutional(conv, (1, 1, 512, 256))
+
+    conv_lobj_branch = common.convolutional(conv, (3, 3, 256, 512))
+    conv_lbbox = common.convolutional(conv_lobj_branch, (1, 1, 512, 3 * (NUM_CLASS + 5)), activate=False, bn=False)
+
+    conv = common.convolutional(conv, (1, 1, 256, 128))
+    conv = common.upsample(conv)
+    conv = tf.concat([conv, route_1], axis=-1)
+
+    conv = common.convolutional(conv, (3, 3, 384, 256))
+    conv_mbbox = common.convolutional(conv, (1, 1, 256, 3 * (NUM_CLASS + 5)), activate=False, bn=False)
+
+    conv = common.convolutional(conv, (1, 1, 256, 64))
+    conv = common.upsample(conv)
+    conv = tf.concat([conv, route_2], axis=-1)
+
+    conv_sobj_branch = common.convolutional(conv, (3, 3, 192, 128))
+    conv_sbbox = common.convolutional(conv_sobj_branch, (1, 1, 128, 3 * (NUM_CLASS + 5)), activate=False, bn=False)
+    return [conv_sbbox, conv_mbbox, conv_lbbox]
 
 def YOLOv3_tiny(input_layer, NUM_CLASS):
     route_1, conv = backbone.darknet53_tiny(input_layer)
