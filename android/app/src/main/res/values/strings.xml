@@ -5,6 +5,7 @@
 
     <string name="activity_main_button_camera">Camera</string>
     <string name="activity_main_button_detect">Detect</string>
+    <string name="activity_main_example_image_desc">Example image</string>
 
     <string name="bottom_sheet_frame_text">Frame</string>
     <string name="bottom_sheet_crop_text">Crop</string>

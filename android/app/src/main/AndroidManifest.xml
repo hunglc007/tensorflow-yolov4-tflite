@@ -15,12 +15,12 @@
         tools:ignore="LockedOrientationActivity">
 
         <activity
-            android:name="org.tensorflow.lite.examples.detector.activities.DetectorActivity"
+            android:name="org.tensorflow.lite.examples.detector.ui.detector.DetectorActivity"
             android:label="@string/tfe_od_app_name"
             android:screenOrientation="portrait" />
 
         <activity
-            android:name=".activities.MainActivity"
+            android:name=".ui.main.MainActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

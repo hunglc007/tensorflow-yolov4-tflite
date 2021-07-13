@@ -1,6 +1,5 @@
-package org.tensorflow.lite.examples.detector.helpers
+package org.tensorflow.lite.examples.detector.misc
 
-import android.content.Context
 import android.graphics.*
 import android.util.DisplayMetrics
 import android.util.Log
@@ -11,7 +10,7 @@ import org.tensorflow.lite.examples.detector.visualization.TrackingOverlayView
 import kotlin.system.measureTimeMillis
 
 class DetectionProcessor(
-    context: Context,
+    private val displayMetrics: DisplayMetrics,
     private var detector: Detector,
     private var trackingOverlay: TrackingOverlayView
 ) {
@@ -20,8 +19,6 @@ class DetectionProcessor(
 
         const val SHOW_SCORE: Boolean = true
     }
-
-    private val mDisplayMetrics: DisplayMetrics = context.resources.displayMetrics
 
     private lateinit var mTracker: MultiBoxTracker
     private var mCroppedBitmap: Bitmap? = null
@@ -49,11 +46,11 @@ class DetectionProcessor(
             srcHeight = cropSize,
             dstWidth = previewWidth,
             dstHeight = previewHeight,
-            rotation = ((rotation + 3) % 4) * 90
+            rotation = ((rotation + 2) % 4) * 90
         )
 
         mTracker = MultiBoxTracker(
-            mDisplayMetrics,
+            displayMetrics,
             previewWidth,
             previewHeight,
             ((rotation + 1) % 4) * 90,

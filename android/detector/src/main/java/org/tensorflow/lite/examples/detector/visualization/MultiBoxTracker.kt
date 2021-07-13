@@ -9,6 +9,9 @@ import android.util.Pair
 import android.util.TypedValue
 import org.tensorflow.lite.examples.detector.Detector.Detection
 import org.tensorflow.lite.examples.detector.utils.ImageUtils.getTransformationMatrix
+import java.util.concurrent.locks.Lock
+import java.util.concurrent.locks.ReentrantLock
+import kotlin.concurrent.withLock
 import kotlin.math.min
 
 /**
@@ -50,6 +53,7 @@ class MultiBoxTracker(
         )
     )
 
+    private val mLock: Lock = ReentrantLock()
     fun trackResults(detections: List<Detection>) {
         mScreenRectangles.clear()
 
@@ -75,22 +79,24 @@ class MultiBoxTracker(
             Log.v(TAG, "Nothing to track.")
         }
 
-        mTrackedDetections.clear()
-        for (rectangle in detectionToTrack) {
-            val trackedRecognition = TrackedDetection()
-            trackedRecognition.score = rectangle.first
-            trackedRecognition.position = RectF(rectangle.second.boundingBox)
-            trackedRecognition.title = rectangle.second.className
-            trackedRecognition.boxPaint = Paint().also {
-                it.color = COLORS[mTrackedDetections.size % COLORS.size]
-                it.style = Paint.Style.STROKE
-                it.strokeWidth = 10.0f
-                it.strokeCap = Cap.ROUND
-                it.strokeJoin = Join.ROUND
-                it.strokeMiter = 100f
-            }
+        mLock.withLock {
+            mTrackedDetections.clear()
+            for (rectangle in detectionToTrack) {
+                val trackedRecognition = TrackedDetection()
+                trackedRecognition.score = rectangle.first
+                trackedRecognition.position = RectF(rectangle.second.boundingBox)
+                trackedRecognition.title = rectangle.second.className
+                trackedRecognition.boxPaint = Paint().also {
+                    it.color = COLORS[mTrackedDetections.size % COLORS.size]
+                    it.style = Paint.Style.STROKE
+                    it.strokeWidth = 10.0f
+                    it.strokeCap = Cap.ROUND
+                    it.strokeJoin = Join.ROUND
+                    it.strokeMiter = 100f
+                }
 
-            mTrackedDetections.add(trackedRecognition)
+                mTrackedDetections.add(trackedRecognition)
+            }
         }
     }
 
@@ -107,37 +113,42 @@ class MultiBoxTracker(
             180
         )
 
-        for (trackedDetection in mTrackedDetections) {
-            mFrameToCanvasMatrix!!.mapRect(trackedDetection.position)
+        mLock.withLock {
+            for (trackedDetection in mTrackedDetections) {
+                mFrameToCanvasMatrix!!.mapRect(trackedDetection.position)
 
-            val cornerSize =
-                min(trackedDetection.position.width(), trackedDetection.position.height()) / 8.0f
+                val cornerSize =
+                    min(
+                        trackedDetection.position.width(),
+                        trackedDetection.position.height()
+                    ) / 8.0f
 
-            canvas.drawRoundRect(
-                trackedDetection.position,
-                cornerSize,
-                cornerSize,
-                trackedDetection.boxPaint
-            )
-
-            val labelString = if (mShowScore && trackedDetection.title.isNotBlank()) {
-                "%s %.2f%%".format(
-                    trackedDetection.title,
-                    100 * trackedDetection.score
+                canvas.drawRoundRect(
+                    trackedDetection.position,
+                    cornerSize,
+                    cornerSize,
+                    trackedDetection.boxPaint
                 )
-            } else if (trackedDetection.title.isNotBlank()) {
-                trackedDetection.title
-            } else if (mShowScore) {
-                "%.2f%%".format(100 * trackedDetection.score)
-            } else ""
 
-            mBorderedText.drawText(
-                canvas,
-                trackedDetection.position.left + cornerSize,
-                trackedDetection.position.top,
-                labelString,
-                trackedDetection.boxPaint
-            )
+                val labelString = if (mShowScore && trackedDetection.title.isNotBlank()) {
+                    "%s %.2f%%".format(
+                        trackedDetection.title,
+                        100 * trackedDetection.score
+                    )
+                } else if (trackedDetection.title.isNotBlank()) {
+                    trackedDetection.title
+                } else if (mShowScore) {
+                    "%.2f%%".format(100 * trackedDetection.score)
+                } else ""
+
+                mBorderedText.drawText(
+                    canvas,
+                    trackedDetection.position.left + cornerSize,
+                    trackedDetection.position.top,
+                    labelString,
+                    trackedDetection.boxPaint
+                )
+            }
         }
     }
 
