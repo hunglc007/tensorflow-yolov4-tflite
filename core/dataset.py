@@ -332,8 +332,8 @@ class Dataset(object):
                 anchors_xywh[:, 0:2] = (
                     np.floor(bbox_xywh_scaled[i, 0:2]).astype(np.int32) + 0.5
                 )
-                anchors_xywh[:, 2:4] = self.anchors[i]
-
+				anchors_xywh[:, 2:4] = self.anchors[i] / self.strides[i]
+				
                 iou_scale = utils.bbox_iou(
                     bbox_xywh_scaled[i][np.newaxis, :], anchors_xywh
                 )
