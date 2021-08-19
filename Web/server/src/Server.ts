@@ -2,7 +2,7 @@
 import 'module-alias/register';
 
 import path from 'path';
-import express from 'express';
+import express, { Request, Response } from 'express';
 import { createServer } from 'http';
 import { Server, Socket } from 'socket.io';
 import Emitter from 'Models/Emitter';
@@ -39,6 +39,13 @@ io.on('connection', (socket: Socket) => {
 		console.log(`User from ${socket.handshake.address} has disconnected`);
 		emitter.pause();
 	});
+});
+
+// ----------------------------------------------------------------------------------------
+// Configure endpoints
+// ----------------------------------------------------------------------------------------
+app.get('/image', async (req: Request, res: Response) => {
+	res.sendFile(path.join(__dirname, 'result.png'));
 });
 
 // ----------------------------------------------------------------------------------------

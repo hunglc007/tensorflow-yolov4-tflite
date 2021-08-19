@@ -1,5 +1,6 @@
 import { Socket } from 'socket.io';
-
+import fs from 'fs';
+import path from 'path';
 class Emitter {
 	// Attributes
 	interval: NodeJS.Timeout;
@@ -15,9 +16,17 @@ class Emitter {
 	// Emit data
 	private emit() {
 		this.interval = setInterval(() => {
-			this.socket.emit('message', Math.sin(this.i * 0.1) * Math.cos(this.i * 0.05 + 4));
+			const filePath =
+				this.i % 2 === 0 ? path.join(__dirname, '../result.png') : path.join(__dirname, '../result2.jpeg');
+			const imgFile = fs.readFileSync(filePath, { encoding: 'base64' });
+
+			console.time('send');
+			this.socket.emit('image', imgFile);
+
+			// this.socket.emit('message', Math.sin(this.i * 0.1) * Math.cos(this.i * 0.05 + 4));
 			this.i++;
-			console.log(this.i);
+			// console.log(this.i);
+			console.timeEnd('send');
 		}, 100);
 	}
 

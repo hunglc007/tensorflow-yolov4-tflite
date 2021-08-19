@@ -1,4 +1,4 @@
-import { FC, Fragment, useEffect } from 'react';
+import { FC, Fragment, useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
 import { Line } from 'react-chartjs-2';
 import { useRef } from 'react';
@@ -46,26 +46,34 @@ const App: FC = () => {
 	// Chart reference
 	const ref = useRef<ChartConfiguration | any>(null);
 
+	// Image state
+	const [base64Image, setBase64Image] = useState('');
+
 	// Subscribe to socket
 	useEffect(() => {
-		socket.on('message', message => {
-			// Update data
-			const data = ref.current?.data.datasets[0].data;
-			data?.shift();
-			data?.push(message);
-
-			// Update chart
-			ref.current.update();
+		socket.on('image', image => {
+			setBase64Image(image);
 		});
+
+		// socket.on('message', message => {
+		// 	// Update data
+		// 	const data = ref.current?.data.datasets[0].data;
+		// 	data?.shift();
+		// 	data?.push(message);
+
+		// 	// Update chart
+		// 	ref.current.update();
+		// });
 	}, []);
 
 	return (
 		<Fragment>
-			<Wrapper>
+			<img style={{ height: 200, width: 200 }} src={`data:image/png;base64, ${base64Image}`} alt="" />
+			{/* <Wrapper>
 				<Line data={chartData} ref={ref} options={chartOptions} />
 			</Wrapper>
 			<button onClick={() => socket.emit('play')}>Play</button>
-			<button onClick={() => socket.emit('pause')}>Pause</button>
+			<button onClick={() => socket.emit('pause')}>Pause</button> */}
 		</Fragment>
 	);
 };
