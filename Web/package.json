@@ -1,0 +1,26 @@
+{
+	"name": "egh455-web",
+	"version": "1.0.0",
+	"description": "Web interface for EGH455",
+	"repository": "https://github.com/CodenameLiam/egh455-web.git",
+	"author": "Liam Percy",
+	"license": "MIT",
+	"scripts": {
+		"install": "cd client && yarn install && cd ../server && yarn install",
+		"lint": "eslint client/src/**/*.ts[x] --fix && eslint client/src/**/*.ts[x] --fix",
+		"dev-client": "cd client && yarn start",
+		"dev-server": "cd server && yarn dev",
+		"build": "cd client && yarn build && cd ../server && yarn start",
+		"start": "cd server && yarn start"
+	},
+	"devDependencies": {
+		"@typescript-eslint/eslint-plugin": "^4.29.1",
+		"@typescript-eslint/parser": "^4.29.1",
+		"eslint": "^7.32.0",
+		"eslint-config-prettier": "^8.3.0",
+		"eslint-plugin-emotion": "^11.0.0",
+		"eslint-plugin-prettier": "^3.4.0",
+		"eslint-plugin-react": "^7.24.0",
+		"eslint-plugin-react-hooks": "^4.2.0"
+	}
+}
