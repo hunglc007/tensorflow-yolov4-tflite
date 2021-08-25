@@ -4,6 +4,11 @@ import { Line } from 'react-chartjs-2';
 import { useRef } from 'react';
 import { ChartConfiguration, ChartData, ChartOptions } from 'chart.js';
 import styled from '@emotion/styled';
+import Navbar from './Components/Navbar';
+import PhotoSlider from './Components/PhotoSlider';
+import Chart from './Components/Chart';
+import Card from '@material-ui/core/Card';
+import { CardMedia } from '@material-ui/core';
 
 // This is all just testing, will move to other files later
 
@@ -55,26 +60,57 @@ const App: FC = () => {
 			setBase64Image(image);
 		});
 
-		// socket.on('message', message => {
-		// 	// Update data
-		// 	const data = ref.current?.data.datasets[0].data;
-		// 	data?.shift();
-		// 	data?.push(message);
+		socket.on('message', message => {
+		 	// Update data
+		const data = ref.current?.data.datasets[0].data;
+		data?.shift();
+		 	data?.push(message);
 
-		// 	// Update chart
-		// 	ref.current.update();
-		// });
+			// Update chart
+		 	ref.current.update();
+		});
 	}, []);
 
 	return (
-		<Fragment>
-			<img style={{ height: 200, width: 200 }} src={`data:image/png;base64, ${base64Image}`} alt="" />
-			{/* <Wrapper>
+		<div>
+			<Navbar/>
+			<PhotoSlider/>
+			<div style={{display: 'inline-flex', padding: 50}}>
+				<Card>
+					<img style={{ height: 600, width: 800 }} 
+					src='https://i.pinimg.com/originals/62/7b/80/627b80d98af7bbc993bf61115418f71d.jpg' 
+					alt='Drone Stream'
+					/>
+					<div style={{flex: 'inline-flex'}} >
+						<button onClick={() => socket.emit('play')}>Play</button>
+						<button onClick={() => socket.emit('pause')}>Pause</button>
+						<h2>Live Camera Feed</h2>
+					</div>
+					
+				</Card>
+				<Fragment>
+					<img style={{ height: 400, width: 200 }} src={`data:image/png;base64, ${base64Image}`} alt="" />
+						<Wrapper>
+							<Chart/>
+							<div style={{flex: 'inline-flex'}} >
+								<button onClick={() => socket.emit('play')}>Play</button>
+								<button onClick={() => socket.emit('pause')}>Pause</button>
+							</div>	
+						</Wrapper>
+							
+				</Fragment>
+	
+			</div>
+		</div>
+		
+		//<Fragment>
+		//	<img style={{ height: 200, width: 200 }} src={`data:image/png;base64, ${base64Image}`} alt="" />
+			/* <Wrapper>
 				<Line data={chartData} ref={ref} options={chartOptions} />
 			</Wrapper>
 			<button onClick={() => socket.emit('play')}>Play</button>
-			<button onClick={() => socket.emit('pause')}>Pause</button> */}
-		</Fragment>
+			<button onClick={() => socket.emit('pause')}>Pause</button> */
+		//</Fragment>
 	);
 };
 
