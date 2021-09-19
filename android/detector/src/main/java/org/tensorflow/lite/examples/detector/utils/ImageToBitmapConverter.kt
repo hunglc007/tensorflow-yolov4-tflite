@@ -11,29 +11,29 @@ import java.nio.ByteBuffer
  * Utility class for converting [Image] to [Bitmap].
  */
 class ImageToBitmapConverter(context: Context, image: Image) {
-    private val mBitmap: Bitmap =
+    private val bitmap: Bitmap =
         Bitmap.createBitmap(image.width, image.height, Bitmap.Config.ARGB_8888)
 
-    private val mRenderScript: RenderScript = RenderScript.create(context)
+    private val renderScript: RenderScript = RenderScript.create(context)
 
-    private val mScriptYuvToRgb: ScriptIntrinsicYuvToRGB =
-        ScriptIntrinsicYuvToRGB.create(mRenderScript, Element.U8_3(mRenderScript))
+    private val scriptYuvToRgb: ScriptIntrinsicYuvToRGB =
+        ScriptIntrinsicYuvToRGB.create(renderScript, Element.U8_3(renderScript))
 
-    private val mElemType = Type.Builder(mRenderScript, Element.YUV(mRenderScript))
+    private val elemType = Type.Builder(renderScript, Element.YUV(renderScript))
         .setYuvFormat(ImageFormat.YUV_420_888)
         .create()
 
-    private val mInputAllocation: Allocation =
+    private val inputAllocation: Allocation =
         Allocation.createSized(
-            mRenderScript,
-            mElemType.element,
+            renderScript,
+            elemType.element,
             image.planes.sumOf { it.buffer.remaining() }
         )
 
-    private val mOutputAllocation: Allocation = Allocation.createFromBitmap(mRenderScript, mBitmap)
+    private val outputAllocation: Allocation = Allocation.createFromBitmap(renderScript, bitmap)
 
     init {
-        mScriptYuvToRgb.setInput(mInputAllocation)
+        scriptYuvToRgb.setInput(inputAllocation)
     }
 
     /**
@@ -42,11 +42,11 @@ class ImageToBitmapConverter(context: Context, image: Image) {
     fun imageToBitmap(image: Image): Bitmap {
         val yuvBuffer: ByteArray = yuv420ToByteArray(image)
 
-        mInputAllocation.copyFrom(yuvBuffer)
-        mScriptYuvToRgb.forEach(mOutputAllocation)
-        mOutputAllocation.copyTo(mBitmap)
+        inputAllocation.copyFrom(yuvBuffer)
+        scriptYuvToRgb.forEach(outputAllocation)
+        outputAllocation.copyTo(bitmap)
 
-        return mBitmap
+        return bitmap
     }
 
     private fun yuv420ToByteArray(image: Image): ByteArray {

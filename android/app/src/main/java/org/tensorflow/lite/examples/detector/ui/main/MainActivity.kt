@@ -17,20 +17,20 @@ open class MainActivity : AppCompatActivity() {
         const val TAG: String = "MainActivity"
     }
 
-    private val mViewModel by viewModels<MainViewModel> { getViewModelFactory() }
+    private val viewModel by viewModels<MainViewModel> { getViewModelFactory() }
 
-    private lateinit var mBinding: ActivityMainBinding
+    private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mBinding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(mBinding.root)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        mViewModel.setUpBitmaps(assets)
-        mBinding.imageView.setImageBitmap(mViewModel.bitmap)
+        viewModel.setUpBitmaps(assets)
+        binding.imageView.setImageBitmap(viewModel.bitmap)
 
         try {
-            mViewModel.setUpDetector(assets)
+            viewModel.setUpDetector(assets)
         } catch (e: IOException) {
             Log.e(TAG, "Exception initializing detector!")
             Log.e(TAG, e.stackTraceToString())
@@ -41,9 +41,9 @@ open class MainActivity : AppCompatActivity() {
             finish()
         }
 
-        mViewModel.setUpDetectionProcessor(
-            mBinding.imageView,
-            mBinding.trackingOverlay,
+        viewModel.setUpDetectionProcessor(
+            binding.imageView,
+            binding.trackingOverlay,
             resources.displayMetrics
         )
 
@@ -51,13 +51,13 @@ open class MainActivity : AppCompatActivity() {
     }
 
     private fun setUpListeners() {
-        mBinding.cameraButton.setOnClickListener {
+        binding.cameraButton.setOnClickListener {
             val intent = Intent(applicationContext, DetectorActivity::class.java)
             startActivity(intent)
         }
 
-        mBinding.detectButton.setOnClickListener {
-            mViewModel.processImage()
+        binding.detectButton.setOnClickListener {
+            viewModel.processImage()
         }
     }
 }

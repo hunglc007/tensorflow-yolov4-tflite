@@ -12,7 +12,7 @@ class BorderedText(
     exteriorColor: Int = Color.BLACK,
     textSize: Float = 16.0f
 ) {
-    private val mInteriorPaint: Paint = Paint().also {
+    private val interiorPaint: Paint = Paint().also {
         it.textSize = textSize
         it.color = interiorColor
         it.style = Paint.Style.FILL
@@ -20,7 +20,7 @@ class BorderedText(
         it.alpha = 255
     }
 
-    private val mExteriorPaint: Paint = Paint().also {
+    private val exteriorPaint: Paint = Paint().also {
         it.textSize = textSize
         it.color = exteriorColor
         it.style = Paint.Style.FILL_AND_STROKE
@@ -37,13 +37,13 @@ class BorderedText(
         text: String,
         bgPaint: Paint
     ) {
-        val width = mExteriorPaint.measureText(text)
-        val textSize = mExteriorPaint.textSize
+        val width = exteriorPaint.measureText(text)
+        val textSize = exteriorPaint.textSize
         val paint = Paint(bgPaint)
 
         paint.style = Paint.Style.FILL
         paint.alpha = 160
         canvas.drawRect(posX, posY + textSize.toInt(), posX + width.toInt(), posY, paint)
-        canvas.drawText(text, posX, posY + textSize, mInteriorPaint)
+        canvas.drawText(text, posX, posY + textSize, interiorPaint)
     }
 }

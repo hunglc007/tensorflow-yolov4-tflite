@@ -29,21 +29,21 @@ class MainViewModel : ViewModel() {
     lateinit var bitmap: Bitmap
         private set
 
-    private lateinit var mDetector: Detector
-    private var mDetectionProcessor: DetectionProcessor? = null
+    private lateinit var detector: Detector
+    private var detectionProcessor: DetectionProcessor? = null
 
-    private lateinit var mSourceBitmap: Bitmap
+    private lateinit var sourceBitmap: Bitmap
 
     fun setUpBitmaps(assetManager: AssetManager) {
-        mSourceBitmap = assetManager.open("kite.jpg").use { inputStream ->
+        sourceBitmap = assetManager.open("kite.jpg").use { inputStream ->
             BitmapFactory.decodeStream(inputStream)
         }
 
-        bitmap = processBitmap(mSourceBitmap, Constants.DETECTION_MODEL.inputSize)
+        bitmap = processBitmap(sourceBitmap, Constants.DETECTION_MODEL.inputSize)
     }
 
     fun setUpDetector(assetManager: AssetManager) {
-        mDetector = DetectorFactory.createDetector(
+        detector = DetectorFactory.createDetector(
             assetManager,
             Constants.DETECTION_MODEL,
             Constants.MINIMUM_SCORE
@@ -59,23 +59,23 @@ class MainViewModel : ViewModel() {
             delay(200)
         }
 
-        mDetectionProcessor = DetectionProcessor(
+        detectionProcessor = DetectionProcessor(
             displayMetrics = displayMetrics,
-            detector = mDetector,
+            detector = detector,
             trackingOverlay = trackingOverlayView,
         )
 
-        mDetectionProcessor!!.initializeTrackingLayout(
+        detectionProcessor!!.initializeTrackingLayout(
             imageView.width,
             imageView.height,
-            mDetector.getDetectionModel().inputSize,
+            detector.getDetectionModel().inputSize,
             DEVICE_ROTATION
         )
     }
 
 
     fun processImage() = viewModelScope.launch(Dispatchers.Default) {
-        mDetectionProcessor?.processImage(bitmap)
+        detectionProcessor?.processImage(bitmap)
     }
 
     private fun processBitmap(source: Bitmap, size: Int): Bitmap {

@@ -28,31 +28,31 @@ class DetectorActivity : AppCompatActivity() {
         const val CAMERA_ASPECT_RATIO: Int = AspectRatio.RATIO_16_9
     }
 
-    private val mViewModel by viewModels<DetectorViewModel> { getViewModelFactory() }
+    private val viewModel by viewModels<DetectorViewModel> { getViewModelFactory() }
 
-    private lateinit var mBinding: ActivityCameraBinding
+    private lateinit var binding: ActivityCameraBinding
 
-    private lateinit var mCameraProviderFuture: ListenableFuture<ProcessCameraProvider>
+    private lateinit var cameraProviderFuture: ListenableFuture<ProcessCameraProvider>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mBinding = ActivityCameraBinding.inflate(layoutInflater)
-        setContentView(mBinding.root)
+        binding = ActivityCameraBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         setUpBottomSheet()
 
         @SuppressLint("SetTextI18n")
-        mBinding.bottomSheet.cropInfo.text =
+        binding.bottomSheet.cropInfo.text =
             "${Constants.DETECTION_MODEL.inputSize}x${Constants.DETECTION_MODEL.inputSize}"
 
-        mCameraProviderFuture = ProcessCameraProvider.getInstance(baseContext)
+        cameraProviderFuture = ProcessCameraProvider.getInstance(baseContext)
         requestPermissions(arrayOf(Manifest.permission.CAMERA), CAMERA_REQUEST_CODE)
 
-        mViewModel.setUpDetectionProcessor(
+        viewModel.setUpDetectionProcessor(
             assets,
             resources.displayMetrics,
-            mBinding.tovCamera,
-            mBinding.pvCamera
+            binding.tovCamera,
+            binding.pvCamera
         )
     }
 
@@ -65,7 +65,7 @@ class DetectorActivity : AppCompatActivity() {
             CAMERA_REQUEST_CODE -> {
                 val indexOfCameraPermission = permissions.indexOf(Manifest.permission.CAMERA)
                 if (grantResults[indexOfCameraPermission] == PackageManager.PERMISSION_GRANTED) {
-                    mCameraProviderFuture.addListener(
+                    cameraProviderFuture.addListener(
                         this::bindPreview,
                         ContextCompat.getMainExecutor(baseContext)
                     )
@@ -84,13 +84,13 @@ class DetectorActivity : AppCompatActivity() {
     }
 
     private fun setUpBottomSheet() {
-        val sheetBehavior = BottomSheetBehavior.from(mBinding.bottomSheet.root)
+        val sheetBehavior = BottomSheetBehavior.from(binding.bottomSheet.root)
         sheetBehavior.isHideable = false
 
-        val callback = CameraBottomSheetCallback(mBinding.bottomSheet.bottomSheetArrow)
+        val callback = CameraBottomSheetCallback(binding.bottomSheet.bottomSheetArrow)
         sheetBehavior.addBottomSheetCallback(callback)
 
-        val gestureLayout = mBinding.bottomSheet.gestureLayout
+        val gestureLayout = binding.bottomSheet.gestureLayout
         gestureLayout.viewTreeObserver.addOnGlobalLayoutListener {
             val height: Int = gestureLayout.measuredHeight
             sheetBehavior.peekHeight = height
@@ -107,7 +107,7 @@ class DetectorActivity : AppCompatActivity() {
             .requireLensFacing(CameraSelector.LENS_FACING_BACK)
             .build()
 
-        preview.setSurfaceProvider(mBinding.pvCamera.surfaceProvider)
+        preview.setSurfaceProvider(binding.pvCamera.surfaceProvider)
 
         val imageAnalysis = ImageAnalysis.Builder()
             .setTargetAspectRatio(CAMERA_ASPECT_RATIO)
@@ -120,7 +120,7 @@ class DetectorActivity : AppCompatActivity() {
             this::analyzeImage
         )
 
-        val cameraProvider: ProcessCameraProvider = mCameraProviderFuture.get()
+        val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
         cameraProvider.bindToLifecycle(
             this as LifecycleOwner,
             cameraSelector,
@@ -132,19 +132,19 @@ class DetectorActivity : AppCompatActivity() {
     @SuppressLint("UnsafeOptInUsageError")
     private fun analyzeImage(image: ImageProxy) {
         @SuppressLint("SetTextI18n")
-        mBinding.bottomSheet.frameInfo.text = "${image.width}x${image.height}"
+        binding.bottomSheet.frameInfo.text = "${image.width}x${image.height}"
 
         lifecycleScope.launch(Dispatchers.Default) {
             image.use {
-                if (!mViewModel.imageConvertedIsSetUpped()) {
-                    mViewModel.setUpImageConverter(baseContext, image)
+                if (!viewModel.imageConvertedIsSetUpped()) {
+                    viewModel.setUpImageConverter(baseContext, image)
                 }
 
-                val detectionTime = mViewModel.detectObjectsOnImage(image)
+                val detectionTime = viewModel.detectObjectsOnImage(image)
 
                 withContext(Dispatchers.Main) {
                     @SuppressLint("SetTextI18n")
-                    mBinding.bottomSheet.timeInfo.text = "$detectionTime ms"
+                    binding.bottomSheet.timeInfo.text = "$detectionTime ms"
                 }
             }
         }

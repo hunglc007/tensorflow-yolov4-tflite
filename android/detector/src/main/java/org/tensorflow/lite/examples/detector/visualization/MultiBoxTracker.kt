@@ -19,10 +19,10 @@ import kotlin.math.min
  */
 class MultiBoxTracker(
     displayMetrics: DisplayMetrics,
-    private val mFrameWidth: Int,
-    private val mFrameHeight: Int,
-    private val mOrientation: Int,
-    private val mShowScore: Boolean = true
+    private val frameWidth: Int,
+    private val frameHeight: Int,
+    private val orientation: Int,
+    private val showScore: Boolean = true
 ) {
 
     private companion object {
@@ -40,12 +40,12 @@ class MultiBoxTracker(
         )
     }
 
-    private val mScreenRectangles: MutableList<Pair<Float, RectF>> = mutableListOf()
-    private val mTrackedDetections: MutableList<TrackedDetection> = mutableListOf()
+    private val screenRectangles: MutableList<Pair<Float, RectF>> = mutableListOf()
+    private val trackedDetections: MutableList<TrackedDetection> = mutableListOf()
 
-    private var mFrameToCanvasMatrix: Matrix? = null
+    private var frameToCanvasMatrix: Matrix? = null
 
-    private val mBorderedText: BorderedText = BorderedText(
+    private val borderedText: BorderedText = BorderedText(
         textSize = TypedValue.applyDimension(
             TypedValue.COMPLEX_UNIT_DIP,
             TEXT_SIZE_DIP,
@@ -53,11 +53,12 @@ class MultiBoxTracker(
         )
     )
 
-    private val mLock: Lock = ReentrantLock()
-    fun trackResults(detections: List<Detection>) {
-        mScreenRectangles.clear()
+    private val lock: Lock = ReentrantLock()
 
-        val rgbFrameToScreen = Matrix(mFrameToCanvasMatrix)
+    fun trackResults(detections: List<Detection>) {
+        screenRectangles.clear()
+
+        val rgbFrameToScreen = Matrix(frameToCanvasMatrix)
 
         val detectionToTrack: List<Pair<Float, Detection>> = detections.mapNotNull { detection ->
             val detectionFrameRect: RectF = detection.boundingBox
@@ -67,7 +68,7 @@ class MultiBoxTracker(
                 TAG,
                 "Result! Frame: ${detection.boundingBox} mapped to screen:$detectionScreenRect"
             )
-            mScreenRectangles.add(Pair(detection.score, detectionScreenRect))
+            screenRectangles.add(Pair(detection.score, detectionScreenRect))
             if (detectionFrameRect.width() < MIN_SIZE || detectionFrameRect.height() < MIN_SIZE) {
                 Log.w(TAG, "Degenerate rectangle : $detectionFrameRect")
                 return@mapNotNull null
@@ -79,15 +80,15 @@ class MultiBoxTracker(
             Log.v(TAG, "Nothing to track.")
         }
 
-        mLock.withLock {
-            mTrackedDetections.clear()
+        lock.withLock {
+            trackedDetections.clear()
             for (rectangle in detectionToTrack) {
                 val trackedRecognition = TrackedDetection()
                 trackedRecognition.score = rectangle.first
                 trackedRecognition.position = RectF(rectangle.second.boundingBox)
                 trackedRecognition.title = rectangle.second.className
                 trackedRecognition.boxPaint = Paint().also {
-                    it.color = COLORS[mTrackedDetections.size % COLORS.size]
+                    it.color = COLORS[trackedDetections.size % COLORS.size]
                     it.style = Paint.Style.STROKE
                     it.strokeWidth = 10.0f
                     it.strokeCap = Cap.ROUND
@@ -95,27 +96,27 @@ class MultiBoxTracker(
                     it.strokeMiter = 100f
                 }
 
-                mTrackedDetections.add(trackedRecognition)
+                trackedDetections.add(trackedRecognition)
             }
         }
     }
 
     fun draw(canvas: Canvas) {
-        val rotated = mOrientation % 180 != 0
+        val rotated = orientation % 180 != 0
 
-        val targetWidth = if (rotated) mFrameHeight else mFrameWidth
-        val targetHeight = if (rotated) mFrameWidth else mFrameHeight
-        mFrameToCanvasMatrix = getTransformationMatrix(
-            mFrameWidth,
-            mFrameHeight,
+        val targetWidth = if (rotated) frameHeight else frameWidth
+        val targetHeight = if (rotated) frameWidth else frameHeight
+        frameToCanvasMatrix = getTransformationMatrix(
+            frameWidth,
+            frameHeight,
             targetWidth,
             targetHeight,
             180
         )
 
-        mLock.withLock {
-            for (trackedDetection in mTrackedDetections) {
-                mFrameToCanvasMatrix!!.mapRect(trackedDetection.position)
+        lock.withLock {
+            for (trackedDetection in trackedDetections) {
+                frameToCanvasMatrix!!.mapRect(trackedDetection.position)
 
                 val cornerSize =
                     min(
@@ -130,18 +131,18 @@ class MultiBoxTracker(
                     trackedDetection.boxPaint
                 )
 
-                val labelString = if (mShowScore && trackedDetection.title.isNotBlank()) {
+                val labelString = if (showScore && trackedDetection.title.isNotBlank()) {
                     "%s %.2f%%".format(
                         trackedDetection.title,
                         100 * trackedDetection.score
                     )
                 } else if (trackedDetection.title.isNotBlank()) {
                     trackedDetection.title
-                } else if (mShowScore) {
+                } else if (showScore) {
                     "%.2f%%".format(100 * trackedDetection.score)
                 } else ""
 
-                mBorderedText.drawText(
+                borderedText.drawText(
                     canvas,
                     trackedDetection.position.left + cornerSize,
                     trackedDetection.position.top,

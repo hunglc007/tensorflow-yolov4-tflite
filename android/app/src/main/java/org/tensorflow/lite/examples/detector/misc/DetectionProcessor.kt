@@ -20,11 +20,11 @@ class DetectionProcessor(
         const val SHOW_SCORE: Boolean = true
     }
 
-    private lateinit var mTracker: MultiBoxTracker
-    private var mCroppedBitmap: Bitmap? = null
-    private var mCropToFrameTransform: Matrix? = null
+    private lateinit var tracker: MultiBoxTracker
+    private var croppedBitmap: Bitmap? = null
+    private var cropToFrameTransform: Matrix? = null
 
-    private val mPaint: Paint = Paint().also {
+    private val paint: Paint = Paint().also {
         it.color = Color.RED
         it.style = Paint.Style.STROKE
         it.strokeWidth = 2.0f
@@ -39,9 +39,9 @@ class DetectionProcessor(
         Log.i(TAG, "Camera orientation relative to screen canvas : $rotation")
         Log.i(TAG, "Initializing with size ${previewWidth}x${previewHeight}")
 
-        mCroppedBitmap = Bitmap.createBitmap(cropSize, cropSize, Bitmap.Config.ARGB_8888)
+        croppedBitmap = Bitmap.createBitmap(cropSize, cropSize, Bitmap.Config.ARGB_8888)
 
-        mCropToFrameTransform = ImageUtils.getTransformationMatrix(
+        cropToFrameTransform = ImageUtils.getTransformationMatrix(
             srcWidth = cropSize,
             srcHeight = cropSize,
             dstWidth = previewWidth,
@@ -49,14 +49,14 @@ class DetectionProcessor(
             rotation = ((rotation + 2) % 4) * 90
         )
 
-        mTracker = MultiBoxTracker(
+        tracker = MultiBoxTracker(
             displayMetrics,
             previewWidth,
             previewHeight,
             ((rotation + 1) % 4) * 90,
-            mShowScore = SHOW_SCORE
+            showScore = SHOW_SCORE
         )
-        trackingOverlay.setTracker(mTracker)
+        trackingOverlay.setTracker(tracker)
     }
 
     fun processImage(bitmap: Bitmap): Long {
@@ -67,16 +67,16 @@ class DetectionProcessor(
         }
 
         Log.v(TAG, "Recognized objects : ${detections.size}")
-        val cropCopyBitmap: Bitmap = Bitmap.createBitmap(mCroppedBitmap!!)
+        val cropCopyBitmap: Bitmap = Bitmap.createBitmap(croppedBitmap!!)
         val canvas = Canvas(cropCopyBitmap)
 
         for (detection in detections) {
             val boundingBox: RectF = detection.boundingBox
-            canvas.drawRect(boundingBox, mPaint)
-            mCropToFrameTransform!!.mapRect(boundingBox)
+            canvas.drawRect(boundingBox, paint)
+            cropToFrameTransform!!.mapRect(boundingBox)
         }
 
-        mTracker.trackResults(detections)
+        tracker.trackResults(detections)
         trackingOverlay.postInvalidate()
 
         return detectionTime

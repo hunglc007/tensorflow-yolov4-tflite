@@ -34,9 +34,9 @@ class DetectorViewModel : ViewModel() {
         const val CAMERA_ROTATION: Int = Surface.ROTATION_0
     }
 
-    private var mDetectionProcessor: DetectionProcessor? = null
+    private var detectionProcessor: DetectionProcessor? = null
 
-    private var mImageConverter: ImageToBitmapConverter? = null
+    private var imageConverter: ImageToBitmapConverter? = null
 
 
     fun setUpDetectionProcessor(
@@ -51,7 +51,7 @@ class DetectorViewModel : ViewModel() {
             Constants.MINIMUM_SCORE
         )
 
-        mDetectionProcessor = DetectionProcessor(
+        detectionProcessor = DetectionProcessor(
             displayMetrics = displayMetrics,
             detector = detector,
             trackingOverlay = trackingOverlayView,
@@ -62,7 +62,7 @@ class DetectorViewModel : ViewModel() {
         }
 
         val surfaceView: View = previewView.getChildAt(0)
-        mDetectionProcessor!!.initializeTrackingLayout(
+        detectionProcessor!!.initializeTrackingLayout(
             previewWidth = surfaceView.width,
             previewHeight = surfaceView.height,
             cropSize = detector.getDetectionModel().inputSize,
@@ -72,20 +72,20 @@ class DetectorViewModel : ViewModel() {
 
 
     fun imageConvertedIsSetUpped(): Boolean {
-        return mImageConverter != null
+        return imageConverter != null
     }
 
     @SuppressLint("UnsafeOptInUsageError")
     fun setUpImageConverter(context: Context, image: ImageProxy) {
         Log.v(TAG, "Image size : ${image.width}x${image.height}")
-        mImageConverter = ImageToBitmapConverter(context, image.image!!)
+        imageConverter = ImageToBitmapConverter(context, image.image!!)
     }
 
     @SuppressLint("UnsafeOptInUsageError")
     fun detectObjectsOnImage(image: ImageProxy): Long {
         var bitmap: Bitmap
         val conversionTime = measureTimeMillis {
-            bitmap = mImageConverter!!.imageToBitmap(image.image!!)
+            bitmap = imageConverter!!.imageToBitmap(image.image!!)
             if(CAMERA_ROTATION % 2 == 0){
                 bitmap = rotateImage(bitmap, 90.0f)
             }
@@ -93,7 +93,7 @@ class DetectorViewModel : ViewModel() {
         Log.v(TAG, "Conversion time : $conversionTime ms")
 
 
-        val detectionTime: Long = mDetectionProcessor!!.processImage(bitmap)
+        val detectionTime: Long = detectionProcessor!!.processImage(bitmap)
         Log.v(TAG, "Detection time : $detectionTime ms")
 
         val processingTime = conversionTime + detectionTime
