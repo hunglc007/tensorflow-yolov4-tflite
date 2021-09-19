@@ -20,6 +20,7 @@ import org.tensorflow.lite.examples.detector.DetectorFactory
 import org.tensorflow.lite.examples.detector.misc.Constants
 import org.tensorflow.lite.examples.detector.misc.DetectionProcessor
 import org.tensorflow.lite.examples.detector.utils.ImageToBitmapConverter
+import org.tensorflow.lite.examples.detector.utils.RenderScriptImageToBitmapConverter
 import org.tensorflow.lite.examples.detector.visualization.TrackingOverlayView
 import kotlin.system.measureTimeMillis
 
@@ -78,7 +79,7 @@ class DetectorViewModel : ViewModel() {
     @SuppressLint("UnsafeOptInUsageError")
     fun setUpImageConverter(context: Context, image: ImageProxy) {
         Log.v(TAG, "Image size : ${image.width}x${image.height}")
-        imageConverter = ImageToBitmapConverter(context, image.image!!)
+        imageConverter = RenderScriptImageToBitmapConverter(context, image.image!!)
     }
 
     @SuppressLint("UnsafeOptInUsageError")
@@ -86,7 +87,7 @@ class DetectorViewModel : ViewModel() {
         var bitmap: Bitmap
         val conversionTime = measureTimeMillis {
             bitmap = imageConverter!!.imageToBitmap(image.image!!)
-            if(CAMERA_ROTATION % 2 == 0){
+            if (CAMERA_ROTATION % 2 == 0) {
                 bitmap = rotateImage(bitmap, 90.0f)
             }
         }

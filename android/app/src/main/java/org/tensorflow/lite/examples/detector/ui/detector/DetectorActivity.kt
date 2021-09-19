@@ -4,6 +4,7 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Size
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -131,13 +132,10 @@ class DetectorActivity : AppCompatActivity() {
 
     @SuppressLint("UnsafeOptInUsageError")
     private fun analyzeImage(image: ImageProxy) {
-        @SuppressLint("SetTextI18n")
-        binding.bottomSheet.frameInfo.text = "${image.width}x${image.height}"
-
         lifecycleScope.launch(Dispatchers.Default) {
             image.use {
                 if (!viewModel.imageConvertedIsSetUpped()) {
-                    viewModel.setUpImageConverter(baseContext, image)
+                    setUpImageConverter(image)
                 }
 
                 val detectionTime = viewModel.detectObjectsOnImage(image)
@@ -148,5 +146,13 @@ class DetectorActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    private suspend fun setUpImageConverter(image: ImageProxy){
+        withContext(Dispatchers.Main){
+            @SuppressLint("SetTextI18n")
+            binding.bottomSheet.frameInfo.text = "${image.width}x${image.height}"
+        }
+        viewModel.setUpImageConverter(baseContext, image)
     }
 }
