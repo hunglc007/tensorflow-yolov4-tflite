@@ -24,7 +24,7 @@ flags.DEFINE_string('video', './data/road.mp4', 'path to input video')
 flags.DEFINE_float('iou', 0.45, 'iou threshold')
 flags.DEFINE_float('score', 0.25, 'score threshold')
 flags.DEFINE_string('output', './data/roadnew.mp4', 'path to output video')
-flags.DEFINE_string('output_format', 'XVID', 'codec used in VideoWriter when saving video to file')
+flags.DEFINE_string('output_format', 'mp4v', 'codec used in VideoWriter when saving video to file')
 flags.DEFINE_boolean('dis_cv2_window', False, 'disable cv2 window during the process') # this is good for the .ipynb
 
 def main(_argv):
@@ -112,7 +112,7 @@ def main(_argv):
         result = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
         if not FLAGS.dis_cv2_window:
             cv2.namedWindow("result", cv2.WINDOW_AUTOSIZE)
-            cv2.imshow("result", result)
+            # cv2.imshow("result", result)
             if cv2.waitKey(1) & 0xFF == ord('q'): break
 
         if FLAGS.output:
