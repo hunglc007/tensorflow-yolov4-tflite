@@ -13,6 +13,7 @@ import cv2
 import numpy as np
 from tensorflow.compat.v1 import ConfigProto
 from tensorflow.compat.v1 import InteractiveSession
+import os, re, os.path
 
 flags.DEFINE_string('framework', 'tf', '(tf, tflite, trt')
 flags.DEFINE_string('weights', './checkpoints/yolov4-416',
@@ -112,6 +113,11 @@ def main(_argv):
         result = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
         if not FLAGS.dis_cv2_window:
             # cv2.namedWindow("result", cv2.WINDOW_AUTOSIZE)
+            
+            mypath = "./output/"
+            for root, dirs, files in os.walk(mypath):
+                for file in files:
+                    os.remove(os.path.join(root, file))
             cv2.imwrite(f"./output/{time.time()}.jpg",result)
             # cv2.imshow("result", result)
             if cv2.waitKey(1) & 0xFF == ord('q'): break
