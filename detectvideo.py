@@ -59,6 +59,12 @@ def main(_argv):
         out = cv2.VideoWriter(FLAGS.output, codec, fps, (width, height))
 
     frame_id = 0
+
+    mypath = "./output/"
+    for root, dirs, files in os.walk(mypath):
+        for file in files:
+            os.remove(os.path.join(root, file))
+            
     while True:
         return_value, frame = vid.read()
         if return_value:
@@ -114,10 +120,7 @@ def main(_argv):
         if not FLAGS.dis_cv2_window:
             # cv2.namedWindow("result", cv2.WINDOW_AUTOSIZE)
             
-            mypath = "./output/"
-            for root, dirs, files in os.walk(mypath):
-                for file in files:
-                    os.remove(os.path.join(root, file))
+
             cv2.imwrite(f"./output/{time.time()}.jpg",result)
             # cv2.imshow("result", result)
             if cv2.waitKey(1) & 0xFF == ord('q'): break
