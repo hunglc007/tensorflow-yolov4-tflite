@@ -32,6 +32,12 @@ android {
     }
 }
 
+repositories {
+    maven {
+        url "https://jitpack.io"
+    }
+}
+
 // import DownloadModels task
 project.ext.ASSET_DIR = projectDir.toString() + '/src/main/assets'
 project.ext.TMP_DIR = project.buildDir.toString() + '/downloads'
@@ -43,6 +49,9 @@ project.ext.TMP_DIR = project.buildDir.toString() + '/downloads'
 apply from: 'download_model.gradle'
 
 dependencies {
+    implementation 'org.tensorflow:tensorflow-lite:2.3.0'
+    implementation 'org.tensorflow:tensorflow-lite-gpu:2.3.0'
+    compile 'com.github.inaka:galgo:v1.0.2'
     implementation fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.coordinatorlayout:coordinatorlayout:1.1.0'
