@@ -96,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
             dialog.show();
         } catch (IOException e) {
             // Handle Exception
-        }
+        }.
 
 //        GalgoOptions options = new GalgoOptions.Builder()
 //                .numberOfLines(15)
