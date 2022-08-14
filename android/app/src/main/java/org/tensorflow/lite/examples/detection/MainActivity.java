@@ -2,7 +2,9 @@ package org.tensorflow.lite.examples.detection;
 
 import static android.speech.tts.TextToSpeech.ERROR;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
@@ -22,13 +24,20 @@ import android.speech.tts.TextToSpeech;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
+import com.inaka.galgo.Galgo;
+import com.inaka.galgo.GalgoOptions;
 
 import org.tensorflow.lite.examples.detection.customview.OverlayView;
 import org.tensorflow.lite.examples.detection.database.DBHelper;
@@ -44,6 +53,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import android.app.Activity;
+import android.os.Bundle;
+import android.widget.TextView;
+
 public class MainActivity extends AppCompatActivity {
 
     private TextToSpeech tts;
@@ -53,6 +69,64 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // 로그 출력
+        try {
+            Process process = Runtime.getRuntime().exec("logcat -d");
+            BufferedReader bufferedReader = new BufferedReader(
+                    new InputStreamReader(process.getInputStream()));
+
+            StringBuilder log=new StringBuilder();
+            String line = "";
+            while ((line = bufferedReader.readLine()) != null) {
+                log.append(line);
+            }
+            TextView logView = findViewById(R.id.logView);
+            logView.setText(log.toString());
+            AlertDialog dialog = new AlertDialog.Builder(MainActivity.this)
+                    .setTitle("Log")
+                    .setMessage(log.toString())
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.dismiss();
+
+                        }
+                    }).create();
+            dialog.show();
+        } catch (IOException e) {
+            // Handle Exception
+        }
+//        GalgoOptions options = new GalgoOptions.Builder()
+//                .numberOfLines(15)
+//                .backgroundColor(Color.parseColor("#D9d6d6d6"))
+//                .textColor(Color.BLACK)
+//                .textSize(15)
+//                .build();
+//        Galgo.enable(this, options);
+//        Galgo.log("I am a log message");
+
+//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+//        setSupportActionBar(toolbar);
+//
+//        OnScreenLog log = new OnScreenLog(this, R.id.content_1);
+//        log.log("Started log on Activity 1");
+//
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+//                startActivity(intent);
+//                log.log("Starting Activity 2");
+//                Snackbar.make(view, "Starting Activity 2", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
+                //showAlertDialog(logView);
+
+
+            }
+        });
 
         // 데이터베이스 연결
         DBHelper helper;
@@ -140,9 +214,23 @@ public class MainActivity extends AppCompatActivity {
 
         this.imageView.setImageBitmap(cropBitmap);
 
-    initBox();
-}
+        initBox();
+    }
 
+    //
+    private void showAlertDialog(String message){
+//        AlertDialog dialog = new AlertDialog.Builder(MainActivity.this)
+//                .setTitle("Log")
+//                .setMessage(logView)
+//                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialogInterface, int i) {
+//                        dialogInterface.dismiss();
+//
+//                    }
+//                }).create();
+//        dialog.show();
+    }
     // 특정시간마다 업데이트 해주기 위한 리스너
     private class GPSListener implements LocationListener {
 
@@ -154,6 +242,21 @@ public class MainActivity extends AppCompatActivity {
             String msg = "Latitude : " + latitude + "\nLongitude : " + longitude;
 
             textView.setText(msg);
+        }
+
+        @Override
+        public void onStatusChanged(String s, int i, Bundle bundle) {
+
+        }
+
+        @Override
+        public void onProviderEnabled(String s) {
+
+        }
+
+        @Override
+        public void onProviderDisabled(String s) {
+
         }
 
     }
@@ -253,6 +356,12 @@ public class MainActivity extends AppCompatActivity {
 //        trackingOverlay.postInvalidate();
         imageView.setImageBitmap(bitmap);
     }
-}
 
+    public void onDestroy() {
+        super.onDestroy();
+
+        // always call disable to avoid memory leaks
+        Galgo.disable(this);
+    }
+}
 
