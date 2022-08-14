@@ -97,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
         } catch (IOException e) {
             // Handle Exception
         }
-        ,
+
 //        GalgoOptions options = new GalgoOptions.Builder()
 //                .numberOfLines(15)
 //                .backgroundColor(Color.parseColor("#D9d6d6d6"))
