@@ -1,0 +1,8 @@
+gate
+signBoard
+warningBlock
+guideBlock
+restroom
+stationInfo
+staircase
+person

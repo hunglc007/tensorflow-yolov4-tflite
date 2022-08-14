@@ -70,61 +70,37 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // 로그 출력
-        try {
-            Process process = Runtime.getRuntime().exec("logcat -d");
-            BufferedReader bufferedReader = new BufferedReader(
-                    new InputStreamReader(process.getInputStream()));
-
-            StringBuilder log=new StringBuilder();
-            String line = "";
-            while ((line = bufferedReader.readLine()) != null) {
-                log.append(line);
-            }
-            TextView logView = findViewById(R.id.logView);
-            logView.setText(log.toString());
-            AlertDialog dialog = new AlertDialog.Builder(MainActivity.this)
-                    .setTitle("Log")
-                    .setMessage(log.toString())
-                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            dialogInterface.dismiss();
-
-                        }
-                    }).create();
-            dialog.show();
-        } catch (IOException e) {
-            // Handle Exception
-        }.
-
-//        GalgoOptions options = new GalgoOptions.Builder()
-//                .numberOfLines(15)
-//                .backgroundColor(Color.parseColor("#D9d6d6d6"))
-//                .textColor(Color.BLACK)
-//                .textSize(15)
-//                .build();
-//        Galgo.enable(this, options);
-//        Galgo.log("I am a log message");
-
-//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
-//
-//        OnScreenLog log = new OnScreenLog(this, R.id.content_1);
-//        log.log("Started log on Activity 1");
-//
+        // 버튼 클릭 시 로그 출력
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-//                startActivity(intent);
-//                log.log("Starting Activity 2");
-//                Snackbar.make(view, "Starting Activity 2", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-                //showAlertDialog(logView);
+                try {
+                    Process process = Runtime.getRuntime().exec("logcat -d");
+                    BufferedReader bufferedReader = new BufferedReader(
+                            new InputStreamReader(process.getInputStream()));
 
+                    StringBuilder log=new StringBuilder();
+                    String line = "";
+                    while ((line = bufferedReader.readLine()) != null) {
+                        log.append(line);
+                    }
+                    TextView logView = findViewById(R.id.logView);
+                    logView.setText(log.toString());
+                    AlertDialog dialog = new AlertDialog.Builder(MainActivity.this)
+                            .setTitle("Log")
+                            .setMessage(log.toString())
+                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    dialogInterface.dismiss();
+                                }
+                            }).create();
+                    dialog.show();
+                } catch (IOException e) {
+                    // Handle Exception
+                }
 
             }
         });

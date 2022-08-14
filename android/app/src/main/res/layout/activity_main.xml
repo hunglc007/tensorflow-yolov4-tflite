@@ -95,7 +95,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end|bottom"
-        android:src="@mipmap/ic_launcher"
+        android:layout_margin="16dp"
         android:contentDescription="@string/app_name"
-        android:layout_margin="16dp" />
+        android:src="@mipmap/ic_launcher"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="288dp"
+        tools:layout_editor_absoluteY="360dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>
