@@ -27,15 +27,23 @@ import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.media.ImageReader.OnImageAvailableListener;
 import android.os.SystemClock;
+import android.util.Base64;
 import android.util.Log;
 import android.util.Size;
 import android.util.TypedValue;
 import android.widget.Toast;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONObject;
 import org.tensorflow.lite.examples.detection.customview.OverlayView;
 import org.tensorflow.lite.examples.detection.customview.OverlayView.DrawCallback;
 import org.tensorflow.lite.examples.detection.env.BorderedText;
@@ -44,6 +52,9 @@ import org.tensorflow.lite.examples.detection.env.Logger;
 import org.tensorflow.lite.examples.detection.tflite.Classifier;
 import org.tensorflow.lite.examples.detection.tflite.YoloV4Classifier;
 import org.tensorflow.lite.examples.detection.tracking.MultiBoxTracker;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
 
 /**
  * An activity that uses a TensorFlowMultiBoxDetector and ObjectTracker to detect and then track
@@ -54,9 +65,10 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
 
     private static final int TF_OD_API_INPUT_SIZE = 416;
     private static final boolean TF_OD_API_IS_QUANTIZED = false;
-    private static final String TF_OD_API_MODEL_FILE = "yolov4-416-416.tflite";
+    //private static final String TF_OD_API_MODEL_FILE = "yolov4-tiny-416.tflite";
+    private static final String TF_OD_API_MODEL_FILE = "yolov4-416-fp32.tflite";
 
-    private static final String TF_OD_API_LABELS_FILE = "file:///android_asset/names.txt";
+    private static final String TF_OD_API_LABELS_FILE = "file:///android_asset/coco.txt";
 
     private static final DetectorMode MODE = DetectorMode.TF_OD_API;
     private static final float MINIMUM_CONFIDENCE_TF_OD_API = 0.5f;
@@ -208,9 +220,144 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
                         final List<Classifier.Recognition> mappedRecognitions =
                                 new LinkedList<Classifier.Recognition>();
 
+                        /*탐지되지 않은 경우에도 사진 넘기기*/
+                        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                        croppedBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                        byte[] byteArray = stream.toByteArray();
+                        String signatureStr = Base64.encodeToString(byteArray, Base64.NO_WRAP);
+                        LOGGER.i("Image to base64 : "+ signatureStr);
+
+                        InputStream inputStream = null;
+                        String resultBase64 = "";
+                        try {
+                            // 1. create HttpClient
+                            HttpClient httpclient = new DefaultHttpClient();
+                            // 2. make POST request to the given URL
+                            HttpPost httpPost = new HttpPost("http://3.37.123.193:8000/ocr");
+                            String json = "";
+
+                            // 3. build jsonObject
+                            JSONObject jsonObject = new JSONObject();
+                            jsonObject.accumulate("img", signatureStr);
+
+                            // 4. convert JSONObject to JSON to String
+                            json = jsonObject.toString();
+
+                            // 5. set json to StringEntity
+                            StringEntity se = new StringEntity(json);
+
+                            // 6. set httpPost Entity
+                            httpPost.setEntity(se);
+
+                            // 7. Set some headers to inform server about the type of the content
+                            httpPost.setHeader("Accept", "application/json");
+                            httpPost.setHeader("Content-type", "application/json");
+
+                            // 8. Execute POST request to the given URL
+                            HttpResponse httpResponse = httpclient.execute(httpPost);
+
+                            // 9. receive response as inputStream
+                            inputStream = httpResponse.getEntity().getContent();
+
+                            // 10. convert inputstream to string
+                            BufferedReader bufferedReader = new BufferedReader( new InputStreamReader(inputStream));
+                            String line = "";
+                            String resultStr = "";
+                            if(inputStream != null) {
+                                while ((line = bufferedReader.readLine()) != null)
+                                    resultStr += line;
+                                inputStream.close();
+                            }
+                            else
+                                resultStr = "Did not work!";
+
+                        } catch (Exception e) {
+                            Log.d("InputStream", e.getLocalizedMessage());
+                        }
+
                         for (final Classifier.Recognition result : results) {
                             final RectF location = result.getLocation();
                             if (location != null && result.getConfidence() >= minimumConfidence) {
+//                                // 위치 출력
+//                                LOGGER.i("Result - " + result + "Where : "+ location);
+//
+//                                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+//                                croppedBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+//                                byte[] byteArray = stream.toByteArray();
+//                                String signatureStr = Base64.encodeToString(byteArray, Base64.NO_WRAP);
+//                                LOGGER.i("Image to base64 : "+ signatureStr);
+//
+//                                InputStream inputStream = null;
+//                                String resultBase64 = "";
+//                                try {
+//                                    // 1. create HttpClient
+//                                    HttpClient httpclient = new DefaultHttpClient();
+//                                    // 2. make POST request to the given URL
+//                                    HttpPost httpPost = new HttpPost("http://3.37.123.193:8000/ocr");
+//                                    String json = "";
+//
+//                                    // 3. build jsonObject
+//                                    JSONObject jsonObject = new JSONObject();
+//                                    jsonObject.accumulate("img", signatureStr);
+//
+//                                    // 4. convert JSONObject to JSON to String
+//                                    json = jsonObject.toString();
+//                                    // ** Alternative way to convert Person object to JSON string usin Jackson Lib
+//                                    // ObjectMapper mapper = new ObjectMapper();
+//                                    // json = mapper.writeValueAsString(person);
+//
+//                                    // 5. set json to StringEntity
+//                                    StringEntity se = new StringEntity(json);
+//
+//                                    // 6. set httpPost Entity
+//                                    httpPost.setEntity(se);
+//
+//                                    // 7. Set some headers to inform server about the type of the content
+//                                    httpPost.setHeader("Accept", "application/json");
+//                                    httpPost.setHeader("Content-type", "application/json");
+//
+//                                    // 8. Execute POST request to the given URL
+//                                    HttpResponse httpResponse = httpclient.execute(httpPost);
+//
+//                                    // 9. receive response as inputStream
+//                                    inputStream = httpResponse.getEntity().getContent();
+//
+//                                    // 10. convert inputstream to string
+//                                    BufferedReader bufferedReader = new BufferedReader( new InputStreamReader(inputStream));
+//                                    String line = "";
+//                                    String resultStr = "";
+//                                    if(inputStream != null) {
+//
+//                                        while ((line = bufferedReader.readLine()) != null)
+//                                            resultStr += line;
+//                                        inputStream.close();
+//                                    }
+//                                    else
+//                                        resultStr = "Did not work!";
+//
+//                                } catch (Exception e) {
+//                                    Log.d("InputStream", e.getLocalizedMessage());
+//                                }
+
+                                /*서버에 bitmap 이미지 보내기*/
+//                                InputStream inputStream = null;
+//                                try {
+//                                    HttpClient httpclient = new DefaultHttpClient();
+//                                    HttpPost httpPost = new HttpPost("http://3.37.123.193:8000/");
+//                                    StringEntity se = new StringEntity(signatureStr);
+//                                    httpPost.setEntity(se);
+//                                    HttpResponse httpResponse = httpclient.execute(httpPost);
+//                                    inputStream = httpResponse.getEntity().getContent();
+//                                } catch (Exception e) {
+//                                    Log.d("InputStream", e.getLocalizedMessage());
+//                                }
+//
+//                                String url = "http://3.37.123.193:8000/"; 	//URL
+//                                HashMap<String, String> param = new HashMap<String, String>();
+//                                param.put("image", signatureStr);	//PARAM
+//
+//                                String resp = HttpConnectionUtil.postRequest(url, param);
+
                                 canvas.drawRect(location, paint);
 
                                 cropToFrameTransform.mapRect(location);
