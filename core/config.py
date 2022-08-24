@@ -11,7 +11,7 @@ cfg                           = __C
 # YOLO options
 __C.YOLO                      = edict()
 
-__C.YOLO.CLASSES              = "./data/classes/coco.names"
+__C.YOLO.CLASSES              = "./data/classes/ppe_classes.names.txt"
 __C.YOLO.ANCHORS              = [12,16, 19,36, 40,28, 36,75, 76,55, 72,146, 142,110, 192,243, 459,401]
 __C.YOLO.ANCHORS_V3           = [10,13, 16,30, 33,23, 30,61, 62,45, 59,119, 116,90, 156,198, 373,326]
 __C.YOLO.ANCHORS_TINY         = [23,27, 37,58, 81,82, 81,82, 135,169, 344,319]
