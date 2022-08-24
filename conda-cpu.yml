@@ -1,0 +1,15 @@
+name: yolov4-cpu
+
+dependencies:
+  - python==3.7
+  - pip
+  - matplotlib
+  - opencv
+  - pip:
+    - opencv-python==4.1.1.26
+    - lxml
+    - tqdm
+    - tensorflow==2.3.0rc0
+    - absl-py
+    - easydict
+    - pillow
