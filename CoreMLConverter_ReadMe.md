@@ -7,6 +7,6 @@
     <br>This is the keras checkpoint which we'll use in out jupyter notebook
 5) After running the save model launch **PortExistingModelToCoreML.ipynb** . After running the final cell of jupyter
    <br>Predictions should be visible
-<br>![](/Users/ankit/Documents/code/iOS/learn/CoreMLConverterCompletePipeline/screenshots/Screenshot 2022-08-24 at 7.23.04 PM.png)
+<br>![](./screenshots/Screenshot 2022-08-24 at 7.23.04 PM.png)
 
    
