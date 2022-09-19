@@ -1,7 +1,6 @@
 package org.tensorflow.lite.examples.detector.ui.detector
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.res.AssetManager
 import android.graphics.Bitmap
 import android.graphics.Matrix
@@ -20,7 +19,7 @@ import org.tensorflow.lite.examples.detector.DetectorFactory
 import org.tensorflow.lite.examples.detector.misc.Constants
 import org.tensorflow.lite.examples.detector.misc.DetectionProcessor
 import org.tensorflow.lite.examples.detector.utils.ImageToBitmapConverter
-import org.tensorflow.lite.examples.detector.utils.RenderScriptImageToBitmapConverter
+import org.tensorflow.lite.examples.detector.utils.RgbaImageToBitmapConverter
 import org.tensorflow.lite.examples.detector.visualization.TrackingOverlayView
 import kotlin.system.measureTimeMillis
 
@@ -37,7 +36,7 @@ class DetectorViewModel : ViewModel() {
 
     private var detectionProcessor: DetectionProcessor? = null
 
-    private var imageConverter: ImageToBitmapConverter? = null
+    private var imageConverter: ImageToBitmapConverter = RgbaImageToBitmapConverter()
 
 
     fun setUpDetectionProcessor(
@@ -71,22 +70,11 @@ class DetectorViewModel : ViewModel() {
         )
     }
 
-
-    fun imageConvertedIsSetUpped(): Boolean {
-        return imageConverter != null
-    }
-
-    @SuppressLint("UnsafeOptInUsageError")
-    fun setUpImageConverter(context: Context, image: ImageProxy) {
-        Log.v(TAG, "Image size : ${image.width}x${image.height}")
-        imageConverter = RenderScriptImageToBitmapConverter(context, image.image!!)
-    }
-
     @SuppressLint("UnsafeOptInUsageError")
     fun detectObjectsOnImage(image: ImageProxy): Long {
         var bitmap: Bitmap
         val conversionTime = measureTimeMillis {
-            bitmap = imageConverter!!.imageToBitmap(image.image!!)
+            bitmap = imageConverter.imageToBitmap(image.image!!)
             if (CAMERA_ROTATION % 2 == 0) {
                 bitmap = rotateImage(bitmap, 90.0f)
             }

@@ -24,6 +24,7 @@ class MainViewModel : ViewModel() {
 
     companion object {
         const val DEVICE_ROTATION: Int = Surface.ROTATION_0
+        const val IMAGE_PATH: String = "kite.jpg"
     }
 
     lateinit var bitmap: Bitmap
@@ -35,9 +36,10 @@ class MainViewModel : ViewModel() {
     private lateinit var sourceBitmap: Bitmap
 
     fun setUpBitmaps(assetManager: AssetManager) {
-        sourceBitmap = assetManager.open("kite.jpg").use { inputStream ->
-            BitmapFactory.decodeStream(inputStream)
-        }
+        sourceBitmap = assetManager.open(IMAGE_PATH)
+            .use { inputStream ->
+                BitmapFactory.decodeStream(inputStream)
+            }
 
         bitmap = processBitmap(sourceBitmap, Constants.DETECTION_MODEL.inputSize)
     }

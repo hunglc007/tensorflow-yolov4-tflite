@@ -2,9 +2,11 @@ package org.tensorflow.lite.examples.detector
 
 import android.content.res.AssetManager
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.graphics.RectF
 import android.os.SystemClock
 import android.util.Log
+import androidx.core.graphics.scale
 import org.tensorflow.lite.Interpreter
 import org.tensorflow.lite.examples.detector.Detector.Detection
 import org.tensorflow.lite.examples.detector.enums.DetectionModel
@@ -16,6 +18,7 @@ import java.nio.channels.FileChannel
 import java.util.*
 import kotlin.math.max
 import kotlin.math.min
+import kotlin.math.roundToInt
 
 
 @Suppress("UNNECESSARY_NOT_NULL_ASSERTION")
@@ -30,7 +33,7 @@ internal class YoloV4Detector(
         const val NUM_THREADS = 4
         const val IS_GPU: Boolean = false
         const val IS_NNAPI: Boolean = false
-
+        const val IS_XNNPACK: Boolean = false
     }
 
     private val inputSize: Int = detectionModel.inputSize
@@ -43,7 +46,7 @@ internal class YoloV4Detector(
     // Pre-allocated buffers.
     private val intValues = IntArray(inputSize * inputSize)
     private val byteBuffer: Array<ByteBuffer>
-    private val outputMap: MutableMap<Int, Array<Array<FloatArray>>> = HashMap()
+    private val outputMap: MutableMap<Int, Array<Array<FloatArray>>> = mutableMapOf()
 
     init {
         val labelsFilename = detectionModel.labelFilePath
@@ -88,16 +91,17 @@ internal class YoloV4Detector(
 
     private fun initializeInterpreter(assetManager: AssetManager): Interpreter {
         val options = Interpreter.Options()
-        options.setNumThreads(NUM_THREADS)
+        options.numThreads = NUM_THREADS
+        options.setUseXNNPACK(false)
 
         when {
             IS_GPU -> {
                 options.addDelegate(GpuDelegate())
             }
             IS_NNAPI -> {
-                options.setUseNNAPI(true)
+                options.useNNAPI = true
             }
-            else -> {
+            IS_XNNPACK -> {
                 options.setUseXNNPACK(true)
             }
         }
@@ -126,13 +130,9 @@ internal class YoloV4Detector(
 
         byteBuffer[0].clear()
         for (pixel in intValues) {
-            val r = (pixel and 0xFF) / 255.0f
-            val g = (pixel shr 8 and 0xFF) / 255.0f
-            val b = (pixel shr 16 and 0xFF) / 255.0f
-
-            byteBuffer[0].putFloat(r)
-            byteBuffer[0].putFloat(g)
-            byteBuffer[0].putFloat(b)
+            byteBuffer[0].putFloat(Color.red(pixel) / 255.0f)
+            byteBuffer[0].putFloat(Color.green(pixel) / 255.0f)
+            byteBuffer[0].putFloat(Color.blue(pixel) / 255.0f)
         }
         Log.v(TAG, "ByteBuffer conversion time : ${SystemClock.uptimeMillis() - startTime} ms")
     }
@@ -145,7 +145,7 @@ internal class YoloV4Detector(
 
         return outScore.zip(boundingBoxes)
             .mapIndexedNotNull { index, (classScores, boundingBoxes) ->
-                val bestClassIndex: Int = labels.indices.maxByOrNull { classScores[it] }!!
+                val bestClassIndex: Int = labels.indices.maxBy { classScores[it] }
                 val bestScore = classScores[bestClassIndex]
 
                 if (bestScore <= minimumScore) {

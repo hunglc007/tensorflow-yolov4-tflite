@@ -4,7 +4,6 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.util.Size
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -34,6 +33,8 @@ class DetectorActivity : AppCompatActivity() {
     private lateinit var binding: ActivityCameraBinding
 
     private lateinit var cameraProviderFuture: ListenableFuture<ProcessCameraProvider>
+
+    private var imageInformationSetUpped: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -113,6 +114,8 @@ class DetectorActivity : AppCompatActivity() {
         val imageAnalysis = ImageAnalysis.Builder()
             .setTargetAspectRatio(CAMERA_ASPECT_RATIO)
             .setTargetRotation(DetectorViewModel.CAMERA_ROTATION)
+            // In reality it outputs ARGB image
+            .setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_RGBA_8888)
             .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
             .build()
 
@@ -134,8 +137,8 @@ class DetectorActivity : AppCompatActivity() {
     private fun analyzeImage(image: ImageProxy) {
         lifecycleScope.launch(Dispatchers.Default) {
             image.use {
-                if (!viewModel.imageConvertedIsSetUpped()) {
-                    setUpImageConverter(image)
+                if (!imageInformationSetUpped) {
+                    setUpImageInformation(image)
                 }
 
                 val detectionTime = viewModel.detectObjectsOnImage(image)
@@ -148,11 +151,11 @@ class DetectorActivity : AppCompatActivity() {
         }
     }
 
-    private suspend fun setUpImageConverter(image: ImageProxy){
-        withContext(Dispatchers.Main){
+    private suspend fun setUpImageInformation(image: ImageProxy) {
+        withContext(Dispatchers.Main) {
             @SuppressLint("SetTextI18n")
             binding.bottomSheet.frameInfo.text = "${image.width}x${image.height}"
         }
-        viewModel.setUpImageConverter(baseContext, image)
+        imageInformationSetUpped = true
     }
 }
