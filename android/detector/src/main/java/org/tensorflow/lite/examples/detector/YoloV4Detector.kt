@@ -2,6 +2,7 @@ package org.tensorflow.lite.examples.detector
 
 import android.content.res.AssetManager
 import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.RectF
 import android.os.SystemClock
@@ -123,7 +124,14 @@ internal class YoloV4Detector(
      */
     private fun convertBitmapToByteBuffer(bitmap: Bitmap) {
         val startTime = SystemClock.uptimeMillis()
-        val scaledBitmap = Bitmap.createScaledBitmap(bitmap, inputSize, inputSize, true)
+
+        val fittedBitmap = scaleToFit(bitmap, inputSize, inputSize)
+        val leftOffset = (inputSize - fittedBitmap.width) / 2F
+        val topOffset = (inputSize - fittedBitmap.height) / 2F
+
+        val scaledBitmap = Bitmap.createBitmap(inputSize, inputSize, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(scaledBitmap)
+        canvas.drawBitmap(fittedBitmap, leftOffset, topOffset, null)
 
         scaledBitmap.getPixels(intValues, 0, inputSize, 0, 0, inputSize, inputSize)
         scaledBitmap.recycle()
@@ -135,6 +143,18 @@ internal class YoloV4Detector(
             byteBuffer[0].putFloat(Color.blue(pixel) / 255.0f)
         }
         Log.v(TAG, "ByteBuffer conversion time : ${SystemClock.uptimeMillis() - startTime} ms")
+    }
+
+    private fun scaleToFit(bitmap: Bitmap, preferredWidth: Int, preferredHeight: Int): Bitmap {
+        val ratio: Float = bitmap.width.toFloat() / bitmap.height.toFloat()
+
+        return if (ratio > 1) {
+            val newHeight = (preferredWidth * ratio).roundToInt()
+            bitmap.scale(preferredWidth, newHeight, false)
+        } else {
+            val newWidth = (preferredHeight * ratio).roundToInt()
+            bitmap.scale(newWidth, preferredHeight, false)
+        }
     }
 
     private fun getDetections(imageWidth: Int, imageHeight: Int): List<Detection> {

@@ -25,7 +25,7 @@ class DetectorActivity : AppCompatActivity() {
     private companion object {
         const val CAMERA_REQUEST_CODE: Int = 1
 
-        const val CAMERA_ASPECT_RATIO: Int = AspectRatio.RATIO_16_9
+        const val CAMERA_ASPECT_RATIO: Int = AspectRatio.RATIO_4_3
     }
 
     private val viewModel by viewModels<DetectorViewModel> { getViewModelFactory() }
