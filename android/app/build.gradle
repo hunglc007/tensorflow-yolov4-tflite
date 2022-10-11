@@ -74,10 +74,7 @@ dependencies {
 //    implementation 'org.tensorflow:tensorflow-lite:0.0.0-gpu-experimental'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     implementation 'com.google.code.gson:gson:2.8.6'
-<<<<<<< HEAD
-=======
-    implementation files('android/libs/ODsayAndroidSDK.aar')
->>>>>>> parent of 9d26bc0 (delete odsaySDK apiTest)
+
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'com.android.support.test:rules:1.0.2'
     androidTestImplementation 'com.google.truth:truth:1.0.1'
