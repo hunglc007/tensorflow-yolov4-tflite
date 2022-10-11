@@ -1,37 +1,24 @@
 package org.tensorflow.lite.examples.detection;
 
-import static android.speech.tts.TextToSpeech.ERROR;
+import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.RectF;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.speech.tts.TextToSpeech;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-
 import org.tensorflow.lite.examples.detection.customview.OverlayView;
-import org.tensorflow.lite.examples.detection.database.DBHelper;
 import org.tensorflow.lite.examples.detection.env.ImageUtils;
 import org.tensorflow.lite.examples.detection.env.Logger;
 import org.tensorflow.lite.examples.detection.env.Utils;
@@ -42,13 +29,13 @@ import org.tensorflow.lite.examples.detection.tracking.MultiBoxTracker;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
     private TextToSpeech tts;
     //정확도
-    public static float MINIMUM_CONFIDENCE_TF_OD_API = 0.70f;
+    //public static float MINIMUM_CONFIDENCE_TF_OD_API = 0.70f;
+    public static final float MINIMUM_CONFIDENCE_TF_OD_API = 0.5f;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,7 +69,6 @@ public class MainActivity extends AppCompatActivity {
         decreaseButton = findViewById(R.id.decreaseConfButton);
         cameraButton = findViewById(R.id.cameraButton);
         detectButton = findViewById(R.id.detectButton);
-        gpsButton = findViewById(R.id.gpsButton);
         imageView = findViewById(R.id.imageView);
         textView = findViewById(R.id.textView);
         confView=findViewById(R.id.confView);
@@ -103,6 +89,7 @@ public class MainActivity extends AppCompatActivity {
             }).start();
 
         });
+        this.sourceBitmap = Utils.getBitmapFromAsset(MainActivity.this, "kite.jpg");
 
         gpsButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -191,10 +178,12 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
+       this.cropBitmap = Utils.processBitmap(sourceBitmap, TF_OD_API_INPUT_SIZE);
+
+        this.imageView.setImageBitmap(cropBitmap);
+
+        initBox();
     }
-
-
-    final LocationListener gpsLocationListener = new GPSListener();
 
     private static final Logger LOGGER = new Logger();
 
@@ -202,7 +191,6 @@ public class MainActivity extends AppCompatActivity {
 
     private static final boolean TF_OD_API_IS_QUANTIZED = false;
 
-    //private static final String TF_OD_API_MODEL_FILE = "yolov4-416-fp32.tflite";
     private static final String TF_OD_API_MODEL_FILE = "yolov4-tiny-blurred-416.tflite";
     private static final String TF_OD_API_LABELS_FILE = "file:///android_asset/names.txt";
 
@@ -289,5 +277,3 @@ public class MainActivity extends AppCompatActivity {
         imageView.setImageBitmap(bitmap);
     }
 }
-
-
