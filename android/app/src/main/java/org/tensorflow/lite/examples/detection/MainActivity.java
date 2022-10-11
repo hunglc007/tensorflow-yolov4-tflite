@@ -2,7 +2,9 @@ package org.tensorflow.lite.examples.detection;
 
 import static android.speech.tts.TextToSpeech.ERROR;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
@@ -22,13 +24,20 @@ import android.speech.tts.TextToSpeech;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
+import com.inaka.galgo.Galgo;
+import com.inaka.galgo.GalgoOptions;
 
 import org.tensorflow.lite.examples.detection.customview.OverlayView;
 import org.tensorflow.lite.examples.detection.database.DBHelper;
@@ -44,15 +53,57 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import android.app.Activity;
+import android.os.Bundle;
+import android.widget.TextView;
+
 public class MainActivity extends AppCompatActivity {
 
     private TextToSpeech tts;
-    public static final float MINIMUM_CONFIDENCE_TF_OD_API = 0.5f;
+    public static final float MINIMUM_CONFIDENCE_TF_OD_API = 0.7f;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // 버튼 클릭 시 로그 출력
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                try {
+                    Process process = Runtime.getRuntime().exec("logcat -d");
+                    BufferedReader bufferedReader = new BufferedReader(
+                            new InputStreamReader(process.getInputStream()));
+
+                    StringBuilder log=new StringBuilder();
+                    String line = "";
+                    while ((line = bufferedReader.readLine()) != null) {
+                        log.append(line);
+                    }
+                    TextView logView = findViewById(R.id.logView);
+                    logView.setText(log.toString());
+                    AlertDialog dialog = new AlertDialog.Builder(MainActivity.this)
+                            .setTitle("Log")
+                            .setMessage(log.toString())
+                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    dialogInterface.dismiss();
+                                }
+                            }).create();
+                    dialog.show();
+                } catch (IOException e) {
+                    // Handle Exception
+                }
+
+            }
+        });
 
         // 데이터베이스 연결
         DBHelper helper;
@@ -140,9 +191,23 @@ public class MainActivity extends AppCompatActivity {
 
         this.imageView.setImageBitmap(cropBitmap);
 
-    initBox();
-}
+        initBox();
+    }
 
+    //
+    private void showAlertDialog(String message){
+//        AlertDialog dialog = new AlertDialog.Builder(MainActivity.this)
+//                .setTitle("Log")
+//                .setMessage(logView)
+//                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialogInterface, int i) {
+//                        dialogInterface.dismiss();
+//
+//                    }
+//                }).create();
+//        dialog.show();
+    }
     // 특정시간마다 업데이트 해주기 위한 리스너
     private class GPSListener implements LocationListener {
 
@@ -182,9 +247,12 @@ public class MainActivity extends AppCompatActivity {
 
     private static final boolean TF_OD_API_IS_QUANTIZED = false;
 
-    private static final String TF_OD_API_MODEL_FILE = "yolov4-416-fp32.tflite";
+    //private static final String TF_OD_API_MODEL_FILE = "yolov4-416-fp32.tflite";
+    private static final String TF_OD_API_MODEL_FILE = "yolov4-tiny-blurred-416.tflite";
 
-    private static final String TF_OD_API_LABELS_FILE = "file:///android_asset/coco.txt";
+    //private static final String TF_OD_API_LABELS_FILE = "file:///android_asset/coco.txt";
+    private static final String TF_OD_API_LABELS_FILE = "file:///android_asset/names.txt";
+
 
     // Minimum detection confidence to track a detection.
     private static final boolean MAINTAIN_ASPECT = false;
@@ -268,6 +336,12 @@ public class MainActivity extends AppCompatActivity {
 //        trackingOverlay.postInvalidate();
         imageView.setImageBitmap(bitmap);
     }
-}
 
+    public void onDestroy() {
+        super.onDestroy();
+
+        // always call disable to avoid memory leaks
+        Galgo.disable(this);
+    }
+}
 
