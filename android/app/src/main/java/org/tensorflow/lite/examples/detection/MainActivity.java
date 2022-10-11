@@ -47,7 +47,8 @@ import java.util.Locale;
 public class MainActivity extends AppCompatActivity {
 
     private TextToSpeech tts;
-    public static final float MINIMUM_CONFIDENCE_TF_OD_API = 0.5f;
+    //정확도
+    public static float MINIMUM_CONFIDENCE_TF_OD_API = 0.70f;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,12 +78,14 @@ public class MainActivity extends AppCompatActivity {
         // 위치 관리자 객체 참조하기
         final LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
-
+        increaseButton = findViewById(R.id.increaseConfButton);
+        decreaseButton = findViewById(R.id.decreaseConfButton);
         cameraButton = findViewById(R.id.cameraButton);
         detectButton = findViewById(R.id.detectButton);
         gpsButton = findViewById(R.id.gpsButton);
         imageView = findViewById(R.id.imageView);
         textView = findViewById(R.id.textView);
+        confView=findViewById(R.id.confView);
 
         cameraButton.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, DetectorActivity.class)));
 
@@ -133,6 +136,23 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        increaseButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MINIMUM_CONFIDENCE_TF_OD_API += 0.01;
+                String msg = "Confidence : " + MINIMUM_CONFIDENCE_TF_OD_API + "\n";
+                confView.setText(msg);
+            }
+        });
+
+        decreaseButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MINIMUM_CONFIDENCE_TF_OD_API -= 0.01;
+                String msg = "Confidence : " + MINIMUM_CONFIDENCE_TF_OD_API + "\n";
+                confView.setText(msg);
+            }
+        });
 
         this.sourceBitmap =Utils.getBitmapFromAsset(MainActivity .this,"kite.jpg");
 
@@ -182,9 +202,9 @@ public class MainActivity extends AppCompatActivity {
 
     private static final boolean TF_OD_API_IS_QUANTIZED = false;
 
-    private static final String TF_OD_API_MODEL_FILE = "yolov4-416-fp32.tflite";
-
-    private static final String TF_OD_API_LABELS_FILE = "file:///android_asset/coco.txt";
+    //private static final String TF_OD_API_MODEL_FILE = "yolov4-416-fp32.tflite";
+    private static final String TF_OD_API_MODEL_FILE = "yolov4-tiny-blurred-416.tflite";
+    private static final String TF_OD_API_LABELS_FILE = "file:///android_asset/names.txt";
 
     // Minimum detection confidence to track a detection.
     private static final boolean MAINTAIN_ASPECT = false;
@@ -203,9 +223,9 @@ public class MainActivity extends AppCompatActivity {
     private Bitmap sourceBitmap;
     private Bitmap cropBitmap;
 
-    private Button cameraButton, detectButton, gpsButton;
+    private Button increaseButton, decreaseButton, cameraButton, detectButton, gpsButton;
     private ImageView imageView;
-    private TextView textView;
+    private TextView textView, confView;
 
     private void initBox() {
         previewHeight = TF_OD_API_INPUT_SIZE;
