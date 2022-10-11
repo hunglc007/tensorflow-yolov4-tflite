@@ -5,7 +5,7 @@ android {
     compileSdkVersion 28
     defaultConfig {
         applicationId "org.tensorflow.lite.examples.detection"
-        minSdkVersion 16
+        minSdkVersion 21
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
@@ -13,6 +13,15 @@ android {
 //        ndk {
 //            abiFilters 'armeabi-v7a', 'arm64-v8a'
 //        }
+    }
+    packagingOptions {
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/ASL2.0'
+        exclude 'build.xml'
     }
     buildTypes {
         release {
@@ -32,6 +41,12 @@ android {
     }
 }
 
+repositories {
+    maven {
+        url "https://jitpack.io"
+    }
+}
+
 // import DownloadModels task
 project.ext.ASSET_DIR = projectDir.toString() + '/src/main/assets'
 project.ext.TMP_DIR = project.buildDir.toString() + '/downloads'
@@ -43,6 +58,10 @@ project.ext.TMP_DIR = project.buildDir.toString() + '/downloads'
 apply from: 'download_model.gradle'
 
 dependencies {
+    implementation 'org.tensorflow:tensorflow-lite:2.3.0'
+    implementation 'org.tensorflow:tensorflow-lite-gpu:2.3.0'
+    implementation 'com.google.firebase:firebase-crashlytics-buildtools:2.7.1'
+    compile 'com.github.inaka:galgo:v1.0.2'
     implementation fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.coordinatorlayout:coordinatorlayout:1.1.0'
@@ -58,4 +77,5 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'com.android.support.test:rules:1.0.2'
     androidTestImplementation 'com.google.truth:truth:1.0.1'
+    compile 'org.apache.httpcomponents:httpclient:4.5'
 }

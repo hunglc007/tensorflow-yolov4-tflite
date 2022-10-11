@@ -182,7 +182,8 @@ public class YoloV4Classifier implements Classifier {
 
     // config yolov4 tiny
     private static final int[] OUTPUT_WIDTH_TINY = new int[]{2535, 2535};
-    private static final int[] OUTPUT_WIDTH_FULL = new int[]{10647, 10647};
+    //private static final int[] OUTPUT_WIDTH_FULL = new int[]{10647, 10647};
+    private static final int[] OUTPUT_WIDTH_FULL = new int[]{2535, 2535};
     private static final int[][] MASKS_TINY = new int[][]{{3, 4, 5}, {1, 2, 3}};
     private static final int[] ANCHORS_TINY = new int[]{
             23, 27, 37, 58, 81, 82, 81, 82, 135, 169, 344, 319};
@@ -385,7 +386,7 @@ public class YoloV4Classifier implements Classifier {
         ArrayList<Recognition> detections = new ArrayList<Recognition>();
         Map<Integer, Object> outputMap = new HashMap<>();
         outputMap.put(0, new float[1][OUTPUT_WIDTH_FULL[0]][4]);
-        outputMap.put(1, new float[1][OUTPUT_WIDTH_FULL[1]][labels.size()]);
+        outputMap.put(1, new float[1][OUTPUT_WIDTH_FULL[1]][labels.size()-1]);
         Object[] inputArray = {byteBuffer};
         tfLite.runForMultipleInputsOutputs(inputArray, outputMap);
 
