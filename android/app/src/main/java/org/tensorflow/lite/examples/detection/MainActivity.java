@@ -156,6 +156,21 @@ public class MainActivity extends AppCompatActivity {
             textView.setText(msg);
         }
 
+        @Override
+        public void onStatusChanged(String s, int i, Bundle bundle) {
+            
+        }
+
+        @Override
+        public void onProviderEnabled(String s) {
+
+        }
+
+        @Override
+        public void onProviderDisabled(String s) {
+
+        }
+
     }
 
 
