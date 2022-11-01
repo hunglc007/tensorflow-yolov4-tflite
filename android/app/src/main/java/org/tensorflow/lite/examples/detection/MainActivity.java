@@ -1,24 +1,37 @@
 package org.tensorflow.lite.examples.detection;
 
-import androidx.appcompat.app.AppCompatActivity;
+import static android.speech.tts.TextToSpeech.ERROR;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.RectF;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
+import android.speech.tts.TextToSpeech;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
 import org.tensorflow.lite.examples.detection.customview.OverlayView;
+import org.tensorflow.lite.examples.detection.database.DBHelper;
 import org.tensorflow.lite.examples.detection.env.ImageUtils;
 import org.tensorflow.lite.examples.detection.env.Logger;
 import org.tensorflow.lite.examples.detection.env.Utils;
@@ -29,19 +42,50 @@ import org.tensorflow.lite.examples.detection.tracking.MultiBoxTracker;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
-    public static final float MINIMUM_CONFIDENCE_TF_OD_API = 0.5f;
+    private TextToSpeech tts;
+    //정확도
+    public static float MINIMUM_CONFIDENCE_TF_OD_API = 0.71f;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // 데이터베이스 연결
+        DBHelper helper;
+        SQLiteDatabase db;
+        helper = new DBHelper(MainActivity.this, 1);
+        db = helper.getWritableDatabase();
+        helper.onUpgrade(db, 1, 2);
+
+        // tts
+        tts = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                if (status != ERROR) {
+                    // 언어를 선택한다.
+                    tts.setLanguage(Locale.KOREAN);
+                }
+            }
+        });
+
+        // location manager
+
+        // 위치 관리자 객체 참조하기
+        final LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+        increaseButton = findViewById(R.id.increaseConfButton);
+        decreaseButton = findViewById(R.id.decreaseConfButton);
         cameraButton = findViewById(R.id.cameraButton);
         detectButton = findViewById(R.id.detectButton);
+        gpsButton = findViewById(R.id.gpsButton);
         imageView = findViewById(R.id.imageView);
+        textView = findViewById(R.id.textView);
+        confView=findViewById(R.id.confView);
 
         cameraButton.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, DetectorActivity.class)));
 
@@ -59,14 +103,99 @@ public class MainActivity extends AppCompatActivity {
             }).start();
 
         });
-        this.sourceBitmap = Utils.getBitmapFromAsset(MainActivity.this, "kite.jpg");
 
-        this.cropBitmap = Utils.processBitmap(sourceBitmap, TF_OD_API_INPUT_SIZE);
+        gpsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (Build.VERSION.SDK_INT >= 23 &&
+                        ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(MainActivity.this, new String[]{
+                            android.Manifest.permission.ACCESS_FINE_LOCATION}, 0);
+                } else {
+                    // 가장최근 위치정보 가져오기
+                    Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                    if (location != null) {
+                        double longitude = location.getLongitude();
+                        double latitude = location.getLatitude();
+
+                        String msg = "Latitude : " + latitude + "\nLongitude : " + longitude;
+
+                        textView.setText(msg);
+                    }
+
+                    // 위치정보를 원하는 시간, 거리마다 갱신해준다.
+                    lm.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+                            1000,
+                            1,
+                            gpsLocationListener);
+                    lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
+                            1000,
+                            1,
+                            gpsLocationListener);
+                }
+            }
+        });
+
+        increaseButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MINIMUM_CONFIDENCE_TF_OD_API += 0.01;
+                String msg = "Confidence : " + MINIMUM_CONFIDENCE_TF_OD_API + "\n";
+                confView.setText(msg);
+            }
+        });
+
+        decreaseButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MINIMUM_CONFIDENCE_TF_OD_API -= 0.01;
+                String msg = "Confidence : " + MINIMUM_CONFIDENCE_TF_OD_API + "\n";
+                confView.setText(msg);
+            }
+        });
+        //메인 화면 예시 이미지
+        //this.sourceBitmap =Utils.getBitmapFromAsset(MainActivity .this,"kite.jpg");
+        this.sourceBitmap =Utils.getBitmapFromAsset(MainActivity .this,"gateLine7.jpeg");
+
+        this.cropBitmap =Utils.processBitmap(sourceBitmap,TF_OD_API_INPUT_SIZE);
 
         this.imageView.setImageBitmap(cropBitmap);
 
-        initBox();
+    initBox();
+}
+
+    // 특정시간마다 업데이트 해주기 위한 리스너
+    private class GPSListener implements LocationListener {
+
+        @Override
+        public void onLocationChanged(@NonNull Location location) {
+            Double latitude = location.getLatitude();
+            Double longitude = location.getLongitude();
+
+            String msg = "Latitude : " + latitude + "\nLongitude : " + longitude;
+
+            textView.setText(msg);
+        }
+
+        @Override
+        public void onStatusChanged(String s, int i, Bundle bundle) {
+            
+        }
+
+        @Override
+        public void onProviderEnabled(String s) {
+
+        }
+
+        @Override
+        public void onProviderDisabled(String s) {
+
+        }
+
     }
+
+
+    final LocationListener gpsLocationListener = new GPSListener();
 
     private static final Logger LOGGER = new Logger();
 
@@ -74,8 +203,8 @@ public class MainActivity extends AppCompatActivity {
 
     private static final boolean TF_OD_API_IS_QUANTIZED = false;
 
-    private static final String TF_OD_API_MODEL_FILE = "yolov4-tiny-blurred-416.tflite";
-
+    //private static final String TF_OD_API_MODEL_FILE = "yolov4-416-fp32.tflite";
+    private static final String TF_OD_API_MODEL_FILE = "yolov4-tiny-people-416.tflite";
     private static final String TF_OD_API_LABELS_FILE = "file:///android_asset/names.txt";
 
     // Minimum detection confidence to track a detection.
@@ -95,8 +224,9 @@ public class MainActivity extends AppCompatActivity {
     private Bitmap sourceBitmap;
     private Bitmap cropBitmap;
 
-    private Button cameraButton, detectButton;
+    private Button increaseButton, decreaseButton, cameraButton, detectButton, gpsButton;
     private ImageView imageView;
+    private TextView textView, confView;
 
     private void initBox() {
         previewHeight = TF_OD_API_INPUT_SIZE;
@@ -160,3 +290,5 @@ public class MainActivity extends AppCompatActivity {
         imageView.setImageBitmap(bitmap);
     }
 }
+
+
