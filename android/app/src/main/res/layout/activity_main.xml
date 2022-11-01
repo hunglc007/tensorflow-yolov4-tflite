@@ -14,7 +14,7 @@
         android:text="Camera"
         app:layout_constraintBottom_toBottomOf="@+id/detectButton"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.201"
+        app:layout_constraintHorizontal_bias="0.655"
         app:layout_constraintStart_toEndOf="@+id/detectButton"
         app:layout_constraintTop_toTopOf="@+id/detectButton"
         app:layout_constraintVertical_bias="0.0" />
@@ -23,13 +23,12 @@
         android:id="@+id/detectButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
+        android:layout_marginStart="80dp"
         android:layout_marginBottom="126dp"
         android:text="Detect"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView" />
-
 
     <Button
         android:id="@+id/increaseConfButton"
@@ -77,6 +76,7 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:srcCompat="@drawable/kite" />
 
+
     <TextView
         android:id="@+id/confView"
         android:layout_width="290dp"
@@ -102,12 +102,9 @@
     <org.tensorflow.lite.examples.detection.customview.OverlayView
         android:id="@+id/tracking_overlay"
         android:layout_width="416dp"
-        android:layout_height="0dp"
-        android:layout_marginBottom="212dp"
-        app:layout_constraintBottom_toTopOf="@+id/textView"
+        android:layout_height="416dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>
