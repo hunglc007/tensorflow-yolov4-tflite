@@ -55,12 +55,12 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
     private static final int TF_OD_API_INPUT_SIZE = 416;
     private static final boolean TF_OD_API_IS_QUANTIZED = false;
 //    private static final String TF_OD_API_MODEL_FILE = "yolov4-416-fp32.tflite";
-    private static final String TF_OD_API_MODEL_FILE = "yolov4-tiny-blurred-416.tflite";
+    private static final String TF_OD_API_MODEL_FILE = "yolov4-tiny-people-416.tflite";
     private static final String TF_OD_API_LABELS_FILE = "file:///android_asset/names.txt";
 
     private static final DetectorMode MODE = DetectorMode.TF_OD_API;
     //정확도
-    private static float MINIMUM_CONFIDENCE_TF_OD_API = 0.7f;
+    private static float MINIMUM_CONFIDENCE_TF_OD_API = 0.71f;
     private static final boolean MAINTAIN_ASPECT = false;
     private static final Size DESIRED_PREVIEW_SIZE = new Size(640, 480);
     private static final boolean SAVE_PREVIEW_BITMAP = false;
@@ -185,6 +185,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
                 new Runnable() {
                     @Override
                     public void run() {
+
                         LOGGER.i("Running detection on image " + currTimestamp);
                         final long startTime = SystemClock.uptimeMillis();
                         final List<Classifier.Recognition> results = detector.recognizeImage(croppedBitmap);
@@ -213,7 +214,8 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
                             final RectF location = result.getLocation();
                             if (location != null && result.getConfidence() >= minimumConfidence) {
                                 canvas.drawRect(location, paint);
-
+                                System.out.println(result.getTitle());
+                                System.out.println(result.getLocation().toString());
                                 cropToFrameTransform.mapRect(location);
 
                                 result.setLocation(location);
