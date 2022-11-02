@@ -46,7 +46,7 @@ import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
-    public static final float MINIMUM_CONFIDENCE_TF_OD_API = 0.5f;
+    public static final float MINIMUM_CONFIDENCE_TF_OD_API = 0.70f;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
