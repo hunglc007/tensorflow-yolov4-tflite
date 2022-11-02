@@ -16,6 +16,8 @@
 
 package org.tensorflow.lite.examples.detection;
 
+import static android.speech.tts.TextToSpeech.ERROR;
+
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
@@ -26,15 +28,20 @@ import android.graphics.Paint.Style;
 import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.media.ImageReader.OnImageAvailableListener;
+import android.os.Bundle;
 import android.os.SystemClock;
+import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.util.Size;
 import android.util.TypedValue;
 import android.widget.Toast;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 
 import org.tensorflow.lite.examples.detection.customview.OverlayView;
 import org.tensorflow.lite.examples.detection.customview.OverlayView.DrawCallback;
@@ -49,7 +56,9 @@ import org.tensorflow.lite.examples.detection.tracking.MultiBoxTracker;
  * An activity that uses a TensorFlowMultiBoxDetector and ObjectTracker to detect and then track
  * objects.
  */
-public class DetectorActivity extends CameraActivity implements OnImageAvailableListener {
+public class DetectorActivity extends CameraActivity implements OnImageAvailableListener{
+
+
     private static final Logger LOGGER = new Logger();
 
     private static final int TF_OD_API_INPUT_SIZE = 416;
@@ -78,12 +87,26 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
 
     private long timestamp = 0;
 
+
     private Matrix frameToCropTransform;
     private Matrix cropToFrameTransform;
 
     private MultiBoxTracker tracker;
 
     private BorderedText borderedText;
+    private float preGateAVG = 0;
+
+    // tts
+    private TextToSpeech tts = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
+        @Override
+        public void onInit(int status) {
+            if(status != ERROR) {
+                // 언어를 선택한다.
+                tts.setLanguage(Locale.KOREAN);
+            }
+        }
+    });
+
 
     @Override
     public void onPreviewSizeChosen(final Size size, final int rotation) {
@@ -155,6 +178,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
         tracker.setFrameConfiguration(previewWidth, previewHeight, sensorOrientation);
     }
 
+
     @Override
     protected void processImage() {
         ++timestamp;
@@ -208,10 +232,30 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
                         final List<Classifier.Recognition> mappedRecognitions =
                                 new LinkedList<Classifier.Recognition>();
 
+
+                        float sumWidth = 0;
+                        float cntGate = 0;
+                        boolean[] dirs = {false, false, false};
+
                         for (final Classifier.Recognition result : results) {
                             final RectF location = result.getLocation();
                             if (location != null && result.getConfidence() >= minimumConfidence) {
                                 canvas.drawRect(location, paint);
+
+                                // gate의 y들 다 모으기
+                                if(result.getTitle().equals("gate")){
+                                    if(location.centerX() > 400){
+                                        dirs[2] = true;
+                                    }
+                                    else if(location.centerX() < 200){
+                                        dirs[0] = true;
+                                    }
+                                    else{
+                                        dirs[1] = true;
+                                    }
+                                    sumWidth += location.width();
+                                    cntGate += 1;
+                                }
 
                                 cropToFrameTransform.mapRect(location);
 
@@ -219,6 +263,32 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
                                 mappedRecognitions.add(result);
                             }
                         }
+
+                        float curGateAVG = 0;
+                        if(cntGate != 0) {
+                            curGateAVG = sumWidth / cntGate;
+                            // 너비의 평균이 커지면
+                            if ((curGateAVG - preGateAVG) > 0.05) {
+                                tts.setPitch((float) 0.6); // 음성 톤 높이 지정
+                                tts.setSpeechRate((float) 0.1); // 음성 속도 지정
+                                tts.speak("게이트가 가까워지고 있습니다.", TextToSpeech.QUEUE_FLUSH, null);
+
+                                StringBuilder sb = new StringBuilder("위치는");
+                                if(dirs[0]){
+                                    sb.append(" 왼쪽");
+                                }
+                                if(dirs[1]){
+                                    sb.append(" 전방");
+                                }
+                                if(dirs[0]){
+                                    sb.append(" 오른쪽");
+                                }
+                                sb.append("입니다.");
+                                tts.speak(sb.toString(), TextToSpeech.QUEUE_FLUSH, null)
+                            }
+                        }
+                        preGateAVG = curGateAVG;
+
 
                         tracker.trackResults(mappedRecognitions, currTimestamp);
                         trackingOverlay.postInvalidate();

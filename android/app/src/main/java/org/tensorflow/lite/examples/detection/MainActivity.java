@@ -46,37 +46,12 @@ import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
-    private TextToSpeech tts;
     public static final float MINIMUM_CONFIDENCE_TF_OD_API = 0.5f;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        // 데이터베이스 연결
-        DBHelper helper;
-        SQLiteDatabase db;
-        helper = new DBHelper(MainActivity.this, 1);
-        db = helper.getWritableDatabase();
-        helper.onUpgrade(db, 1, 2);
-
-        // tts
-        tts = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
-            @Override
-            public void onInit(int status) {
-                if (status != ERROR) {
-                    // 언어를 선택한다.
-                    tts.setLanguage(Locale.KOREAN);
-                }
-            }
-        });
-
-        // location manager
-
-        // 위치 관리자 객체 참조하기
-        final LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-
 
         cameraButton = findViewById(R.id.cameraButton);
         detectButton = findViewById(R.id.detectButton);
@@ -101,37 +76,6 @@ public class MainActivity extends AppCompatActivity {
 
         });
 
-        gpsButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (Build.VERSION.SDK_INT >= 23 &&
-                        ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(MainActivity.this, new String[]{
-                            android.Manifest.permission.ACCESS_FINE_LOCATION}, 0);
-                } else {
-                    // 가장최근 위치정보 가져오기
-                    Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                    if (location != null) {
-                        double longitude = location.getLongitude();
-                        double latitude = location.getLatitude();
-
-                        String msg = "Latitude : " + latitude + "\nLongitude : " + longitude;
-
-                        textView.setText(msg);
-                    }
-
-                    // 위치정보를 원하는 시간, 거리마다 갱신해준다.
-                    lm.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-                            1000,
-                            1,
-                            gpsLocationListener);
-                    lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
-                            1000,
-                            1,
-                            gpsLocationListener);
-                }
-            }
-        });
 
 
         this.sourceBitmap =Utils.getBitmapFromAsset(MainActivity .this,"kite.jpg");
@@ -143,23 +87,6 @@ public class MainActivity extends AppCompatActivity {
     initBox();
 }
 
-    // 특정시간마다 업데이트 해주기 위한 리스너
-    private class GPSListener implements LocationListener {
-
-        @Override
-        public void onLocationChanged(@NonNull Location location) {
-            Double latitude = location.getLatitude();
-            Double longitude = location.getLongitude();
-
-            String msg = "Latitude : " + latitude + "\nLongitude : " + longitude;
-
-            textView.setText(msg);
-        }
-
-    }
-
-
-    final LocationListener gpsLocationListener = new GPSListener();
 
     private static final Logger LOGGER = new Logger();
 
@@ -167,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static final boolean TF_OD_API_IS_QUANTIZED = false;
 
-    private static final String TF_OD_API_MODEL_FILE = "yolov4-416-fp32.tflite";
+    private static final String TF_OD_API_MODEL_FILE = "yolov4-tiny-416.tflite";
 
     private static final String TF_OD_API_LABELS_FILE = "file:///android_asset/coco.txt";
 
