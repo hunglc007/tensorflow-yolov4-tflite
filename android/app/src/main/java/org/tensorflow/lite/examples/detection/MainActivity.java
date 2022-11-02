@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
 
     private TextToSpeech tts;
     //정확도
-    public static float MINIMUM_CONFIDENCE_TF_OD_API = 0.71f;
+    public static float MINIMUM_CONFIDENCE_TF_OD_API = 0.50f;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -155,7 +155,7 @@ public class MainActivity extends AppCompatActivity {
         });
         //메인 화면 예시 이미지
         //this.sourceBitmap =Utils.getBitmapFromAsset(MainActivity .this,"kite.jpg");
-        this.sourceBitmap =Utils.getBitmapFromAsset(MainActivity .this,"testPerson.jpeg");
+        this.sourceBitmap =Utils.getBitmapFromAsset(MainActivity .this,"gateLine7.jpeg");
 
         this.cropBitmap =Utils.processBitmap(sourceBitmap,TF_OD_API_INPUT_SIZE);
 
@@ -204,7 +204,7 @@ public class MainActivity extends AppCompatActivity {
     private static final boolean TF_OD_API_IS_QUANTIZED = false;
 
     //private static final String TF_OD_API_MODEL_FILE = "yolov4-416-fp32.tflite";
-    private static final String TF_OD_API_MODEL_FILE = "yolov4-tiny-personOnly-416.tflite";
+    private static final String TF_OD_API_MODEL_FILE = "yolov4-tiny-gate-416.tflite";
     private static final String TF_OD_API_LABELS_FILE = "file:///android_asset/names.txt";
 
     // Minimum detection confidence to track a detection.
