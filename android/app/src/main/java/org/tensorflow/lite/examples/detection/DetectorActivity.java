@@ -286,7 +286,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
                                     sb.append(" 오른쪽");
                                 }
                                 sb.append("입니다.");
-                                tts.speak(sb.toString(), TextToSpeech.QUEUE_FLUSH, null)
+                                tts.speak(sb.toString(), TextToSpeech.QUEUE_FLUSH, null);
                             }
                         }
                         preGateAVG = curGateAVG;
