@@ -58,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
         gpsButton = findViewById(R.id.gpsButton);
         imageView = findViewById(R.id.imageView);
         textView = findViewById(R.id.textView);
+        confView=findViewById(R.id.confView);
 
         cameraButton.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, DetectorActivity.class)));
 
@@ -96,8 +97,6 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TF_OD_API_MODEL_FILE = "yolov4-tiny-416.tflite";
 
-    private static final String TF_OD_API_LABELS_FILE = "file:///android_asset/coco.txt";
-
     // Minimum detection confidence to track a detection.
     private static final boolean MAINTAIN_ASPECT = false;
     private Integer sensorOrientation = 90;
@@ -115,9 +114,9 @@ public class MainActivity extends AppCompatActivity {
     private Bitmap sourceBitmap;
     private Bitmap cropBitmap;
 
-    private Button cameraButton, detectButton, gpsButton;
+    private Button increaseButton, decreaseButton, cameraButton, detectButton, gpsButton;
     private ImageView imageView;
-    private TextView textView;
+    private TextView textView, confView;
 
     private void initBox() {
         previewHeight = TF_OD_API_INPUT_SIZE;
