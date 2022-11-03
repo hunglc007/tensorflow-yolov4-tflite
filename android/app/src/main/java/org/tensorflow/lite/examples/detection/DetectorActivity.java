@@ -28,6 +28,7 @@ import android.graphics.Paint.Style;
 import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.media.ImageReader.OnImageAvailableListener;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.speech.tts.TextToSpeech;
@@ -36,9 +37,10 @@ import android.util.Size;
 import android.util.TypedValue;
 import android.widget.Toast;
 
+import androidx.annotation.RequiresApi;
+
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -56,6 +58,7 @@ import org.tensorflow.lite.examples.detection.tracking.MultiBoxTracker;
  * An activity that uses a TensorFlowMultiBoxDetector and ObjectTracker to detect and then track
  * objects.
  */
+@RequiresApi(api = Build.VERSION_CODES.O)
 public class DetectorActivity extends CameraActivity implements OnImageAvailableListener{
 
 
@@ -97,6 +100,8 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
     private BorderedText borderedText;
     private float preGateAVG = 0;
     private TextToSpeech tts;
+    private LocalDateTime currentDateTime = LocalDateTime.now();
+
 
 
     @Override
@@ -186,6 +191,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
     }
 
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void processImage() {
         ++timestamp;
@@ -215,7 +221,6 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
                 new Runnable() {
                     @Override
                     public void run() {
-
                         LOGGER.i("Running detection on image " + currTimestamp);
                         final long startTime = SystemClock.uptimeMillis();
                         final List<Classifier.Recognition> results = detector.recognizeImage(croppedBitmap);
@@ -241,11 +246,9 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
                                 new LinkedList<Classifier.Recognition>();
 
 
-                        float sumWidth = 0;
-                        float cntGate = 0;
+
+                        float maxWidth = 0;
                         boolean[] dirs = {false, false, false};
-
-
                         for (final Classifier.Recognition result : results) {
                             final RectF location = result.getLocation();
                             if (location != null && result.getConfidence() >= minimumConfidence) {
@@ -264,9 +267,10 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
                                     else{
                                         dirs[1] = true;
                                     }
-                                    sumWidth += location.width();
-                                    cntGate += 1;
-                                    System.out.println("너비" + sumWidth + "카운트" + cntGate);
+
+                                    if(maxWidth < location.width()) {
+                                        maxWidth = location.width();
+                                    }
                                 }
 
                                 cropToFrameTransform.mapRect(location);
@@ -276,35 +280,42 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
                             }
                         }
 
-                        float curGateAVG = 0;
-                        if(cntGate != 0) {
-                            curGateAVG = sumWidth / cntGate;
-                            // 너비의 평균이 커지면
-                            if ((curGateAVG - preGateAVG) > 0) {
-                                tts.setPitch((float) 0.6); // 음성 톤 높이 지정
-                                tts.setSpeechRate((float) 0.8); // 음성 속도 지정
-                                tts.speak("게이트가 가까워지고 있습니다.", TextToSpeech.QUEUE_ADD, null);
+                        System.out.println("최대너비" + maxWidth);
 
-                                StringBuilder sb = new StringBuilder("위치는");
-                                if(dirs[0]){
-                                    sb.append(" 왼쪽");
-                                }
-                                if(dirs[1]){
-                                    sb.append(" 전방");
-                                }
-                                if(dirs[0]){
-                                    sb.append(" 오른쪽");
-                                }
-                                sb.append("입니다.");
-                                tts.speak(sb.toString(), TextToSpeech.QUEUE_ADD, null);
-                                preGateAVG = curGateAVG;
+                        // 최대 너비가 측정되었고 안내간격이 1초가 넘었다면
+                        if(maxWidth != 0 && LocalDateTime.now().isAfter(currentDateTime.plusSeconds(1))) {
+                            // 거리문구
+                            final String LONG = "게이트가 발견되었습니다.";
+                            final String MEDIUM = "게이트가 가까워지고 있습니다.";
+                            final String SHORT = "게이트가 매우 가깝습니다.";
+                            // tts설정
+                            tts.setPitch((float) 0.6); // 음성 톤 높이 지정
+                            tts.setSpeechRate((float) 1.0); // 음성 속도 지정
+
+                            if(maxWidth < 60){
+                                tts.speak(SHORT, TextToSpeech.QUEUE_ADD, null);
                             }
-                        }
-                        else {
-                            preGateAVG = curGateAVG;
-                        }
-                        System.out.println("너비평균 최근 :" + curGateAVG + "너비평균 이전 :" + preGateAVG);
+                            else if(maxWidth < 100){
+                                tts.speak(MEDIUM, TextToSpeech.QUEUE_ADD, null);
+                            }
+                            else if (maxWidth < 130){
+                                tts.speak(LONG, TextToSpeech.QUEUE_ADD, null);
+                            }
 
+                            StringBuilder sb = new StringBuilder("방향은");
+                            if(dirs[0]){
+                                sb.append(" 왼쪽");
+                            }
+                            if(dirs[1]){
+                                sb.append(" 전방");
+                            }
+                            if(dirs[2]){
+                                sb.append(" 오른쪽");
+                            }
+                            sb.append("입니다.");
+                            tts.speak(sb.toString(), TextToSpeech.QUEUE_ADD, null);
+                            currentDateTime = LocalDateTime.now();
+                        }
 
 
                         tracker.trackResults(mappedRecognitions, currTimestamp);
