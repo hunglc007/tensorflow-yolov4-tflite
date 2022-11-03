@@ -292,13 +292,13 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
                             tts.setPitch((float) 0.6); // 음성 톤 높이 지정
                             tts.setSpeechRate((float) 1.0); // 음성 속도 지정
 
-                            if(maxWidth < 60){
+                            if(maxWidth > 130){
                                 tts.speak(SHORT, TextToSpeech.QUEUE_ADD, null);
                             }
-                            else if(maxWidth < 100){
+                            else if(maxWidth > 100){
                                 tts.speak(MEDIUM, TextToSpeech.QUEUE_ADD, null);
                             }
-                            else if (maxWidth < 130){
+                            else if (maxWidth > 60){
                                 tts.speak(LONG, TextToSpeech.QUEUE_ADD, null);
                             }
 
