@@ -69,7 +69,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
 
     private static final DetectorMode MODE = DetectorMode.TF_OD_API;
     //정확도
-    private static float MINIMUM_CONFIDENCE_TF_OD_API = 0.50f;
+    private static float MINIMUM_CONFIDENCE_TF_OD_API = 0.70f;
     private static final boolean MAINTAIN_ASPECT = false;
     private static final Size DESIRED_PREVIEW_SIZE = new Size(640, 480);
     private static final boolean SAVE_PREVIEW_BITMAP = false;
@@ -98,10 +98,13 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
     private float preGateAVG = 0;
     private TextToSpeech tts;
 
+    // tts
+    private TextToSpeech tts;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // tts
+
         tts = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
             @Override
             public void onInit(int status) {
@@ -111,6 +114,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
                 }
             }
         });
+    }
 
     }
 
@@ -244,17 +248,20 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
                         float cntGate = 0;
                         boolean[] dirs = {false, false, false};
 
+
                         for (final Classifier.Recognition result : results) {
                             final RectF location = result.getLocation();
                             if (location != null && result.getConfidence() >= minimumConfidence) {
                                 canvas.drawRect(location, paint);
 
+                                System.out.println("x좌표 :" + location.centerX() +" y좌표 :" + location.centerY() + "너비 :" + location.width());
+
                                 // gate의 y들 다 모으기
                                 if(result.getTitle().equals("gate")){
-                                    if(location.centerX() > 400){
+                                    if(location.centerX() > 200){
                                         dirs[2] = true;
                                     }
-                                    else if(location.centerX() < 200){
+                                    else if(location.centerX() < 100){
                                         dirs[0] = true;
                                     }
                                     else{
@@ -262,6 +269,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
                                     }
                                     sumWidth += location.width();
                                     cntGate += 1;
+                                    System.out.println("너비" + sumWidth + "카운트" + cntGate);
                                 }
 
                                 cropToFrameTransform.mapRect(location);
@@ -275,10 +283,10 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
                         if(cntGate != 0) {
                             curGateAVG = sumWidth / cntGate;
                             // 너비의 평균이 커지면
-                            if ((curGateAVG - preGateAVG) > 0.05) {
+                            if ((curGateAVG - preGateAVG) > 0) {
                                 tts.setPitch((float) 0.6); // 음성 톤 높이 지정
-                                tts.setSpeechRate((float) 0.1); // 음성 속도 지정
-                                tts.speak("게이트가 가까워지고 있습니다.", TextToSpeech.QUEUE_FLUSH, null);
+                                tts.setSpeechRate((float) 0.8); // 음성 속도 지정
+                                tts.speak("게이트가 가까워지고 있습니다.", TextToSpeech.QUEUE_ADD, null);
 
                                 StringBuilder sb = new StringBuilder("위치는");
                                 if(dirs[0]){
@@ -291,10 +299,15 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
                                     sb.append(" 오른쪽");
                                 }
                                 sb.append("입니다.");
-                                tts.speak(sb.toString(), TextToSpeech.QUEUE_FLUSH, null)
+                                tts.speak(sb.toString(), TextToSpeech.QUEUE_ADD, null);
+                                preGateAVG = curGateAVG;
                             }
                         }
-                        preGateAVG = curGateAVG;
+                        else {
+                            preGateAVG = curGateAVG;
+                        }
+                        System.out.println("너비평균 최근 :" + curGateAVG + "너비평균 이전 :" + preGateAVG);
+
 
 
                         tracker.trackResults(mappedRecognitions, currTimestamp);
