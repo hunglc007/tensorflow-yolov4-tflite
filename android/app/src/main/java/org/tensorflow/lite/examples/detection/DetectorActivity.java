@@ -96,18 +96,23 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
 
     private BorderedText borderedText;
     private float preGateAVG = 0;
+    private TextToSpeech tts;
 
-    // tts
-    private TextToSpeech tts = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
-        @Override
-        public void onInit(int status) {
-            if(status != ERROR) {
-                // 언어를 선택한다.
-                tts.setLanguage(Locale.KOREAN);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        // tts
+        tts = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                if(status != ERROR) {
+                    // 언어를 선택한다.
+                    tts.setLanguage(Locale.KOREAN);
+                }
             }
-        }
-    });
+        });
 
+    }
 
     @Override
     public void onPreviewSizeChosen(final Size size, final int rotation) {
