@@ -101,6 +101,11 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
     private float preGateAVG = 0;
     private TextToSpeech tts;
     private LocalDateTime currentDateTime = LocalDateTime.now();
+    private String curGateStatus = null;
+    // 거리문구
+    private final String GATE_LONG = "게이트가 발견되었습니다.";
+    private final String GATE_MEDIUM = "게이트가 가까워지고 있습니다.";
+    private final String GATE_SHORT = "게이트가 매우 가깝습니다.";
 
 
 
@@ -283,23 +288,28 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
                         System.out.println("최대너비" + maxWidth);
 
                         // 최대 너비가 측정되었고 안내간격이 1초가 넘었다면
-                        if(maxWidth != 0 && LocalDateTime.now().isAfter(currentDateTime.plusSeconds(1))) {
-                            // 거리문구
-                            final String LONG = "게이트가 발견되었습니다.";
-                            final String MEDIUM = "게이트가 가까워지고 있습니다.";
-                            final String SHORT = "게이트가 매우 가깝습니다.";
+                        if(maxWidth != 0 && LocalDateTime.now().isAfter(currentDateTime.plusSeconds(2))) {
                             // tts설정
                             tts.setPitch((float) 0.6); // 음성 톤 높이 지정
                             tts.setSpeechRate((float) 1.0); // 음성 속도 지정
 
                             if(maxWidth > 130){
-                                tts.speak(SHORT, TextToSpeech.QUEUE_ADD, null);
+                                if(!curGateStatus.equals(GATE_SHORT)) {
+                                    tts.speak(GATE_SHORT, TextToSpeech.QUEUE_ADD, null);
+                                    curGateStatus = GATE_SHORT;
+                                }
                             }
                             else if(maxWidth > 100){
-                                tts.speak(MEDIUM, TextToSpeech.QUEUE_ADD, null);
+                                if(!curGateStatus.equals(GATE_MEDIUM)) {
+                                    tts.speak(GATE_MEDIUM, TextToSpeech.QUEUE_ADD, null);
+                                    curGateStatus = GATE_MEDIUM;
+                                }
                             }
                             else if (maxWidth > 60){
-                                tts.speak(LONG, TextToSpeech.QUEUE_ADD, null);
+                                if(!curGateStatus.equals(GATE_LONG)) {
+                                    tts.speak(GATE_LONG, TextToSpeech.QUEUE_ADD, null);
+                                    curGateStatus = GATE_LONG;
+                                }
                             }
 
                             StringBuilder sb = new StringBuilder("방향은");
