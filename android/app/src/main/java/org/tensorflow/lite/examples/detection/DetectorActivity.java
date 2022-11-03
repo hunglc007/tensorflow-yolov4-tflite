@@ -101,7 +101,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
     private float preGateAVG = 0;
     private TextToSpeech tts;
     private LocalDateTime currentDateTime = LocalDateTime.now();
-    private String curGateStatus = null;
+    private String curGateStatus = "nothing";
     // 거리문구
     private final String GATE_LONG = "게이트가 발견되었습니다.";
     private final String GATE_MEDIUM = "게이트가 가까워지고 있습니다.";
@@ -293,25 +293,6 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
                             tts.setPitch((float) 0.6); // 음성 톤 높이 지정
                             tts.setSpeechRate((float) 1.0); // 음성 속도 지정
 
-                            if(maxWidth > 130){
-                                if(!curGateStatus.equals(GATE_SHORT)) {
-                                    tts.speak(GATE_SHORT, TextToSpeech.QUEUE_ADD, null);
-                                    curGateStatus = GATE_SHORT;
-                                }
-                            }
-                            else if(maxWidth > 100){
-                                if(!curGateStatus.equals(GATE_MEDIUM)) {
-                                    tts.speak(GATE_MEDIUM, TextToSpeech.QUEUE_ADD, null);
-                                    curGateStatus = GATE_MEDIUM;
-                                }
-                            }
-                            else if (maxWidth > 60){
-                                if(!curGateStatus.equals(GATE_LONG)) {
-                                    tts.speak(GATE_LONG, TextToSpeech.QUEUE_ADD, null);
-                                    curGateStatus = GATE_LONG;
-                                }
-                            }
-
                             StringBuilder sb = new StringBuilder("방향은");
                             if(dirs[0]){
                                 sb.append(" 왼쪽");
@@ -323,8 +304,32 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
                                 sb.append(" 오른쪽");
                             }
                             sb.append("입니다.");
-                            tts.speak(sb.toString(), TextToSpeech.QUEUE_ADD, null);
-                            currentDateTime = LocalDateTime.now();
+
+                            if(maxWidth > 130){
+                                if(!curGateStatus.equals(GATE_SHORT)) {
+                                    tts.speak(GATE_SHORT, TextToSpeech.QUEUE_ADD, null);
+                                    curGateStatus = GATE_SHORT;
+                                    tts.speak(sb.toString(), TextToSpeech.QUEUE_ADD, null);
+                                    currentDateTime = LocalDateTime.now();
+                                }
+                            }
+                            else if(maxWidth > 100){
+                                if(!curGateStatus.equals(GATE_MEDIUM)) {
+                                    tts.speak(GATE_MEDIUM, TextToSpeech.QUEUE_ADD, null);
+                                    curGateStatus = GATE_MEDIUM;
+                                    tts.speak(sb.toString(), TextToSpeech.QUEUE_ADD, null);
+                                    currentDateTime = LocalDateTime.now();
+                                }
+                            }
+                            else if (maxWidth > 60){
+                                if(!curGateStatus.equals(GATE_LONG)) {
+                                    tts.speak(GATE_LONG, TextToSpeech.QUEUE_ADD, null);
+                                    curGateStatus = GATE_LONG;
+                                    tts.speak(sb.toString(), TextToSpeech.QUEUE_ADD, null);
+                                    currentDateTime = LocalDateTime.now();
+                                }
+                            }
+
                         }
 
 
