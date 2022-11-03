@@ -98,8 +98,6 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
     private float preGateAVG = 0;
     private TextToSpeech tts;
 
-    // tts
-    private TextToSpeech tts;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -116,7 +114,6 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
         });
     }
 
-    }
 
     @Override
     public void onPreviewSizeChosen(final Size size, final int rotation) {
