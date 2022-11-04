@@ -300,23 +300,23 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
                         System.out.println("총 너비" + sumWidth);
 
                         // 사람밀집도
-                        if(cntPerson != 0 && LocalDateTime.now().isAfter(curGateDateTime.plusSeconds(3))){
+                        if(cntPerson != 0 && LocalDateTime.now().isAfter(curGateDateTime.plusSeconds(5))){
                             if(cntPerson <= 5){
                                 if(!curPersonStatus.equals(PERSON_FEW)) {
                                     tts.speak(PERSON_FEW, TextToSpeech.QUEUE_ADD, null);
-                                    curGateStatus = PERSON_FEW;
+                                    curPersonStatus = PERSON_FEW;
                                 }
                             }
                             else if(cntPerson <= 10){
                                 if(!curPersonStatus.equals(PERSON_MEDIUM)) {
                                     tts.speak(PERSON_MEDIUM, TextToSpeech.QUEUE_ADD, null);
-                                    curGateStatus = PERSON_MEDIUM;
+                                    curPersonStatus = PERSON_MEDIUM;
                                 }
                             }
                             else{
                                 if(!curPersonStatus.equals(PERSON_MANY)) {
                                     tts.speak(PERSON_MANY, TextToSpeech.QUEUE_ADD, null);
-                                    curGateStatus = PERSON_MANY;
+                                    curPersonStatus = PERSON_MANY;
                                 }
                             }
                             curPersonDateTime = LocalDateTime.now();
