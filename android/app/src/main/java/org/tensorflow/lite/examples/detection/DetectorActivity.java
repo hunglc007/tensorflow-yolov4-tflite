@@ -263,10 +263,10 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
 
                                 // gate의 y들 다 모으기
                                 if(result.getTitle().equals("gate")){
-                                    if(location.centerX() > 200){
+                                    if(location.centerX() > 270){
                                         dirs[2] = true;
                                     }
-                                    else if(location.centerX() < 100){
+                                    else if(location.centerX() < 130){
                                         dirs[0] = true;
                                     }
                                     else{
