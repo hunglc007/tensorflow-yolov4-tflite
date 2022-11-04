@@ -301,13 +301,13 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
 
                         // 사람밀집도
                         if(cntPerson != 0 && LocalDateTime.now().isAfter(curGateDateTime.plusSeconds(5))){
-                            if(cntPerson <= 5){
+                            if(cntPerson <= 7){
                                 if(!curPersonStatus.equals(PERSON_FEW)) {
                                     tts.speak(PERSON_FEW, TextToSpeech.QUEUE_ADD, null);
                                     curPersonStatus = PERSON_FEW;
                                 }
                             }
-                            else if(cntPerson <= 10){
+                            else if(cntPerson <= 13){
                                 if(!curPersonStatus.equals(PERSON_MEDIUM)) {
                                     tts.speak(PERSON_MEDIUM, TextToSpeech.QUEUE_ADD, null);
                                     curPersonStatus = PERSON_MEDIUM;
