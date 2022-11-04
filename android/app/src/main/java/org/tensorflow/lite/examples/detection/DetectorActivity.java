@@ -27,6 +27,7 @@ import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.RectF;
 import android.graphics.Typeface;
+import android.location.LocationListener;
 import android.media.ImageReader.OnImageAvailableListener;
 import android.os.Build;
 import android.os.Bundle;
@@ -98,14 +99,30 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
     private MultiBoxTracker tracker;
 
     private BorderedText borderedText;
-    private float preGateAVG = 0;
     private TextToSpeech tts;
-    private LocalDateTime currentDateTime = LocalDateTime.now();
-    private String curGateStatus = "nothing";
+
     // 거리문구
-    private final String GATE_LONG = "게이트가 발견되었습니다.";
-    private final String GATE_MEDIUM = "게이트가 가까워지고 있습니다.";
-    private final String GATE_SHORT = "게이트가 매우 가깝습니다.";
+    private final String GATE_LONG = "전방 개찰구 발견";
+    private final String GATE_MEDIUM = "전방 개찰구 가까움";
+    private final String GATE_SHORT = "전방 개찰구 매우 가까움";
+
+    // 밀집도문구
+    private final String PERSON_FEW = "사람 거의 없음";
+    private final String PERSON_MEDIUM = "사람 적당함";
+    private final String PERSON_MANY = "사람 많음";
+
+    // 게이트변수
+    private float sumWidth = 0;
+    private int cntGate = 0;
+    private String curGateStatus = "nothing";
+    private LocalDateTime curGateDateTime = LocalDateTime.now();
+
+
+    //사람변수
+    private int cntPerson = 0;
+    private String curPersonStatus = "nothing";
+    private LocalDateTime curPersonDateTime = LocalDateTime.now();
+
 
 
 
@@ -230,6 +247,9 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
                         final long startTime = SystemClock.uptimeMillis();
                         final List<Classifier.Recognition> results = detector.recognizeImage(croppedBitmap);
                         lastProcessingTimeMs = SystemClock.uptimeMillis() - startTime;
+                        // tts설정
+                        tts.setPitch((float) 0.6); // 음성 톤 높이 지정
+                        tts.setSpeechRate((float) 1.0); // 음성 속도 지정
 
                         Log.e("CHECK", "run: " + results.size());
 
@@ -252,8 +272,6 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
 
 
 
-                        float maxWidth = 0;
-                        boolean[] dirs = {false, false, false};
                         for (final Classifier.Recognition result : results) {
                             final RectF location = result.getLocation();
                             if (location != null && result.getConfidence() >= minimumConfidence) {
@@ -261,21 +279,15 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
 
                                 System.out.println("x좌표 :" + location.centerX() +" y좌표 :" + location.centerY() + "너비 :" + location.width());
 
-                                // gate의 y들 다 모으기
-                                if(result.getTitle().equals("gate")){
-                                    if(location.centerX() > 270){
-                                        dirs[2] = true;
-                                    }
-                                    else if(location.centerX() < 130){
-                                        dirs[0] = true;
-                                    }
-                                    else{
-                                        dirs[1] = true;
-                                    }
+                                // 사람인식
+                                if(result.getTitle().equals("person")){
+                                    cntPerson += 1;
+                                }
 
-                                    if(maxWidth < location.width()) {
-                                        maxWidth = location.width();
-                                    }
+                                // gate의 너비 다 모으기
+                                if(result.getTitle().equals("gate")){
+                                    sumWidth += location.width();
+                                    cntGate += 1;
                                 }
 
                                 cropToFrameTransform.mapRect(location);
@@ -285,51 +297,57 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
                             }
                         }
 
-                        System.out.println("최대너비" + maxWidth);
+                        System.out.println("총 너비" + sumWidth);
 
-                        // 최대 너비가 측정되었고 안내간격이 1초가 넘었다면
-                        if(maxWidth != 0 && LocalDateTime.now().isAfter(currentDateTime.plusSeconds(2))) {
-                            // tts설정
-                            tts.setPitch((float) 0.6); // 음성 톤 높이 지정
-                            tts.setSpeechRate((float) 1.0); // 음성 속도 지정
+                        // 사람밀집도
+                        if(cntPerson != 0 && LocalDateTime.now().isAfter(curGateDateTime.plusSeconds(3))){
+                            if(cntPerson <= 5){
+                                if(!curPersonStatus.equals(PERSON_FEW)) {
+                                    tts.speak(PERSON_FEW, TextToSpeech.QUEUE_ADD, null);
+                                    curGateStatus = PERSON_FEW;
+                                }
+                            }
+                            else if(cntPerson <= 10){
+                                if(!curPersonStatus.equals(PERSON_MEDIUM)) {
+                                    tts.speak(PERSON_MEDIUM, TextToSpeech.QUEUE_ADD, null);
+                                    curGateStatus = PERSON_MEDIUM;
+                                }
+                            }
+                            else{
+                                if(!curPersonStatus.equals(PERSON_MANY)) {
+                                    tts.speak(PERSON_MANY, TextToSpeech.QUEUE_ADD, null);
+                                    curGateStatus = PERSON_MANY;
+                                }
+                            }
+                            curPersonDateTime = LocalDateTime.now();
+                            cntPerson = 0;
+                        }
 
-                            StringBuilder sb = new StringBuilder("방향은");
-                            if(dirs[0]){
-                                sb.append(" 왼쪽");
-                            }
-                            if(dirs[1]){
-                                sb.append(" 전방");
-                            }
-                            if(dirs[2]){
-                                sb.append(" 오른쪽");
-                            }
-                            sb.append("입니다.");
+                        // Gate 두개 이상이며 안내간격이 2초가 넘었다면
+                        if(cntGate >= 2 && LocalDateTime.now().isAfter(curGateDateTime.plusSeconds(2))) {
+                            float avgWidth = sumWidth / cntGate;
 
-                            if(maxWidth > 130){
+                            if(avgWidth > 130){
                                 if(!curGateStatus.equals(GATE_SHORT)) {
                                     tts.speak(GATE_SHORT, TextToSpeech.QUEUE_ADD, null);
                                     curGateStatus = GATE_SHORT;
-                                    tts.speak(sb.toString(), TextToSpeech.QUEUE_ADD, null);
-                                    currentDateTime = LocalDateTime.now();
                                 }
                             }
-                            else if(maxWidth > 100){
+                            else if(avgWidth > 100){
                                 if(!curGateStatus.equals(GATE_MEDIUM)) {
                                     tts.speak(GATE_MEDIUM, TextToSpeech.QUEUE_ADD, null);
                                     curGateStatus = GATE_MEDIUM;
-                                    tts.speak(sb.toString(), TextToSpeech.QUEUE_ADD, null);
-                                    currentDateTime = LocalDateTime.now();
                                 }
                             }
-                            else if (maxWidth > 60){
+                            else if (avgWidth > 60){
                                 if(!curGateStatus.equals(GATE_LONG)) {
                                     tts.speak(GATE_LONG, TextToSpeech.QUEUE_ADD, null);
                                     curGateStatus = GATE_LONG;
-                                    tts.speak(sb.toString(), TextToSpeech.QUEUE_ADD, null);
-                                    currentDateTime = LocalDateTime.now();
                                 }
                             }
-
+                            cntGate = 0;
+                            sumWidth = 0;
+                            curGateDateTime = LocalDateTime.now();
                         }
 
 
