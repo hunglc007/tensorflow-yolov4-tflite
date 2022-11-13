@@ -301,6 +301,8 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
 
                         // 사람밀집도
                         if(cntPerson != 0 && LocalDateTime.now().isAfter(curPersonDateTime.plusSeconds(5))){
+                            System.out.println("person say time : " + LocalDateTime.now());
+                            System.out.println("person count : " + cntPerson);
                             if(cntPerson <= 7){
                                 if(!curPersonStatus.equals(PERSON_FEW)) {
                                     tts.speak(PERSON_FEW, TextToSpeech.QUEUE_ADD, null);
