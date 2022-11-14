@@ -335,13 +335,13 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
                                     curGateStatus = GATE_SHORT;
                                 }
                             }
-                            else if(avgWidth > 100){
+                            else if(avgWidth > 85){
                                 if(!curGateStatus.equals(GATE_MEDIUM)) {
                                     tts.speak(GATE_MEDIUM, TextToSpeech.QUEUE_ADD, null);
                                     curGateStatus = GATE_MEDIUM;
                                 }
                             }
-                            else if (avgWidth > 60){
+                            else if (avgWidth > 40){
                                 if(!curGateStatus.equals(GATE_LONG)) {
                                     tts.speak(GATE_LONG, TextToSpeech.QUEUE_ADD, null);
                                     curGateStatus = GATE_LONG;
