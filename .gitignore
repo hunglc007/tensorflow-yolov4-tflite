@@ -1,0 +1,5 @@
+data/yolov3.weights
+data/yolov3-tiny.weights
+
+.venv/
+checkpoints/

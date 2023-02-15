@@ -1,0 +1,834 @@
+input_1
+conv2d
+batch_normalization
+tf_op_layer_LeakyRelu
+zero_padding2d
+conv2d_1
+batch_normalization_1
+tf_op_layer_LeakyRelu_1
+conv2d_2
+batch_normalization_2
+tf_op_layer_LeakyRelu_2
+conv2d_3
+batch_normalization_3
+tf_op_layer_LeakyRelu_3
+tf_op_layer_AddV2
+zero_padding2d_1
+conv2d_4
+batch_normalization_4
+tf_op_layer_LeakyRelu_4
+conv2d_5
+batch_normalization_5
+tf_op_layer_LeakyRelu_5
+conv2d_6
+batch_normalization_6
+tf_op_layer_LeakyRelu_6
+tf_op_layer_AddV2_1
+conv2d_7
+batch_normalization_7
+tf_op_layer_LeakyRelu_7
+conv2d_8
+batch_normalization_8
+tf_op_layer_LeakyRelu_8
+tf_op_layer_AddV2_2
+zero_padding2d_2
+conv2d_9
+batch_normalization_9
+tf_op_layer_LeakyRelu_9
+conv2d_10
+batch_normalization_10
+tf_op_layer_LeakyRelu_10
+conv2d_11
+batch_normalization_11
+tf_op_layer_LeakyRelu_11
+tf_op_layer_AddV2_3
+conv2d_12
+batch_normalization_12
+tf_op_layer_LeakyRelu_12
+conv2d_13
+batch_normalization_13
+tf_op_layer_LeakyRelu_13
+tf_op_layer_AddV2_4
+conv2d_14
+batch_normalization_14
+tf_op_layer_LeakyRelu_14
+conv2d_15
+batch_normalization_15
+tf_op_layer_LeakyRelu_15
+tf_op_layer_AddV2_5
+conv2d_16
+batch_normalization_16
+tf_op_layer_LeakyRelu_16
+conv2d_17
+batch_normalization_17
+tf_op_layer_LeakyRelu_17
+tf_op_layer_AddV2_6
+conv2d_18
+batch_normalization_18
+tf_op_layer_LeakyRelu_18
+conv2d_19
+batch_normalization_19
+tf_op_layer_LeakyRelu_19
+tf_op_layer_AddV2_7
+conv2d_20
+batch_normalization_20
+tf_op_layer_LeakyRelu_20
+conv2d_21
+batch_normalization_21
+tf_op_layer_LeakyRelu_21
+tf_op_layer_AddV2_8
+conv2d_22
+batch_normalization_22
+tf_op_layer_LeakyRelu_22
+conv2d_23
+batch_normalization_23
+tf_op_layer_LeakyRelu_23
+tf_op_layer_AddV2_9
+conv2d_24
+batch_normalization_24
+tf_op_layer_LeakyRelu_24
+conv2d_25
+batch_normalization_25
+tf_op_layer_LeakyRelu_25
+tf_op_layer_AddV2_10
+zero_padding2d_3
+conv2d_26
+batch_normalization_26
+tf_op_layer_LeakyRelu_26
+conv2d_27
+batch_normalization_27
+tf_op_layer_LeakyRelu_27
+conv2d_28
+batch_normalization_28
+tf_op_layer_LeakyRelu_28
+tf_op_layer_AddV2_11
+conv2d_29
+batch_normalization_29
+tf_op_layer_LeakyRelu_29
+conv2d_30
+batch_normalization_30
+tf_op_layer_LeakyRelu_30
+tf_op_layer_AddV2_12
+conv2d_31
+batch_normalization_31
+tf_op_layer_LeakyRelu_31
+conv2d_32
+batch_normalization_32
+tf_op_layer_LeakyRelu_32
+tf_op_layer_AddV2_13
+conv2d_33
+batch_normalization_33
+tf_op_layer_LeakyRelu_33
+conv2d_34
+batch_normalization_34
+tf_op_layer_LeakyRelu_34
+tf_op_layer_AddV2_14
+conv2d_35
+batch_normalization_35
+tf_op_layer_LeakyRelu_35
+conv2d_36
+batch_normalization_36
+tf_op_layer_LeakyRelu_36
+tf_op_layer_AddV2_15
+conv2d_37
+batch_normalization_37
+tf_op_layer_LeakyRelu_37
+conv2d_38
+batch_normalization_38
+tf_op_layer_LeakyRelu_38
+tf_op_layer_AddV2_16
+conv2d_39
+batch_normalization_39
+tf_op_layer_LeakyRelu_39
+conv2d_40
+batch_normalization_40
+tf_op_layer_LeakyRelu_40
+tf_op_layer_AddV2_17
+conv2d_41
+batch_normalization_41
+tf_op_layer_LeakyRelu_41
+conv2d_42
+batch_normalization_42
+tf_op_layer_LeakyRelu_42
+tf_op_layer_AddV2_18
+zero_padding2d_4
+conv2d_43
+batch_normalization_43
+tf_op_layer_LeakyRelu_43
+conv2d_44
+batch_normalization_44
+tf_op_layer_LeakyRelu_44
+conv2d_45
+batch_normalization_45
+tf_op_layer_LeakyRelu_45
+tf_op_layer_AddV2_19
+conv2d_46
+batch_normalization_46
+tf_op_layer_LeakyRelu_46
+conv2d_47
+batch_normalization_47
+tf_op_layer_LeakyRelu_47
+tf_op_layer_AddV2_20
+conv2d_48
+batch_normalization_48
+tf_op_layer_LeakyRelu_48
+conv2d_49
+batch_normalization_49
+tf_op_layer_LeakyRelu_49
+tf_op_layer_AddV2_21
+conv2d_50
+batch_normalization_50
+tf_op_layer_LeakyRelu_50
+conv2d_51
+batch_normalization_51
+tf_op_layer_LeakyRelu_51
+tf_op_layer_AddV2_22
+conv2d_52
+batch_normalization_52
+tf_op_layer_LeakyRelu_52
+conv2d_53
+batch_normalization_53
+tf_op_layer_LeakyRelu_53
+conv2d_54
+batch_normalization_54
+tf_op_layer_LeakyRelu_54
+conv2d_55
+batch_normalization_55
+tf_op_layer_LeakyRelu_55
+conv2d_56
+batch_normalization_56
+tf_op_layer_LeakyRelu_56
+conv2d_59
+batch_normalization_58
+tf_op_layer_LeakyRelu_58
+tf_op_layer_ResizeBilinear
+tf_op_layer_concat
+conv2d_60
+batch_normalization_59
+tf_op_layer_LeakyRelu_59
+conv2d_61
+batch_normalization_60
+tf_op_layer_LeakyRelu_60
+conv2d_62
+batch_normalization_61
+tf_op_layer_LeakyRelu_61
+conv2d_63
+batch_normalization_62
+tf_op_layer_LeakyRelu_62
+conv2d_64
+batch_normalization_63
+tf_op_layer_LeakyRelu_63
+conv2d_67
+batch_normalization_65
+tf_op_layer_LeakyRelu_65
+tf_op_layer_ResizeBilinear_1
+tf_op_layer_concat_1
+conv2d_68
+batch_normalization_66
+tf_op_layer_LeakyRelu_66
+conv2d_69
+batch_normalization_67
+tf_op_layer_LeakyRelu_67
+conv2d_70
+batch_normalization_68
+tf_op_layer_LeakyRelu_68
+conv2d_71
+batch_normalization_69
+tf_op_layer_LeakyRelu_69
+conv2d_72
+batch_normalization_70
+tf_op_layer_LeakyRelu_70
+conv2d_73
+conv2d_65
+conv2d_57
+batch_normalization_71
+batch_normalization_64
+batch_normalization_57
+tf_op_layer_LeakyRelu_71
+tf_op_layer_LeakyRelu_64
+tf_op_layer_LeakyRelu_57
+conv2d_74
+conv2d_66
+conv2d_58
+tf_op_layer_split
+tf_op_layer_split_1
+tf_op_layer_split_2
+tf_op_layer_Sigmoid_3
+tf_op_layer_Sigmoid_4
+tf_op_layer_Sigmoid_5
+tf_op_layer_Sigmoid_9
+tf_op_layer_Sigmoid_10
+tf_op_layer_Sigmoid_11
+tf_op_layer_Sigmoid_15
+tf_op_layer_Sigmoid_16
+tf_op_layer_Sigmoid_17
+tf_op_layer_Mul_6
+tf_op_layer_Mul_8
+tf_op_layer_Mul_10
+tf_op_layer_Mul_18
+tf_op_layer_Mul_20
+tf_op_layer_Mul_22
+tf_op_layer_Mul_30
+tf_op_layer_Mul_32
+tf_op_layer_Mul_34
+tf_op_layer_Sub
+tf_op_layer_Sub_1
+tf_op_layer_Sub_2
+tf_op_layer_Sub_3
+tf_op_layer_Sub_4
+tf_op_layer_Sub_5
+tf_op_layer_Sub_6
+tf_op_layer_Sub_7
+tf_op_layer_Sub_8
+tf_op_layer_AddV2_23
+tf_op_layer_AddV2_24
+tf_op_layer_AddV2_25
+tf_op_layer_Exp
+tf_op_layer_Exp_1
+tf_op_layer_Exp_2
+tf_op_layer_AddV2_26
+tf_op_layer_AddV2_27
+tf_op_layer_AddV2_28
+tf_op_layer_Exp_3
+tf_op_layer_Exp_4
+tf_op_layer_Exp_5
+tf_op_layer_AddV2_29
+tf_op_layer_AddV2_30
+tf_op_layer_AddV2_31
+tf_op_layer_Exp_6
+tf_op_layer_Exp_7
+tf_op_layer_Exp_8
+tf_op_layer_Sigmoid
+tf_op_layer_Sigmoid_1
+tf_op_layer_Sigmoid_2
+tf_op_layer_Sigmoid_6
+tf_op_layer_Sigmoid_7
+tf_op_layer_Sigmoid_8
+tf_op_layer_Sigmoid_12
+tf_op_layer_Sigmoid_13
+tf_op_layer_Sigmoid_14
+tf_op_layer_Mul_7
+tf_op_layer_Mul_9
+tf_op_layer_Mul_11
+tf_op_layer_Mul_3
+tf_op_layer_Mul_4
+tf_op_layer_Mul_5
+tf_op_layer_Mul_19
+tf_op_layer_Mul_21
+tf_op_layer_Mul_23
+tf_op_layer_Mul_15
+tf_op_layer_Mul_16
+tf_op_layer_Mul_17
+tf_op_layer_Mul_31
+tf_op_layer_Mul_33
+tf_op_layer_Mul_35
+tf_op_layer_Mul_27
+tf_op_layer_Mul_28
+tf_op_layer_Mul_29
+tf_op_layer_strided_slice
+tf_op_layer_strided_slice_1
+tf_op_layer_strided_slice_2
+tf_op_layer_strided_slice_3
+tf_op_layer_strided_slice_4
+tf_op_layer_strided_slice_5
+tf_op_layer_strided_slice_6
+tf_op_layer_strided_slice_7
+tf_op_layer_strided_slice_8
+tf_op_layer_strided_slice_9
+tf_op_layer_strided_slice_10
+tf_op_layer_strided_slice_11
+tf_op_layer_strided_slice_12
+tf_op_layer_strided_slice_13
+tf_op_layer_strided_slice_14
+tf_op_layer_strided_slice_15
+tf_op_layer_strided_slice_16
+tf_op_layer_strided_slice_17
+tf_op_layer_Reshape_6
+tf_op_layer_Reshape_7
+tf_op_layer_Reshape_8
+tf_op_layer_Reshape_3
+tf_op_layer_Reshape_4
+tf_op_layer_Reshape_5
+tf_op_layer_Reshape_15
+tf_op_layer_Reshape_16
+tf_op_layer_Reshape_17
+tf_op_layer_Reshape_12
+tf_op_layer_Reshape_13
+tf_op_layer_Reshape_14
+tf_op_layer_Reshape_24
+tf_op_layer_Reshape_25
+tf_op_layer_Reshape_26
+tf_op_layer_Reshape_21
+tf_op_layer_Reshape_22
+tf_op_layer_Reshape_23
+tf_op_layer_Mul
+tf_op_layer_Mul_1
+tf_op_layer_Mul_2
+tf_op_layer_Mul_12
+tf_op_layer_Mul_13
+tf_op_layer_Mul_14
+tf_op_layer_Mul_24
+tf_op_layer_Mul_25
+tf_op_layer_Mul_26
+tf_op_layer_concat_4
+tf_op_layer_concat_3
+tf_op_layer_concat_8
+tf_op_layer_concat_7
+tf_op_layer_concat_12
+tf_op_layer_concat_11
+tf_op_layer_Reshape
+tf_op_layer_Reshape_1
+tf_op_layer_Reshape_2
+tf_op_layer_Reshape_9
+tf_op_layer_Reshape_10
+tf_op_layer_Reshape_11
+tf_op_layer_Reshape_18
+tf_op_layer_Reshape_19
+tf_op_layer_Reshape_20
+tf_op_layer_concat_5
+tf_op_layer_concat_9
+tf_op_layer_concat_13
+tf_op_layer_concat_2
+tf_op_layer_concat_6
+tf_op_layer_concat_10
+tf_op_layer_concat_14
+tf_op_layer_concat_15
+Model: "functional_3"
+__________________________________________________________________________________________________
+Layer (type)                    Output Shape         Param #     Connected to                     
+==================================================================================================
+input_1 (InputLayer)            [(None, 416, 416, 3) 0                                            
+__________________________________________________________________________________________________
+conv2d (Conv2D)                 (None, 416, 416, 32) 864         input_1[0][0]                    
+__________________________________________________________________________________________________
+batch_normalization (BatchNorma (None, 416, 416, 32) 128         conv2d[0][0]                     
+__________________________________________________________________________________________________
+tf_op_layer_LeakyRelu (TensorFl [(None, 416, 416, 32 0           batch_normalization[0][0]        
+__________________________________________________________________________________________________
+zero_padding2d (ZeroPadding2D)  (None, 417, 417, 32) 0           tf_op_layer_LeakyRelu[0][0]      
+__________________________________________________________________________________________________
+conv2d_1 (Conv2D)               (None, 208, 208, 64) 18432       zero_padding2d[0][0]             
+__________________________________________________________________________________________________
+batch_normalization_1 (BatchNor (None, 208, 208, 64) 256         conv2d_1[0][0]                   
+__________________________________________________________________________________________________
+tf_op_layer_LeakyRelu_1 (Tensor [(None, 208, 208, 64 0           batch_normalization_1[0][0]      
+__________________________________________________________________________________________________
+conv2d_2 (Conv2D)               (None, 208, 208, 32) 2048        tf_op_layer_LeakyRelu_1[0][0]    
+__________________________________________________________________________________________________
+batch_normalization_2 (BatchNor (None, 208, 208, 32) 128         conv2d_2[0][0]                   
+__________________________________________________________________________________________________
+tf_op_layer_LeakyRelu_2 (Tensor [(None, 208, 208, 32 0           batch_normalization_2[0][0]      
+__________________________________________________________________________________________________
+conv2d_3 (Conv2D)               (None, 208, 208, 64) 18432       tf_op_layer_LeakyRelu_2[0][0]    
+__________________________________________________________________________________________________
+batch_normalization_3 (BatchNor (None, 208, 208, 64) 256         conv2d_3[0][0]                   
+__________________________________________________________________________________________________
+tf_op_layer_LeakyRelu_3 (Tensor [(None, 208, 208, 64 0           batch_normalization_3[0][0]      
+__________________________________________________________________________________________________
+tf_op_layer_AddV2 (TensorFlowOp [(None, 208, 208, 64 0           tf_op_layer_LeakyRelu_1[0][0]    
+                                                                 tf_op_layer_LeakyRelu_3[0][0]    
+__________________________________________________________________________________________________
+zero_padding2d_1 (ZeroPadding2D (None, 209, 209, 64) 0           tf_op_layer_AddV2[0][0]          
+__________________________________________________________________________________________________
+conv2d_4 (Conv2D)               (None, 104, 104, 128 73728       zero_padding2d_1[0][0]           
+__________________________________________________________________________________________________
+batch_normalization_4 (BatchNor (None, 104, 104, 128 512         conv2d_4[0][0]                   
+__________________________________________________________________________________________________
+tf_op_layer_LeakyRelu_4 (Tensor [(None, 104, 104, 12 0           batch_normalization_4[0][0]      
+__________________________________________________________________________________________________
+conv2d_5 (Conv2D)               (None, 104, 104, 64) 8192        tf_op_layer_LeakyRelu_4[0][0]    
+__________________________________________________________________________________________________
+batch_normalization_5 (BatchNor (None, 104, 104, 64) 256         conv2d_5[0][0]                   
+__________________________________________________________________________________________________
+tf_op_layer_LeakyRelu_5 (Tensor [(None, 104, 104, 64 0           batch_normalization_5[0][0]      
+__________________________________________________________________________________________________
+conv2d_6 (Conv2D)               (None, 104, 104, 128 73728       tf_op_layer_LeakyRelu_5[0][0]    
+__________________________________________________________________________________________________
+batch_normalization_6 (BatchNor (None, 104, 104, 128 512         conv2d_6[0][0]                   
+__________________________________________________________________________________________________
+tf_op_layer_LeakyRelu_6 (Tensor [(None, 104, 104, 12 0           batch_normalization_6[0][0]      
+__________________________________________________________________________________________________
+tf_op_layer_AddV2_1 (TensorFlow [(None, 104, 104, 12 0           tf_op_layer_LeakyRelu_4[0][0]    
+                                                                 tf_op_layer_LeakyRelu_6[0][0]    
+__________________________________________________________________________________________________
+conv2d_7 (Conv2D)               (None, 104, 104, 64) 8192        tf_op_layer_AddV2_1[0][0]        
+__________________________________________________________________________________________________
+batch_normalization_7 (BatchNor (None, 104, 104, 64) 256         conv2d_7[0][0]                   
+__________________________________________________________________________________________________
+tf_op_layer_LeakyRelu_7 (Tensor [(None, 104, 104, 64 0           batch_normalization_7[0][0]      
+__________________________________________________________________________________________________
+conv2d_8 (Conv2D)               (None, 104, 104, 128 73728       tf_op_layer_LeakyRelu_7[0][0]    
+__________________________________________________________________________________________________
+batch_normalization_8 (BatchNor (None, 104, 104, 128 512         conv2d_8[0][0]                   
+__________________________________________________________________________________________________
+tf_op_layer_LeakyRelu_8 (Tensor [(None, 104, 104, 12 0           batch_normalization_8[0][0]      
+__________________________________________________________________________________________________
+tf_op_layer_AddV2_2 (TensorFlow [(None, 104, 104, 12 0           tf_op_layer_AddV2_1[0][0]        
+                                                                 tf_op_layer_LeakyRelu_8[0][0]    
+__________________________________________________________________________________________________
+zero_padding2d_2 (ZeroPadding2D (None, 105, 105, 128 0           tf_op_layer_AddV2_2[0][0]        
+__________________________________________________________________________________________________
+conv2d_9 (Conv2D)               (None, 52, 52, 256)  294912      zero_padding2d_2[0][0]           
+__________________________________________________________________________________________________
+batch_normalization_9 (BatchNor (None, 52, 52, 256)  1024        conv2d_9[0][0]                   
+__________________________________________________________________________________________________
+tf_op_layer_LeakyRelu_9 (Tensor [(None, 52, 52, 256) 0           batch_normalization_9[0][0]      
+__________________________________________________________________________________________________
+conv2d_10 (Conv2D)              (None, 52, 52, 128)  32768       tf_op_layer_LeakyRelu_9[0][0]    
+__________________________________________________________________________________________________
+batch_normalization_10 (BatchNo (None, 52, 52, 128)  512         conv2d_10[0][0]                  
+__________________________________________________________________________________________________
+tf_op_layer_LeakyRelu_10 (Tenso [(None, 52, 52, 128) 0           batch_normalization_10[0][0]     
+__________________________________________________________________________________________________
+conv2d_11 (Conv2D)              (None, 52, 52, 256)  294912      tf_op_layer_LeakyRelu_10[0][0]   
+__________________________________________________________________________________________________
+batch_normalization_11 (BatchNo (None, 52, 52, 256)  1024        conv2d_11[0][0]                  
+__________________________________________________________________________________________________
+tf_op_layer_LeakyRelu_11 (Tenso [(None, 52, 52, 256) 0           batch_normalization_11[0][0]     
+__________________________________________________________________________________________________
+tf_op_layer_AddV2_3 (TensorFlow [(None, 52, 52, 256) 0           tf_op_layer_LeakyRelu_9[0][0]    
+                                                                 tf_op_layer_LeakyRelu_11[0][0]   
+__________________________________________________________________________________________________
+conv2d_12 (Conv2D)              (None, 52, 52, 128)  32768       tf_op_layer_AddV2_3[0][0]        
+__________________________________________________________________________________________________
+batch_normalization_12 (BatchNo (None, 52, 52, 128)  512         conv2d_12[0][0]                  
+__________________________________________________________________________________________________
+tf_op_layer_LeakyRelu_12 (Tenso [(None, 52, 52, 128) 0           batch_normalization_12[0][0]     
+__________________________________________________________________________________________________
+conv2d_13 (Conv2D)              (None, 52, 52, 256)  294912      tf_op_layer_LeakyRelu_12[0][0]   
+__________________________________________________________________________________________________
+batch_normalization_13 (BatchNo (None, 52, 52, 256)  1024        conv2d_13[0][0]                  
+__________________________________________________________________________________________________
+tf_op_layer_LeakyRelu_13 (Tenso [(None, 52, 52, 256) 0           batch_normalization_13[0][0]     
+__________________________________________________________________________________________________
+tf_op_layer_AddV2_4 (TensorFlow [(None, 52, 52, 256) 0           tf_op_layer_AddV2_3[0][0]        
+                                                                 tf_op_layer_LeakyRelu_13[0][0]   
+__________________________________________________________________________________________________
+conv2d_14 (Conv2D)              (None, 52, 52, 128)  32768       tf_op_layer_AddV2_4[0][0]        
+__________________________________________________________________________________________________
+batch_normalization_14 (BatchNo (None, 52, 52, 128)  512         conv2d_14[0][0]                  
+__________________________________________________________________________________________________
+tf_op_layer_LeakyRelu_14 (Tenso [(None, 52, 52, 128) 0           batch_normalization_14[0][0]     
+__________________________________________________________________________________________________
+conv2d_15 (Conv2D)              (None, 52, 52, 256)  294912      tf_op_layer_LeakyRelu_14[0][0]   
+__________________________________________________________________________________________________
+batch_normalization_15 (BatchNo (None, 52, 52, 256)  1024        conv2d_15[0][0]                  
+__________________________________________________________________________________________________
+tf_op_layer_LeakyRelu_15 (Tenso [(None, 52, 52, 256) 0           batch_normalization_15[0][0]     
+__________________________________________________________________________________________________
+tf_op_layer_AddV2_5 (TensorFlow [(None, 52, 52, 256) 0           tf_op_layer_AddV2_4[0][0]        
+                                                                 tf_op_layer_LeakyRelu_15[0][0]   
+__________________________________________________________________________________________________
+conv2d_16 (Conv2D)              (None, 52, 52, 128)  32768       tf_op_layer_AddV2_5[0][0]        
+__________________________________________________________________________________________________
+batch_normalization_16 (BatchNo (None, 52, 52, 128)  512         conv2d_16[0][0]                  
+__________________________________________________________________________________________________
+tf_op_layer_LeakyRelu_16 (Tenso [(None, 52, 52, 128) 0           batch_normalization_16[0][0]     
+__________________________________________________________________________________________________
+conv2d_17 (Conv2D)              (None, 52, 52, 256)  294912      tf_op_layer_LeakyRelu_16[0][0]   
+__________________________________________________________________________________________________
+batch_normalization_17 (BatchNo (None, 52, 52, 256)  1024        conv2d_17[0][0]                  
+__________________________________________________________________________________________________
+tf_op_layer_LeakyRelu_17 (Tenso [(None, 52, 52, 256) 0           batch_normalization_17[0][0]     
+__________________________________________________________________________________________________
+tf_op_layer_AddV2_6 (TensorFlow [(None, 52, 52, 256) 0           tf_op_layer_AddV2_5[0][0]        
+                                                                 tf_op_layer_LeakyRelu_17[0][0]   
+__________________________________________________________________________________________________
+conv2d_18 (Conv2D)              (None, 52, 52, 128)  32768       tf_op_layer_AddV2_6[0][0]        
+__________________________________________________________________________________________________
+batch_normalization_18 (BatchNo (None, 52, 52, 128)  512         conv2d_18[0][0]                  
+__________________________________________________________________________________________________
+tf_op_layer_LeakyRelu_18 (Tenso [(None, 52, 52, 128) 0           batch_normalization_18[0][0]     
+__________________________________________________________________________________________________
+conv2d_19 (Conv2D)              (None, 52, 52, 256)  294912      tf_op_layer_LeakyRelu_18[0][0]   
+__________________________________________________________________________________________________
+batch_normalization_19 (BatchNo (None, 52, 52, 256)  1024        conv2d_19[0][0]                  
+__________________________________________________________________________________________________
+tf_op_layer_LeakyRelu_19 (Tenso [(None, 52, 52, 256) 0           batch_normalization_19[0][0]     
+__________________________________________________________________________________________________
+tf_op_layer_AddV2_7 (TensorFlow [(None, 52, 52, 256) 0           tf_op_layer_AddV2_6[0][0]        
+                                                                 tf_op_layer_LeakyRelu_19[0][0]   
+__________________________________________________________________________________________________
+conv2d_20 (Conv2D)              (None, 52, 52, 128)  32768       tf_op_layer_AddV2_7[0][0]        
+__________________________________________________________________________________________________
+batch_normalization_20 (BatchNo (None, 52, 52, 128)  512         conv2d_20[0][0]                  
+__________________________________________________________________________________________________
+tf_op_layer_LeakyRelu_20 (Tenso [(None, 52, 52, 128) 0           batch_normalization_20[0][0]     
+__________________________________________________________________________________________________
+conv2d_21 (Conv2D)              (None, 52, 52, 256)  294912      tf_op_layer_LeakyRelu_20[0][0]   
+__________________________________________________________________________________________________
+batch_normalization_21 (BatchNo (None, 52, 52, 256)  1024        conv2d_21[0][0]                  
+__________________________________________________________________________________________________
+tf_op_layer_LeakyRelu_21 (Tenso [(None, 52, 52, 256) 0           batch_normalization_21[0][0]     
+__________________________________________________________________________________________________
+tf_op_layer_AddV2_8 (TensorFlow [(None, 52, 52, 256) 0           tf_op_layer_AddV2_7[0][0]        
+                                                                 tf_op_layer_LeakyRelu_21[0][0]   
+__________________________________________________________________________________________________
+conv2d_22 (Conv2D)              (None, 52, 52, 128)  32768       tf_op_layer_AddV2_8[0][0]        
+__________________________________________________________________________________________________
+batch_normalization_22 (BatchNo (None, 52, 52, 128)  512         conv2d_22[0][0]                  
+__________________________________________________________________________________________________
+tf_op_layer_LeakyRelu_22 (Tenso [(None, 52, 52, 128) 0           batch_normalization_22[0][0]     
+__________________________________________________________________________________________________
+conv2d_23 (Conv2D)              (None, 52, 52, 256)  294912      tf_op_layer_LeakyRelu_22[0][0]   
+__________________________________________________________________________________________________
+batch_normalization_23 (BatchNo (None, 52, 52, 256)  1024        conv2d_23[0][0]                  
+__________________________________________________________________________________________________
+tf_op_layer_LeakyRelu_23 (Tenso [(None, 52, 52, 256) 0           batch_normalization_23[0][0]     
+__________________________________________________________________________________________________
+tf_op_layer_AddV2_9 (TensorFlow [(None, 52, 52, 256) 0           tf_op_layer_AddV2_8[0][0]        
+                                                                 tf_op_layer_LeakyRelu_23[0][0]   
+__________________________________________________________________________________________________
+conv2d_24 (Conv2D)              (None, 52, 52, 128)  32768       tf_op_layer_AddV2_9[0][0]        
+__________________________________________________________________________________________________
+batch_normalization_24 (BatchNo (None, 52, 52, 128)  512         conv2d_24[0][0]                  
+__________________________________________________________________________________________________
+tf_op_layer_LeakyRelu_24 (Tenso [(None, 52, 52, 128) 0           batch_normalization_24[0][0]     
+__________________________________________________________________________________________________
+conv2d_25 (Conv2D)              (None, 52, 52, 256)  294912      tf_op_layer_LeakyRelu_24[0][0]   
+__________________________________________________________________________________________________
+batch_normalization_25 (BatchNo (None, 52, 52, 256)  1024        conv2d_25[0][0]                  
+__________________________________________________________________________________________________
+tf_op_layer_LeakyRelu_25 (Tenso [(None, 52, 52, 256) 0           batch_normalization_25[0][0]     
+__________________________________________________________________________________________________
+tf_op_layer_AddV2_10 (TensorFlo [(None, 52, 52, 256) 0           tf_op_layer_AddV2_9[0][0]        
+                                                                 tf_op_layer_LeakyRelu_25[0][0]   
+__________________________________________________________________________________________________
+zero_padding2d_3 (ZeroPadding2D (None, 53, 53, 256)  0           tf_op_layer_AddV2_10[0][0]       
+__________________________________________________________________________________________________
+conv2d_26 (Conv2D)              (None, 26, 26, 512)  1179648     zero_padding2d_3[0][0]           
+__________________________________________________________________________________________________
+batch_normalization_26 (BatchNo (None, 26, 26, 512)  2048        conv2d_26[0][0]                  
+__________________________________________________________________________________________________
+tf_op_layer_LeakyRelu_26 (Tenso [(None, 26, 26, 512) 0           batch_normalization_26[0][0]     
+__________________________________________________________________________________________________
+conv2d_27 (Conv2D)              (None, 26, 26, 256)  131072      tf_op_layer_LeakyRelu_26[0][0]   
+__________________________________________________________________________________________________
+batch_normalization_27 (BatchNo (None, 26, 26, 256)  1024        conv2d_27[0][0]                  
+__________________________________________________________________________________________________
+tf_op_layer_LeakyRelu_27 (Tenso [(None, 26, 26, 256) 0           batch_normalization_27[0][0]     
+__________________________________________________________________________________________________
+conv2d_28 (Conv2D)              (None, 26, 26, 512)  1179648     tf_op_layer_LeakyRelu_27[0][0]   
+__________________________________________________________________________________________________
+batch_normalization_28 (BatchNo (None, 26, 26, 512)  2048        conv2d_28[0][0]                  
+__________________________________________________________________________________________________
+tf_op_layer_LeakyRelu_28 (Tenso [(None, 26, 26, 512) 0           batch_normalization_28[0][0]     
+__________________________________________________________________________________________________
+tf_op_layer_AddV2_11 (TensorFlo [(None, 26, 26, 512) 0           tf_op_layer_LeakyRelu_26[0][0]   
+                                                                 tf_op_layer_LeakyRelu_28[0][0]   
+__________________________________________________________________________________________________
+conv2d_29 (Conv2D)              (None, 26, 26, 256)  131072      tf_op_layer_AddV2_11[0][0]       
+__________________________________________________________________________________________________
+batch_normalization_29 (BatchNo (None, 26, 26, 256)  1024        conv2d_29[0][0]                  
+__________________________________________________________________________________________________
+tf_op_layer_LeakyRelu_29 (Tenso [(None, 26, 26, 256) 0           batch_normalization_29[0][0]     
+__________________________________________________________________________________________________
+conv2d_30 (Conv2D)              (None, 26, 26, 512)  1179648     tf_op_layer_LeakyRelu_29[0][0]   
+__________________________________________________________________________________________________
+batch_normalization_30 (BatchNo (None, 26, 26, 512)  2048        conv2d_30[0][0]                  
+__________________________________________________________________________________________________
+tf_op_layer_LeakyRelu_30 (Tenso [(None, 26, 26, 512) 0           batch_normalization_30[0][0]     
+__________________________________________________________________________________________________
+tf_op_layer_AddV2_12 (TensorFlo [(None, 26, 26, 512) 0           tf_op_layer_AddV2_11[0][0]       
+                                                                 tf_op_layer_LeakyRelu_30[0][0]   
+__________________________________________________________________________________________________
+conv2d_31 (Conv2D)              (None, 26, 26, 256)  131072      tf_op_layer_AddV2_12[0][0]       
+__________________________________________________________________________________________________
+batch_normalization_31 (BatchNo (None, 26, 26, 256)  1024        conv2d_31[0][0]                  
+__________________________________________________________________________________________________
+tf_op_layer_LeakyRelu_31 (Tenso [(None, 26, 26, 256) 0           batch_normalization_31[0][0]     
+__________________________________________________________________________________________________
+conv2d_32 (Conv2D)              (None, 26, 26, 512)  1179648     tf_op_layer_LeakyRelu_31[0][0]   
+__________________________________________________________________________________________________
+batch_normalization_32 (BatchNo (None, 26, 26, 512)  2048        conv2d_32[0][0]                  
+__________________________________________________________________________________________________
+tf_op_layer_LeakyRelu_32 (Tenso [(None, 26, 26, 512) 0           batch_normalization_32[0][0]     
+__________________________________________________________________________________________________
+tf_op_layer_AddV2_13 (TensorFlo [(None, 26, 26, 512) 0           tf_op_layer_AddV2_12[0][0]       
+                                                                 tf_op_layer_LeakyRelu_32[0][0]   
+__________________________________________________________________________________________________
+conv2d_33 (Conv2D)              (None, 26, 26, 256)  131072      tf_op_layer_AddV2_13[0][0]       
+__________________________________________________________________________________________________
+batch_normalization_33 (BatchNo (None, 26, 26, 256)  1024        conv2d_33[0][0]                  
+__________________________________________________________________________________________________
+tf_op_layer_LeakyRelu_33 (Tenso [(None, 26, 26, 256) 0           batch_normalization_33[0][0]     
+__________________________________________________________________________________________________
+conv2d_34 (Conv2D)              (None, 26, 26, 512)  1179648     tf_op_layer_LeakyRelu_33[0][0]   
+__________________________________________________________________________________________________
+batch_normalization_34 (BatchNo (None, 26, 26, 512)  2048        conv2d_34[0][0]                  
+__________________________________________________________________________________________________
+tf_op_layer_LeakyRelu_34 (Tenso [(None, 26, 26, 512) 0           batch_normalization_34[0][0]     
+__________________________________________________________________________________________________
+tf_op_layer_AddV2_14 (TensorFlo [(None, 26, 26, 512) 0           tf_op_layer_AddV2_13[0][0]       
+                                                                 tf_op_layer_LeakyRelu_34[0][0]   
+__________________________________________________________________________________________________
+conv2d_35 (Conv2D)              (None, 26, 26, 256)  131072      tf_op_layer_AddV2_14[0][0]       
+__________________________________________________________________________________________________
+batch_normalization_35 (BatchNo (None, 26, 26, 256)  1024        conv2d_35[0][0]                  
+__________________________________________________________________________________________________
+tf_op_layer_LeakyRelu_35 (Tenso [(None, 26, 26, 256) 0           batch_normalization_35[0][0]     
+__________________________________________________________________________________________________
+conv2d_36 (Conv2D)              (None, 26, 26, 512)  1179648     tf_op_layer_LeakyRelu_35[0][0]   
+__________________________________________________________________________________________________
+batch_normalization_36 (BatchNo (None, 26, 26, 512)  2048        conv2d_36[0][0]                  
+__________________________________________________________________________________________________
+tf_op_layer_LeakyRelu_36 (Tenso [(None, 26, 26, 512) 0           batch_normalization_36[0][0]     
+__________________________________________________________________________________________________
+tf_op_layer_AddV2_15 (TensorFlo [(None, 26, 26, 512) 0           tf_op_layer_AddV2_14[0][0]       
+                                                                 tf_op_layer_LeakyRelu_36[0][0]   
+__________________________________________________________________________________________________
+conv2d_37 (Conv2D)              (None, 26, 26, 256)  131072      tf_op_layer_AddV2_15[0][0]       
+__________________________________________________________________________________________________
+batch_normalization_37 (BatchNo (None, 26, 26, 256)  1024        conv2d_37[0][0]                  
+__________________________________________________________________________________________________
+tf_op_layer_LeakyRelu_37 (Tenso [(None, 26, 26, 256) 0           batch_normalization_37[0][0]     
+__________________________________________________________________________________________________
+conv2d_38 (Conv2D)              (None, 26, 26, 512)  1179648     tf_op_layer_LeakyRelu_37[0][0]   
+__________________________________________________________________________________________________
+batch_normalization_38 (BatchNo (None, 26, 26, 512)  2048        conv2d_38[0][0]                  
+__________________________________________________________________________________________________
+tf_op_layer_LeakyRelu_38 (Tenso [(None, 26, 26, 512) 0           batch_normalization_38[0][0]     
+__________________________________________________________________________________________________
+tf_op_layer_AddV2_16 (TensorFlo [(None, 26, 26, 512) 0           tf_op_layer_AddV2_15[0][0]       
+                                                                 tf_op_layer_LeakyRelu_38[0][0]   
+__________________________________________________________________________________________________
+conv2d_39 (Conv2D)              (None, 26, 26, 256)  131072      tf_op_layer_AddV2_16[0][0]       
+__________________________________________________________________________________________________
+batch_normalization_39 (BatchNo (None, 26, 26, 256)  1024        conv2d_39[0][0]                  
+__________________________________________________________________________________________________
+tf_op_layer_LeakyRelu_39 (Tenso [(None, 26, 26, 256) 0           batch_normalization_39[0][0]     
+__________________________________________________________________________________________________
+conv2d_40 (Conv2D)              (None, 26, 26, 512)  1179648     tf_op_layer_LeakyRelu_39[0][0]   
+__________________________________________________________________________________________________
+batch_normalization_40 (BatchNo (None, 26, 26, 512)  2048        conv2d_40[0][0]                  
+__________________________________________________________________________________________________
+tf_op_layer_LeakyRelu_40 (Tenso [(None, 26, 26, 512) 0           batch_normalization_40[0][0]     
+__________________________________________________________________________________________________
+tf_op_layer_AddV2_17 (TensorFlo [(None, 26, 26, 512) 0           tf_op_layer_AddV2_16[0][0]       
+                                                                 tf_op_layer_LeakyRelu_40[0][0]   
+__________________________________________________________________________________________________
+conv2d_41 (Conv2D)              (None, 26, 26, 256)  131072      tf_op_layer_AddV2_17[0][0]       
+__________________________________________________________________________________________________
+batch_normalization_41 (BatchNo (None, 26, 26, 256)  1024        conv2d_41[0][0]                  
+__________________________________________________________________________________________________
+tf_op_layer_LeakyRelu_41 (Tenso [(None, 26, 26, 256) 0           batch_normalization_41[0][0]     
+__________________________________________________________________________________________________
+conv2d_42 (Conv2D)              (None, 26, 26, 512)  1179648     tf_op_layer_LeakyRelu_41[0][0]   
+__________________________________________________________________________________________________
+batch_normalization_42 (BatchNo (None, 26, 26, 512)  2048        conv2d_42[0][0]                  
+__________________________________________________________________________________________________
+tf_op_layer_LeakyRelu_42 (Tenso [(None, 26, 26, 512) 0           batch_normalization_42[0][0]     
+__________________________________________________________________________________________________
+tf_op_layer_AddV2_18 (TensorFlo [(None, 26, 26, 512) 0           tf_op_layer_AddV2_17[0][0]       
+                                                                 tf_op_layer_LeakyRelu_42[0][0]   
+__________________________________________________________________________________________________
+zero_padding2d_4 (ZeroPadding2D (None, 27, 27, 512)  0           tf_op_layer_AddV2_18[0][0]       
+__________________________________________________________________________________________________
+conv2d_43 (Conv2D)              (None, 13, 13, 1024) 4718592     zero_padding2d_4[0][0]           
+__________________________________________________________________________________________________
+batch_normalization_43 (BatchNo (None, 13, 13, 1024) 4096        conv2d_43[0][0]                  
+__________________________________________________________________________________________________
+tf_op_layer_LeakyRelu_43 (Tenso [(None, 13, 13, 1024 0           batch_normalization_43[0][0]     
+__________________________________________________________________________________________________
+conv2d_44 (Conv2D)              (None, 13, 13, 512)  524288      tf_op_layer_LeakyRelu_43[0][0]   
+__________________________________________________________________________________________________
+batch_normalization_44 (BatchNo (None, 13, 13, 512)  2048        conv2d_44[0][0]                  
+__________________________________________________________________________________________________
+tf_op_layer_LeakyRelu_44 (Tenso [(None, 13, 13, 512) 0           batch_normalization_44[0][0]     
+__________________________________________________________________________________________________
+conv2d_45 (Conv2D)              (None, 13, 13, 1024) 4718592     tf_op_layer_LeakyRelu_44[0][0]   
+__________________________________________________________________________________________________
+batch_normalization_45 (BatchNo (None, 13, 13, 1024) 4096        conv2d_45[0][0]                  
+__________________________________________________________________________________________________
+tf_op_layer_LeakyRelu_45 (Tenso [(None, 13, 13, 1024 0           batch_normalization_45[0][0]     
+__________________________________________________________________________________________________
+tf_op_layer_AddV2_19 (TensorFlo [(None, 13, 13, 1024 0           tf_op_layer_LeakyRelu_43[0][0]   
+                                                                 tf_op_layer_LeakyRelu_45[0][0]   
+__________________________________________________________________________________________________
+conv2d_46 (Conv2D)              (None, 13, 13, 512)  524288      tf_op_layer_AddV2_19[0][0]       
+__________________________________________________________________________________________________
+batch_normalization_46 (BatchNo (None, 13, 13, 512)  2048        conv2d_46[0][0]                  
+__________________________________________________________________________________________________
+tf_op_layer_LeakyRelu_46 (Tenso [(None, 13, 13, 512) 0           batch_normalization_46[0][0]     
+__________________________________________________________________________________________________
+conv2d_47 (Conv2D)              (None, 13, 13, 1024) 4718592     tf_op_layer_LeakyRelu_46[0][0]   
+__________________________________________________________________________________________________
+batch_normalization_47 (BatchNo (None, 13, 13, 1024) 4096        conv2d_47[0][0]                  
+__________________________________________________________________________________________________
+tf_op_layer_LeakyRelu_47 (Tenso [(None, 13, 13, 1024 0           batch_normalization_47[0][0]     
+__________________________________________________________________________________________________
+tf_op_layer_AddV2_20 (TensorFlo [(None, 13, 13, 1024 0           tf_op_layer_AddV2_19[0][0]       
+                                                                 tf_op_layer_LeakyRelu_47[0][0]   
+__________________________________________________________________________________________________
+conv2d_48 (Conv2D)              (None, 13, 13, 512)  524288      tf_op_layer_AddV2_20[0][0]       
+__________________________________________________________________________________________________
+batch_normalization_48 (BatchNo (None, 13, 13, 512)  2048        conv2d_48[0][0]                  
+__________________________________________________________________________________________________
+tf_op_layer_LeakyRelu_48 (Tenso [(None, 13, 13, 512) 0           batch_normalization_48[0][0]     
+__________________________________________________________________________________________________
+conv2d_49 (Conv2D)              (None, 13, 13, 1024) 4718592     tf_op_layer_LeakyRelu_48[0][0]   
+__________________________________________________________________________________________________
+batch_normalization_49 (BatchNo (None, 13, 13, 1024) 4096        conv2d_49[0][0]                  
+__________________________________________________________________________________________________
+tf_op_layer_LeakyRelu_49 (Tenso [(None, 13, 13, 1024 0           batch_normalization_49[0][0]     
+__________________________________________________________________________________________________
+tf_op_layer_AddV2_21 (TensorFlo [(None, 13, 13, 1024 0           tf_op_layer_AddV2_20[0][0]       
+                                                                 tf_op_layer_LeakyRelu_49[0][0]   
+__________________________________________________________________________________________________
+conv2d_50 (Conv2D)              (None, 13, 13, 512)  524288      tf_op_layer_AddV2_21[0][0]       
+__________________________________________________________________________________________________
+batch_normalization_50 (BatchNo (None, 13, 13, 512)  2048        conv2d_50[0][0]                  
+__________________________________________________________________________________________________
+tf_op_layer_LeakyRelu_50 (Tenso [(None, 13, 13, 512) 0           batch_normalization_50[0][0]     
+__________________________________________________________________________________________________
+conv2d_51 (Conv2D)              (None, 13, 13, 1024) 4718592     tf_op_layer_LeakyRelu_50[0][0]   
+__________________________________________________________________________________________________
+batch_normalization_51 (BatchNo (None, 13, 13, 1024) 4096        conv2d_51[0][0]                  
+__________________________________________________________________________________________________
+tf_op_layer_LeakyRelu_51 (Tenso [(None, 13, 13, 1024 0           batch_normalization_51[0][0]     
+__________________________________________________________________________________________________
+tf_op_layer_AddV2_22 (TensorFlo [(None, 13, 13, 1024 0           tf_op_layer_AddV2_21[0][0]       
+                                                                 tf_op_layer_LeakyRelu_51[0][0]   
+__________________________________________________________________________________________________
+conv2d_52 (Conv2D)              (None, 13, 13, 512)  524288      tf_op_layer_AddV2_22[0][0]       
+__________________________________________________________________________________________________
+batch_normalization_52 (BatchNo (None, 13, 13, 512)  2048        conv2d_52[0][0]                  
+__________________________________________________________________________________________________
+tf_op_layer_LeakyRelu_52 (Tenso [(None, 13, 13, 512) 0           batch_normalization_52[0][0]     
+__________________________________________________________________________________________________
+conv2d_53 (Conv2D)              (None, 13, 13, 1024) 4718592     tf_op_layer_LeakyRelu_52[0][0]   
+__________________________________________________________________________________________________
+batch_normalization_53 (BatchNo (None, 13, 13, 1024) 4096        conv2d_53[0][0]                  
+__________________________________________________________________________________________________
+tf_op_layer_LeakyRelu_53 (Tenso [(None, 13, 13, 1024 0           batch_normalization_53[0][0]     
+__________________________________________________________________________________________________
+conv2d_54 (Conv2D)              (None, 13, 13, 512)  524288      tf_op_layer_LeakyRelu_53[0][0]   
+__________________________________________________________________________________________________
+batch_normalization_54 (BatchNo (None, 13, 13, 512)  2048        conv2d_54[0][0]                  
+__________________________________________________________________________________________________
+tf_op_layer_LeakyRelu_54 (Tenso [(None, 13, 13, 512) 0           batch_normalization_54[0][0]     
+__________________________________________________________________________________________________
+conv2d_55 (Conv2D)              (None, 13, 13, 1024) 4718592     tf_op_layer_LeakyRelu_54[0][0]   
+__________________________________________________________________________________________________
+batch_normalization_55 (BatchNo (None, 13, 13, 1024) 4096        conv2d_55[0][0]                  
+__________________________________________________________________________________________________
+tf_op_layer_LeakyRelu_55 (Tenso [(None, 13, 13, 1024 0           batch_normalization_55[0][0]     
+__________________________________________________________________________________________________
+conv2d_56 (Conv2D)              (None, 13, 13, 512)  524288      tf_op_layer_LeakyRelu_55[0][0]   
+__________________________________________________________________________________________________
+batch_normalization_56 (BatchNo (None, 13, 13, 512)  2048        conv2d_56[0][0]                  
+__________________________________________________________________________________________________
+tf_op_layer_LeakyRelu_56 (Tenso [(None, 13, 13, 512) 0           batch_normalization_56[0][0]     
+__________________________________________________________________________________________________
+conv2d_57 (Conv2D)              (None, 13, 13, 1024) 4718592     tf_op_layer_LeakyRelu_56[0][0]   
+__________________________________________________________________________________________________
+batch_normalization_57 (BatchNo (None, 13, 13, 1024) 4096        conv2d_57[0][0]                  
+__________________________________________________________________________________________________
+tf_op_layer_LeakyRelu_57 (Tenso [(None, 13, 13, 1024 0           batch_normalization_57[0][0]     
+__________________________________________________________________________________________________
+conv2d_58 (Conv2D)              (None, 13, 13, 255)  261375      tf_op_layer_LeakyRelu_57[0][0]   
+==================================================================================================
+Total params: 56,629,087
+Trainable params: 56,584,159
+Non-trainable params: 44,928
+__________________________________________________________________________________________________

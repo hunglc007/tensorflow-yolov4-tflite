@@ -47,28 +47,8 @@ def save_tf():
     pred = tf.concat([boxes, pred_conf], axis=-1)
   model = tf.keras.Model(input_layer, pred)
   utils.load_weights(model, FLAGS.weights, FLAGS.model, FLAGS.tiny)
-
-  layer_names = [layer.name for layer in model.layers]
-  l1_name = 'conv2d_58'
-  l2_name = 'conv2d_66'
-  l3_name = 'conv2d_74'
-  l1 = model.layers[layer_names.index(l1_name)]
-  l2 = model.layers[layer_names.index(l2_name)]
-  l3 = model.layers[layer_names.index(l3_name)]
-  l1 = l1.output
-  l2 = l2.output
-  l3 = l3.output
-  k = l1.shape[1]
-  l1_reshape = tf.reshape(l1, (k*k*3   ,85))
-  l2_reshape = tf.reshape(l2, (k*k*3*4 ,85))
-  l3_reshape = tf.reshape(l3, (k*k*3*16,85))
-  print(l1_reshape.shape)
-  print(l2_reshape.shape)
-  print(l3_reshape.shape)
-  concat = tf.keras.layers.Concatenate(axis=0)([l1_reshape,l2_reshape,l3_reshape])
-  new_model = tf.keras.Model(input_layer, concat)
-  new_model.summary()
-  new_model.save(FLAGS.output)
+  model.summary()
+  model.save(FLAGS.output)
 
 def main(_argv):
   save_tf()

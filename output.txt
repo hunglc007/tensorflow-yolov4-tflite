@@ -1,0 +1,1142 @@
+Model: "model"
+__________________________________________________________________________________________________
+ Layer (type)                   Output Shape         Param #     Connected to                     
+==================================================================================================
+ input_1 (InputLayer)           [(None, 416, 416, 3  0           []                               
+                                )]                                                                
+                                                                                                  
+ conv2d (Conv2D)                (None, 416, 416, 32  864         ['input_1[0][0]']                
+                                )                                                                 
+                                                                                                  
+ batch_normalization (BatchNorm  (None, 416, 416, 32  128        ['conv2d[0][0]']                 
+ alization)                     )                                                                 
+                                                                                                  
+ tf.nn.leaky_relu (TFOpLambda)  (None, 416, 416, 32  0           ['batch_normalization[0][0]']    
+                                )                                                                 
+                                                                                                  
+ zero_padding2d (ZeroPadding2D)  (None, 417, 417, 32  0          ['tf.nn.leaky_relu[0][0]']       
+                                )                                                                 
+                                                                                                  
+ conv2d_1 (Conv2D)              (None, 208, 208, 64  18432       ['zero_padding2d[0][0]']         
+                                )                                                                 
+                                                                                                  
+ batch_normalization_1 (BatchNo  (None, 208, 208, 64  256        ['conv2d_1[0][0]']               
+ rmalization)                   )                                                                 
+                                                                                                  
+ tf.nn.leaky_relu_1 (TFOpLambda  (None, 208, 208, 64  0          ['batch_normalization_1[0][0]']  
+ )                              )                                                                 
+                                                                                                  
+ conv2d_2 (Conv2D)              (None, 208, 208, 32  2048        ['tf.nn.leaky_relu_1[0][0]']     
+                                )                                                                 
+                                                                                                  
+ batch_normalization_2 (BatchNo  (None, 208, 208, 32  128        ['conv2d_2[0][0]']               
+ rmalization)                   )                                                                 
+                                                                                                  
+ tf.nn.leaky_relu_2 (TFOpLambda  (None, 208, 208, 32  0          ['batch_normalization_2[0][0]']  
+ )                              )                                                                 
+                                                                                                  
+ conv2d_3 (Conv2D)              (None, 208, 208, 64  18432       ['tf.nn.leaky_relu_2[0][0]']     
+                                )                                                                 
+                                                                                                  
+ batch_normalization_3 (BatchNo  (None, 208, 208, 64  256        ['conv2d_3[0][0]']               
+ rmalization)                   )                                                                 
+                                                                                                  
+ tf.nn.leaky_relu_3 (TFOpLambda  (None, 208, 208, 64  0          ['batch_normalization_3[0][0]']  
+ )                              )                                                                 
+                                                                                                  
+ tf.__operators__.add (TFOpLamb  (None, 208, 208, 64  0          ['tf.nn.leaky_relu_1[0][0]',     
+ da)                            )                                 'tf.nn.leaky_relu_3[0][0]']     
+                                                                                                  
+ zero_padding2d_1 (ZeroPadding2  (None, 209, 209, 64  0          ['tf.__operators__.add[0][0]']   
+ D)                             )                                                                 
+                                                                                                  
+ conv2d_4 (Conv2D)              (None, 104, 104, 12  73728       ['zero_padding2d_1[0][0]']       
+                                8)                                                                
+                                                                                                  
+ batch_normalization_4 (BatchNo  (None, 104, 104, 12  512        ['conv2d_4[0][0]']               
+ rmalization)                   8)                                                                
+                                                                                                  
+ tf.nn.leaky_relu_4 (TFOpLambda  (None, 104, 104, 12  0          ['batch_normalization_4[0][0]']  
+ )                              8)                                                                
+                                                                                                  
+ conv2d_5 (Conv2D)              (None, 104, 104, 64  8192        ['tf.nn.leaky_relu_4[0][0]']     
+                                )                                                                 
+                                                                                                  
+ batch_normalization_5 (BatchNo  (None, 104, 104, 64  256        ['conv2d_5[0][0]']               
+ rmalization)                   )                                                                 
+                                                                                                  
+ tf.nn.leaky_relu_5 (TFOpLambda  (None, 104, 104, 64  0          ['batch_normalization_5[0][0]']  
+ )                              )                                                                 
+                                                                                                  
+ conv2d_6 (Conv2D)              (None, 104, 104, 12  73728       ['tf.nn.leaky_relu_5[0][0]']     
+                                8)                                                                
+                                                                                                  
+ batch_normalization_6 (BatchNo  (None, 104, 104, 12  512        ['conv2d_6[0][0]']               
+ rmalization)                   8)                                                                
+                                                                                                  
+ tf.nn.leaky_relu_6 (TFOpLambda  (None, 104, 104, 12  0          ['batch_normalization_6[0][0]']  
+ )                              8)                                                                
+                                                                                                  
+ tf.__operators__.add_1 (TFOpLa  (None, 104, 104, 12  0          ['tf.nn.leaky_relu_4[0][0]',     
+ mbda)                          8)                                'tf.nn.leaky_relu_6[0][0]']     
+                                                                                                  
+ conv2d_7 (Conv2D)              (None, 104, 104, 64  8192        ['tf.__operators__.add_1[0][0]'] 
+                                )                                                                 
+                                                                                                  
+ batch_normalization_7 (BatchNo  (None, 104, 104, 64  256        ['conv2d_7[0][0]']               
+ rmalization)                   )                                                                 
+                                                                                                  
+ tf.nn.leaky_relu_7 (TFOpLambda  (None, 104, 104, 64  0          ['batch_normalization_7[0][0]']  
+ )                              )                                                                 
+                                                                                                  
+ conv2d_8 (Conv2D)              (None, 104, 104, 12  73728       ['tf.nn.leaky_relu_7[0][0]']     
+                                8)                                                                
+                                                                                                  
+ batch_normalization_8 (BatchNo  (None, 104, 104, 12  512        ['conv2d_8[0][0]']               
+ rmalization)                   8)                                                                
+                                                                                                  
+ tf.nn.leaky_relu_8 (TFOpLambda  (None, 104, 104, 12  0          ['batch_normalization_8[0][0]']  
+ )                              8)                                                                
+                                                                                                  
+ tf.__operators__.add_2 (TFOpLa  (None, 104, 104, 12  0          ['tf.__operators__.add_1[0][0]', 
+ mbda)                          8)                                'tf.nn.leaky_relu_8[0][0]']     
+                                                                                                  
+ zero_padding2d_2 (ZeroPadding2  (None, 105, 105, 12  0          ['tf.__operators__.add_2[0][0]'] 
+ D)                             8)                                                                
+                                                                                                  
+ conv2d_9 (Conv2D)              (None, 52, 52, 256)  294912      ['zero_padding2d_2[0][0]']       
+                                                                                                  
+ batch_normalization_9 (BatchNo  (None, 52, 52, 256)  1024       ['conv2d_9[0][0]']               
+ rmalization)                                                                                     
+                                                                                                  
+ tf.nn.leaky_relu_9 (TFOpLambda  (None, 52, 52, 256)  0          ['batch_normalization_9[0][0]']  
+ )                                                                                                
+                                                                                                  
+ conv2d_10 (Conv2D)             (None, 52, 52, 128)  32768       ['tf.nn.leaky_relu_9[0][0]']     
+                                                                                                  
+ batch_normalization_10 (BatchN  (None, 52, 52, 128)  512        ['conv2d_10[0][0]']              
+ ormalization)                                                                                    
+                                                                                                  
+ tf.nn.leaky_relu_10 (TFOpLambd  (None, 52, 52, 128)  0          ['batch_normalization_10[0][0]'] 
+ a)                                                                                               
+                                                                                                  
+ conv2d_11 (Conv2D)             (None, 52, 52, 256)  294912      ['tf.nn.leaky_relu_10[0][0]']    
+                                                                                                  
+ batch_normalization_11 (BatchN  (None, 52, 52, 256)  1024       ['conv2d_11[0][0]']              
+ ormalization)                                                                                    
+                                                                                                  
+ tf.nn.leaky_relu_11 (TFOpLambd  (None, 52, 52, 256)  0          ['batch_normalization_11[0][0]'] 
+ a)                                                                                               
+                                                                                                  
+ tf.__operators__.add_3 (TFOpLa  (None, 52, 52, 256)  0          ['tf.nn.leaky_relu_9[0][0]',     
+ mbda)                                                            'tf.nn.leaky_relu_11[0][0]']    
+                                                                                                  
+ conv2d_12 (Conv2D)             (None, 52, 52, 128)  32768       ['tf.__operators__.add_3[0][0]'] 
+                                                                                                  
+ batch_normalization_12 (BatchN  (None, 52, 52, 128)  512        ['conv2d_12[0][0]']              
+ ormalization)                                                                                    
+                                                                                                  
+ tf.nn.leaky_relu_12 (TFOpLambd  (None, 52, 52, 128)  0          ['batch_normalization_12[0][0]'] 
+ a)                                                                                               
+                                                                                                  
+ conv2d_13 (Conv2D)             (None, 52, 52, 256)  294912      ['tf.nn.leaky_relu_12[0][0]']    
+                                                                                                  
+ batch_normalization_13 (BatchN  (None, 52, 52, 256)  1024       ['conv2d_13[0][0]']              
+ ormalization)                                                                                    
+                                                                                                  
+ tf.nn.leaky_relu_13 (TFOpLambd  (None, 52, 52, 256)  0          ['batch_normalization_13[0][0]'] 
+ a)                                                                                               
+                                                                                                  
+ tf.__operators__.add_4 (TFOpLa  (None, 52, 52, 256)  0          ['tf.__operators__.add_3[0][0]', 
+ mbda)                                                            'tf.nn.leaky_relu_13[0][0]']    
+                                                                                                  
+ conv2d_14 (Conv2D)             (None, 52, 52, 128)  32768       ['tf.__operators__.add_4[0][0]'] 
+                                                                                                  
+ batch_normalization_14 (BatchN  (None, 52, 52, 128)  512        ['conv2d_14[0][0]']              
+ ormalization)                                                                                    
+                                                                                                  
+ tf.nn.leaky_relu_14 (TFOpLambd  (None, 52, 52, 128)  0          ['batch_normalization_14[0][0]'] 
+ a)                                                                                               
+                                                                                                  
+ conv2d_15 (Conv2D)             (None, 52, 52, 256)  294912      ['tf.nn.leaky_relu_14[0][0]']    
+                                                                                                  
+ batch_normalization_15 (BatchN  (None, 52, 52, 256)  1024       ['conv2d_15[0][0]']              
+ ormalization)                                                                                    
+                                                                                                  
+ tf.nn.leaky_relu_15 (TFOpLambd  (None, 52, 52, 256)  0          ['batch_normalization_15[0][0]'] 
+ a)                                                                                               
+                                                                                                  
+ tf.__operators__.add_5 (TFOpLa  (None, 52, 52, 256)  0          ['tf.__operators__.add_4[0][0]', 
+ mbda)                                                            'tf.nn.leaky_relu_15[0][0]']    
+                                                                                                  
+ conv2d_16 (Conv2D)             (None, 52, 52, 128)  32768       ['tf.__operators__.add_5[0][0]'] 
+                                                                                                  
+ batch_normalization_16 (BatchN  (None, 52, 52, 128)  512        ['conv2d_16[0][0]']              
+ ormalization)                                                                                    
+                                                                                                  
+ tf.nn.leaky_relu_16 (TFOpLambd  (None, 52, 52, 128)  0          ['batch_normalization_16[0][0]'] 
+ a)                                                                                               
+                                                                                                  
+ conv2d_17 (Conv2D)             (None, 52, 52, 256)  294912      ['tf.nn.leaky_relu_16[0][0]']    
+                                                                                                  
+ batch_normalization_17 (BatchN  (None, 52, 52, 256)  1024       ['conv2d_17[0][0]']              
+ ormalization)                                                                                    
+                                                                                                  
+ tf.nn.leaky_relu_17 (TFOpLambd  (None, 52, 52, 256)  0          ['batch_normalization_17[0][0]'] 
+ a)                                                                                               
+                                                                                                  
+ tf.__operators__.add_6 (TFOpLa  (None, 52, 52, 256)  0          ['tf.__operators__.add_5[0][0]', 
+ mbda)                                                            'tf.nn.leaky_relu_17[0][0]']    
+                                                                                                  
+ conv2d_18 (Conv2D)             (None, 52, 52, 128)  32768       ['tf.__operators__.add_6[0][0]'] 
+                                                                                                  
+ batch_normalization_18 (BatchN  (None, 52, 52, 128)  512        ['conv2d_18[0][0]']              
+ ormalization)                                                                                    
+                                                                                                  
+ tf.nn.leaky_relu_18 (TFOpLambd  (None, 52, 52, 128)  0          ['batch_normalization_18[0][0]'] 
+ a)                                                                                               
+                                                                                                  
+ conv2d_19 (Conv2D)             (None, 52, 52, 256)  294912      ['tf.nn.leaky_relu_18[0][0]']    
+                                                                                                  
+ batch_normalization_19 (BatchN  (None, 52, 52, 256)  1024       ['conv2d_19[0][0]']              
+ ormalization)                                                                                    
+                                                                                                  
+ tf.nn.leaky_relu_19 (TFOpLambd  (None, 52, 52, 256)  0          ['batch_normalization_19[0][0]'] 
+ a)                                                                                               
+                                                                                                  
+ tf.__operators__.add_7 (TFOpLa  (None, 52, 52, 256)  0          ['tf.__operators__.add_6[0][0]', 
+ mbda)                                                            'tf.nn.leaky_relu_19[0][0]']    
+                                                                                                  
+ conv2d_20 (Conv2D)             (None, 52, 52, 128)  32768       ['tf.__operators__.add_7[0][0]'] 
+                                                                                                  
+ batch_normalization_20 (BatchN  (None, 52, 52, 128)  512        ['conv2d_20[0][0]']              
+ ormalization)                                                                                    
+                                                                                                  
+ tf.nn.leaky_relu_20 (TFOpLambd  (None, 52, 52, 128)  0          ['batch_normalization_20[0][0]'] 
+ a)                                                                                               
+                                                                                                  
+ conv2d_21 (Conv2D)             (None, 52, 52, 256)  294912      ['tf.nn.leaky_relu_20[0][0]']    
+                                                                                                  
+ batch_normalization_21 (BatchN  (None, 52, 52, 256)  1024       ['conv2d_21[0][0]']              
+ ormalization)                                                                                    
+                                                                                                  
+ tf.nn.leaky_relu_21 (TFOpLambd  (None, 52, 52, 256)  0          ['batch_normalization_21[0][0]'] 
+ a)                                                                                               
+                                                                                                  
+ tf.__operators__.add_8 (TFOpLa  (None, 52, 52, 256)  0          ['tf.__operators__.add_7[0][0]', 
+ mbda)                                                            'tf.nn.leaky_relu_21[0][0]']    
+                                                                                                  
+ conv2d_22 (Conv2D)             (None, 52, 52, 128)  32768       ['tf.__operators__.add_8[0][0]'] 
+                                                                                                  
+ batch_normalization_22 (BatchN  (None, 52, 52, 128)  512        ['conv2d_22[0][0]']              
+ ormalization)                                                                                    
+                                                                                                  
+ tf.nn.leaky_relu_22 (TFOpLambd  (None, 52, 52, 128)  0          ['batch_normalization_22[0][0]'] 
+ a)                                                                                               
+                                                                                                  
+ conv2d_23 (Conv2D)             (None, 52, 52, 256)  294912      ['tf.nn.leaky_relu_22[0][0]']    
+                                                                                                  
+ batch_normalization_23 (BatchN  (None, 52, 52, 256)  1024       ['conv2d_23[0][0]']              
+ ormalization)                                                                                    
+                                                                                                  
+ tf.nn.leaky_relu_23 (TFOpLambd  (None, 52, 52, 256)  0          ['batch_normalization_23[0][0]'] 
+ a)                                                                                               
+                                                                                                  
+ tf.__operators__.add_9 (TFOpLa  (None, 52, 52, 256)  0          ['tf.__operators__.add_8[0][0]', 
+ mbda)                                                            'tf.nn.leaky_relu_23[0][0]']    
+                                                                                                  
+ conv2d_24 (Conv2D)             (None, 52, 52, 128)  32768       ['tf.__operators__.add_9[0][0]'] 
+                                                                                                  
+ batch_normalization_24 (BatchN  (None, 52, 52, 128)  512        ['conv2d_24[0][0]']              
+ ormalization)                                                                                    
+                                                                                                  
+ tf.nn.leaky_relu_24 (TFOpLambd  (None, 52, 52, 128)  0          ['batch_normalization_24[0][0]'] 
+ a)                                                                                               
+                                                                                                  
+ conv2d_25 (Conv2D)             (None, 52, 52, 256)  294912      ['tf.nn.leaky_relu_24[0][0]']    
+                                                                                                  
+ batch_normalization_25 (BatchN  (None, 52, 52, 256)  1024       ['conv2d_25[0][0]']              
+ ormalization)                                                                                    
+                                                                                                  
+ tf.nn.leaky_relu_25 (TFOpLambd  (None, 52, 52, 256)  0          ['batch_normalization_25[0][0]'] 
+ a)                                                                                               
+                                                                                                  
+ tf.__operators__.add_10 (TFOpL  (None, 52, 52, 256)  0          ['tf.__operators__.add_9[0][0]', 
+ ambda)                                                           'tf.nn.leaky_relu_25[0][0]']    
+                                                                                                  
+ zero_padding2d_3 (ZeroPadding2  (None, 53, 53, 256)  0          ['tf.__operators__.add_10[0][0]']
+ D)                                                                                               
+                                                                                                  
+ conv2d_26 (Conv2D)             (None, 26, 26, 512)  1179648     ['zero_padding2d_3[0][0]']       
+                                                                                                  
+ batch_normalization_26 (BatchN  (None, 26, 26, 512)  2048       ['conv2d_26[0][0]']              
+ ormalization)                                                                                    
+                                                                                                  
+ tf.nn.leaky_relu_26 (TFOpLambd  (None, 26, 26, 512)  0          ['batch_normalization_26[0][0]'] 
+ a)                                                                                               
+                                                                                                  
+ conv2d_27 (Conv2D)             (None, 26, 26, 256)  131072      ['tf.nn.leaky_relu_26[0][0]']    
+                                                                                                  
+ batch_normalization_27 (BatchN  (None, 26, 26, 256)  1024       ['conv2d_27[0][0]']              
+ ormalization)                                                                                    
+                                                                                                  
+ tf.nn.leaky_relu_27 (TFOpLambd  (None, 26, 26, 256)  0          ['batch_normalization_27[0][0]'] 
+ a)                                                                                               
+                                                                                                  
+ conv2d_28 (Conv2D)             (None, 26, 26, 512)  1179648     ['tf.nn.leaky_relu_27[0][0]']    
+                                                                                                  
+ batch_normalization_28 (BatchN  (None, 26, 26, 512)  2048       ['conv2d_28[0][0]']              
+ ormalization)                                                                                    
+                                                                                                  
+ tf.nn.leaky_relu_28 (TFOpLambd  (None, 26, 26, 512)  0          ['batch_normalization_28[0][0]'] 
+ a)                                                                                               
+                                                                                                  
+ tf.__operators__.add_11 (TFOpL  (None, 26, 26, 512)  0          ['tf.nn.leaky_relu_26[0][0]',    
+ ambda)                                                           'tf.nn.leaky_relu_28[0][0]']    
+                                                                                                  
+ conv2d_29 (Conv2D)             (None, 26, 26, 256)  131072      ['tf.__operators__.add_11[0][0]']
+                                                                                                  
+ batch_normalization_29 (BatchN  (None, 26, 26, 256)  1024       ['conv2d_29[0][0]']              
+ ormalization)                                                                                    
+                                                                                                  
+ tf.nn.leaky_relu_29 (TFOpLambd  (None, 26, 26, 256)  0          ['batch_normalization_29[0][0]'] 
+ a)                                                                                               
+                                                                                                  
+ conv2d_30 (Conv2D)             (None, 26, 26, 512)  1179648     ['tf.nn.leaky_relu_29[0][0]']    
+                                                                                                  
+ batch_normalization_30 (BatchN  (None, 26, 26, 512)  2048       ['conv2d_30[0][0]']              
+ ormalization)                                                                                    
+                                                                                                  
+ tf.nn.leaky_relu_30 (TFOpLambd  (None, 26, 26, 512)  0          ['batch_normalization_30[0][0]'] 
+ a)                                                                                               
+                                                                                                  
+ tf.__operators__.add_12 (TFOpL  (None, 26, 26, 512)  0          ['tf.__operators__.add_11[0][0]',
+ ambda)                                                           'tf.nn.leaky_relu_30[0][0]']    
+                                                                                                  
+ conv2d_31 (Conv2D)             (None, 26, 26, 256)  131072      ['tf.__operators__.add_12[0][0]']
+                                                                                                  
+ batch_normalization_31 (BatchN  (None, 26, 26, 256)  1024       ['conv2d_31[0][0]']              
+ ormalization)                                                                                    
+                                                                                                  
+ tf.nn.leaky_relu_31 (TFOpLambd  (None, 26, 26, 256)  0          ['batch_normalization_31[0][0]'] 
+ a)                                                                                               
+                                                                                                  
+ conv2d_32 (Conv2D)             (None, 26, 26, 512)  1179648     ['tf.nn.leaky_relu_31[0][0]']    
+                                                                                                  
+ batch_normalization_32 (BatchN  (None, 26, 26, 512)  2048       ['conv2d_32[0][0]']              
+ ormalization)                                                                                    
+                                                                                                  
+ tf.nn.leaky_relu_32 (TFOpLambd  (None, 26, 26, 512)  0          ['batch_normalization_32[0][0]'] 
+ a)                                                                                               
+                                                                                                  
+ tf.__operators__.add_13 (TFOpL  (None, 26, 26, 512)  0          ['tf.__operators__.add_12[0][0]',
+ ambda)                                                           'tf.nn.leaky_relu_32[0][0]']    
+                                                                                                  
+ conv2d_33 (Conv2D)             (None, 26, 26, 256)  131072      ['tf.__operators__.add_13[0][0]']
+                                                                                                  
+ batch_normalization_33 (BatchN  (None, 26, 26, 256)  1024       ['conv2d_33[0][0]']              
+ ormalization)                                                                                    
+                                                                                                  
+ tf.nn.leaky_relu_33 (TFOpLambd  (None, 26, 26, 256)  0          ['batch_normalization_33[0][0]'] 
+ a)                                                                                               
+                                                                                                  
+ conv2d_34 (Conv2D)             (None, 26, 26, 512)  1179648     ['tf.nn.leaky_relu_33[0][0]']    
+                                                                                                  
+ batch_normalization_34 (BatchN  (None, 26, 26, 512)  2048       ['conv2d_34[0][0]']              
+ ormalization)                                                                                    
+                                                                                                  
+ tf.nn.leaky_relu_34 (TFOpLambd  (None, 26, 26, 512)  0          ['batch_normalization_34[0][0]'] 
+ a)                                                                                               
+                                                                                                  
+ tf.__operators__.add_14 (TFOpL  (None, 26, 26, 512)  0          ['tf.__operators__.add_13[0][0]',
+ ambda)                                                           'tf.nn.leaky_relu_34[0][0]']    
+                                                                                                  
+ conv2d_35 (Conv2D)             (None, 26, 26, 256)  131072      ['tf.__operators__.add_14[0][0]']
+                                                                                                  
+ batch_normalization_35 (BatchN  (None, 26, 26, 256)  1024       ['conv2d_35[0][0]']              
+ ormalization)                                                                                    
+                                                                                                  
+ tf.nn.leaky_relu_35 (TFOpLambd  (None, 26, 26, 256)  0          ['batch_normalization_35[0][0]'] 
+ a)                                                                                               
+                                                                                                  
+ conv2d_36 (Conv2D)             (None, 26, 26, 512)  1179648     ['tf.nn.leaky_relu_35[0][0]']    
+                                                                                                  
+ batch_normalization_36 (BatchN  (None, 26, 26, 512)  2048       ['conv2d_36[0][0]']              
+ ormalization)                                                                                    
+                                                                                                  
+ tf.nn.leaky_relu_36 (TFOpLambd  (None, 26, 26, 512)  0          ['batch_normalization_36[0][0]'] 
+ a)                                                                                               
+                                                                                                  
+ tf.__operators__.add_15 (TFOpL  (None, 26, 26, 512)  0          ['tf.__operators__.add_14[0][0]',
+ ambda)                                                           'tf.nn.leaky_relu_36[0][0]']    
+                                                                                                  
+ conv2d_37 (Conv2D)             (None, 26, 26, 256)  131072      ['tf.__operators__.add_15[0][0]']
+                                                                                                  
+ batch_normalization_37 (BatchN  (None, 26, 26, 256)  1024       ['conv2d_37[0][0]']              
+ ormalization)                                                                                    
+                                                                                                  
+ tf.nn.leaky_relu_37 (TFOpLambd  (None, 26, 26, 256)  0          ['batch_normalization_37[0][0]'] 
+ a)                                                                                               
+                                                                                                  
+ conv2d_38 (Conv2D)             (None, 26, 26, 512)  1179648     ['tf.nn.leaky_relu_37[0][0]']    
+                                                                                                  
+ batch_normalization_38 (BatchN  (None, 26, 26, 512)  2048       ['conv2d_38[0][0]']              
+ ormalization)                                                                                    
+                                                                                                  
+ tf.nn.leaky_relu_38 (TFOpLambd  (None, 26, 26, 512)  0          ['batch_normalization_38[0][0]'] 
+ a)                                                                                               
+                                                                                                  
+ tf.__operators__.add_16 (TFOpL  (None, 26, 26, 512)  0          ['tf.__operators__.add_15[0][0]',
+ ambda)                                                           'tf.nn.leaky_relu_38[0][0]']    
+                                                                                                  
+ conv2d_39 (Conv2D)             (None, 26, 26, 256)  131072      ['tf.__operators__.add_16[0][0]']
+                                                                                                  
+ batch_normalization_39 (BatchN  (None, 26, 26, 256)  1024       ['conv2d_39[0][0]']              
+ ormalization)                                                                                    
+                                                                                                  
+ tf.nn.leaky_relu_39 (TFOpLambd  (None, 26, 26, 256)  0          ['batch_normalization_39[0][0]'] 
+ a)                                                                                               
+                                                                                                  
+ conv2d_40 (Conv2D)             (None, 26, 26, 512)  1179648     ['tf.nn.leaky_relu_39[0][0]']    
+                                                                                                  
+ batch_normalization_40 (BatchN  (None, 26, 26, 512)  2048       ['conv2d_40[0][0]']              
+ ormalization)                                                                                    
+                                                                                                  
+ tf.nn.leaky_relu_40 (TFOpLambd  (None, 26, 26, 512)  0          ['batch_normalization_40[0][0]'] 
+ a)                                                                                               
+                                                                                                  
+ tf.__operators__.add_17 (TFOpL  (None, 26, 26, 512)  0          ['tf.__operators__.add_16[0][0]',
+ ambda)                                                           'tf.nn.leaky_relu_40[0][0]']    
+                                                                                                  
+ conv2d_41 (Conv2D)             (None, 26, 26, 256)  131072      ['tf.__operators__.add_17[0][0]']
+                                                                                                  
+ batch_normalization_41 (BatchN  (None, 26, 26, 256)  1024       ['conv2d_41[0][0]']              
+ ormalization)                                                                                    
+                                                                                                  
+ tf.nn.leaky_relu_41 (TFOpLambd  (None, 26, 26, 256)  0          ['batch_normalization_41[0][0]'] 
+ a)                                                                                               
+                                                                                                  
+ conv2d_42 (Conv2D)             (None, 26, 26, 512)  1179648     ['tf.nn.leaky_relu_41[0][0]']    
+                                                                                                  
+ batch_normalization_42 (BatchN  (None, 26, 26, 512)  2048       ['conv2d_42[0][0]']              
+ ormalization)                                                                                    
+                                                                                                  
+ tf.nn.leaky_relu_42 (TFOpLambd  (None, 26, 26, 512)  0          ['batch_normalization_42[0][0]'] 
+ a)                                                                                               
+                                                                                                  
+ tf.__operators__.add_18 (TFOpL  (None, 26, 26, 512)  0          ['tf.__operators__.add_17[0][0]',
+ ambda)                                                           'tf.nn.leaky_relu_42[0][0]']    
+                                                                                                  
+ zero_padding2d_4 (ZeroPadding2  (None, 27, 27, 512)  0          ['tf.__operators__.add_18[0][0]']
+ D)                                                                                               
+                                                                                                  
+ conv2d_43 (Conv2D)             (None, 13, 13, 1024  4718592     ['zero_padding2d_4[0][0]']       
+                                )                                                                 
+                                                                                                  
+ batch_normalization_43 (BatchN  (None, 13, 13, 1024  4096       ['conv2d_43[0][0]']              
+ ormalization)                  )                                                                 
+                                                                                                  
+ tf.nn.leaky_relu_43 (TFOpLambd  (None, 13, 13, 1024  0          ['batch_normalization_43[0][0]'] 
+ a)                             )                                                                 
+                                                                                                  
+ conv2d_44 (Conv2D)             (None, 13, 13, 512)  524288      ['tf.nn.leaky_relu_43[0][0]']    
+                                                                                                  
+ batch_normalization_44 (BatchN  (None, 13, 13, 512)  2048       ['conv2d_44[0][0]']              
+ ormalization)                                                                                    
+                                                                                                  
+ tf.nn.leaky_relu_44 (TFOpLambd  (None, 13, 13, 512)  0          ['batch_normalization_44[0][0]'] 
+ a)                                                                                               
+                                                                                                  
+ conv2d_45 (Conv2D)             (None, 13, 13, 1024  4718592     ['tf.nn.leaky_relu_44[0][0]']    
+                                )                                                                 
+                                                                                                  
+ batch_normalization_45 (BatchN  (None, 13, 13, 1024  4096       ['conv2d_45[0][0]']              
+ ormalization)                  )                                                                 
+                                                                                                  
+ tf.nn.leaky_relu_45 (TFOpLambd  (None, 13, 13, 1024  0          ['batch_normalization_45[0][0]'] 
+ a)                             )                                                                 
+                                                                                                  
+ tf.__operators__.add_19 (TFOpL  (None, 13, 13, 1024  0          ['tf.nn.leaky_relu_43[0][0]',    
+ ambda)                         )                                 'tf.nn.leaky_relu_45[0][0]']    
+                                                                                                  
+ conv2d_46 (Conv2D)             (None, 13, 13, 512)  524288      ['tf.__operators__.add_19[0][0]']
+                                                                                                  
+ batch_normalization_46 (BatchN  (None, 13, 13, 512)  2048       ['conv2d_46[0][0]']              
+ ormalization)                                                                                    
+                                                                                                  
+ tf.nn.leaky_relu_46 (TFOpLambd  (None, 13, 13, 512)  0          ['batch_normalization_46[0][0]'] 
+ a)                                                                                               
+                                                                                                  
+ conv2d_47 (Conv2D)             (None, 13, 13, 1024  4718592     ['tf.nn.leaky_relu_46[0][0]']    
+                                )                                                                 
+                                                                                                  
+ batch_normalization_47 (BatchN  (None, 13, 13, 1024  4096       ['conv2d_47[0][0]']              
+ ormalization)                  )                                                                 
+                                                                                                  
+ tf.nn.leaky_relu_47 (TFOpLambd  (None, 13, 13, 1024  0          ['batch_normalization_47[0][0]'] 
+ a)                             )                                                                 
+                                                                                                  
+ tf.__operators__.add_20 (TFOpL  (None, 13, 13, 1024  0          ['tf.__operators__.add_19[0][0]',
+ ambda)                         )                                 'tf.nn.leaky_relu_47[0][0]']    
+                                                                                                  
+ conv2d_48 (Conv2D)             (None, 13, 13, 512)  524288      ['tf.__operators__.add_20[0][0]']
+                                                                                                  
+ batch_normalization_48 (BatchN  (None, 13, 13, 512)  2048       ['conv2d_48[0][0]']              
+ ormalization)                                                                                    
+                                                                                                  
+ tf.nn.leaky_relu_48 (TFOpLambd  (None, 13, 13, 512)  0          ['batch_normalization_48[0][0]'] 
+ a)                                                                                               
+                                                                                                  
+ conv2d_49 (Conv2D)             (None, 13, 13, 1024  4718592     ['tf.nn.leaky_relu_48[0][0]']    
+                                )                                                                 
+                                                                                                  
+ batch_normalization_49 (BatchN  (None, 13, 13, 1024  4096       ['conv2d_49[0][0]']              
+ ormalization)                  )                                                                 
+                                                                                                  
+ tf.nn.leaky_relu_49 (TFOpLambd  (None, 13, 13, 1024  0          ['batch_normalization_49[0][0]'] 
+ a)                             )                                                                 
+                                                                                                  
+ tf.__operators__.add_21 (TFOpL  (None, 13, 13, 1024  0          ['tf.__operators__.add_20[0][0]',
+ ambda)                         )                                 'tf.nn.leaky_relu_49[0][0]']    
+                                                                                                  
+ conv2d_50 (Conv2D)             (None, 13, 13, 512)  524288      ['tf.__operators__.add_21[0][0]']
+                                                                                                  
+ batch_normalization_50 (BatchN  (None, 13, 13, 512)  2048       ['conv2d_50[0][0]']              
+ ormalization)                                                                                    
+                                                                                                  
+ tf.nn.leaky_relu_50 (TFOpLambd  (None, 13, 13, 512)  0          ['batch_normalization_50[0][0]'] 
+ a)                                                                                               
+                                                                                                  
+ conv2d_51 (Conv2D)             (None, 13, 13, 1024  4718592     ['tf.nn.leaky_relu_50[0][0]']    
+                                )                                                                 
+                                                                                                  
+ batch_normalization_51 (BatchN  (None, 13, 13, 1024  4096       ['conv2d_51[0][0]']              
+ ormalization)                  )                                                                 
+                                                                                                  
+ tf.nn.leaky_relu_51 (TFOpLambd  (None, 13, 13, 1024  0          ['batch_normalization_51[0][0]'] 
+ a)                             )                                                                 
+                                                                                                  
+ tf.__operators__.add_22 (TFOpL  (None, 13, 13, 1024  0          ['tf.__operators__.add_21[0][0]',
+ ambda)                         )                                 'tf.nn.leaky_relu_51[0][0]']    
+                                                                                                  
+ conv2d_52 (Conv2D)             (None, 13, 13, 512)  524288      ['tf.__operators__.add_22[0][0]']
+                                                                                                  
+ batch_normalization_52 (BatchN  (None, 13, 13, 512)  2048       ['conv2d_52[0][0]']              
+ ormalization)                                                                                    
+                                                                                                  
+ tf.nn.leaky_relu_52 (TFOpLambd  (None, 13, 13, 512)  0          ['batch_normalization_52[0][0]'] 
+ a)                                                                                               
+                                                                                                  
+ conv2d_53 (Conv2D)             (None, 13, 13, 1024  4718592     ['tf.nn.leaky_relu_52[0][0]']    
+                                )                                                                 
+                                                                                                  
+ batch_normalization_53 (BatchN  (None, 13, 13, 1024  4096       ['conv2d_53[0][0]']              
+ ormalization)                  )                                                                 
+                                                                                                  
+ tf.nn.leaky_relu_53 (TFOpLambd  (None, 13, 13, 1024  0          ['batch_normalization_53[0][0]'] 
+ a)                             )                                                                 
+                                                                                                  
+ conv2d_54 (Conv2D)             (None, 13, 13, 512)  524288      ['tf.nn.leaky_relu_53[0][0]']    
+                                                                                                  
+ batch_normalization_54 (BatchN  (None, 13, 13, 512)  2048       ['conv2d_54[0][0]']              
+ ormalization)                                                                                    
+                                                                                                  
+ tf.nn.leaky_relu_54 (TFOpLambd  (None, 13, 13, 512)  0          ['batch_normalization_54[0][0]'] 
+ a)                                                                                               
+                                                                                                  
+ conv2d_55 (Conv2D)             (None, 13, 13, 1024  4718592     ['tf.nn.leaky_relu_54[0][0]']    
+                                )                                                                 
+                                                                                                  
+ batch_normalization_55 (BatchN  (None, 13, 13, 1024  4096       ['conv2d_55[0][0]']              
+ ormalization)                  )                                                                 
+                                                                                                  
+ tf.nn.leaky_relu_55 (TFOpLambd  (None, 13, 13, 1024  0          ['batch_normalization_55[0][0]'] 
+ a)                             )                                                                 
+                                                                                                  
+ conv2d_56 (Conv2D)             (None, 13, 13, 512)  524288      ['tf.nn.leaky_relu_55[0][0]']    
+                                                                                                  
+ batch_normalization_56 (BatchN  (None, 13, 13, 512)  2048       ['conv2d_56[0][0]']              
+ ormalization)                                                                                    
+                                                                                                  
+ tf.nn.leaky_relu_56 (TFOpLambd  (None, 13, 13, 512)  0          ['batch_normalization_56[0][0]'] 
+ a)                                                                                               
+                                                                                                  
+ conv2d_59 (Conv2D)             (None, 13, 13, 256)  131072      ['tf.nn.leaky_relu_56[0][0]']    
+                                                                                                  
+ batch_normalization_58 (BatchN  (None, 13, 13, 256)  1024       ['conv2d_59[0][0]']              
+ ormalization)                                                                                    
+                                                                                                  
+ tf.nn.leaky_relu_58 (TFOpLambd  (None, 13, 13, 256)  0          ['batch_normalization_58[0][0]'] 
+ a)                                                                                               
+                                                                                                  
+ tf.image.resize (TFOpLambda)   (None, 26, 26, 256)  0           ['tf.nn.leaky_relu_58[0][0]']    
+                                                                                                  
+ tf.concat (TFOpLambda)         (None, 26, 26, 768)  0           ['tf.image.resize[0][0]',        
+                                                                  'tf.__operators__.add_18[0][0]']
+                                                                                                  
+ conv2d_60 (Conv2D)             (None, 26, 26, 256)  196608      ['tf.concat[0][0]']              
+                                                                                                  
+ batch_normalization_59 (BatchN  (None, 26, 26, 256)  1024       ['conv2d_60[0][0]']              
+ ormalization)                                                                                    
+                                                                                                  
+ tf.nn.leaky_relu_59 (TFOpLambd  (None, 26, 26, 256)  0          ['batch_normalization_59[0][0]'] 
+ a)                                                                                               
+                                                                                                  
+ conv2d_61 (Conv2D)             (None, 26, 26, 512)  1179648     ['tf.nn.leaky_relu_59[0][0]']    
+                                                                                                  
+ batch_normalization_60 (BatchN  (None, 26, 26, 512)  2048       ['conv2d_61[0][0]']              
+ ormalization)                                                                                    
+                                                                                                  
+ tf.nn.leaky_relu_60 (TFOpLambd  (None, 26, 26, 512)  0          ['batch_normalization_60[0][0]'] 
+ a)                                                                                               
+                                                                                                  
+ conv2d_62 (Conv2D)             (None, 26, 26, 256)  131072      ['tf.nn.leaky_relu_60[0][0]']    
+                                                                                                  
+ batch_normalization_61 (BatchN  (None, 26, 26, 256)  1024       ['conv2d_62[0][0]']              
+ ormalization)                                                                                    
+                                                                                                  
+ tf.nn.leaky_relu_61 (TFOpLambd  (None, 26, 26, 256)  0          ['batch_normalization_61[0][0]'] 
+ a)                                                                                               
+                                                                                                  
+ conv2d_63 (Conv2D)             (None, 26, 26, 512)  1179648     ['tf.nn.leaky_relu_61[0][0]']    
+                                                                                                  
+ batch_normalization_62 (BatchN  (None, 26, 26, 512)  2048       ['conv2d_63[0][0]']              
+ ormalization)                                                                                    
+                                                                                                  
+ tf.nn.leaky_relu_62 (TFOpLambd  (None, 26, 26, 512)  0          ['batch_normalization_62[0][0]'] 
+ a)                                                                                               
+                                                                                                  
+ conv2d_64 (Conv2D)             (None, 26, 26, 256)  131072      ['tf.nn.leaky_relu_62[0][0]']    
+                                                                                                  
+ batch_normalization_63 (BatchN  (None, 26, 26, 256)  1024       ['conv2d_64[0][0]']              
+ ormalization)                                                                                    
+                                                                                                  
+ tf.nn.leaky_relu_63 (TFOpLambd  (None, 26, 26, 256)  0          ['batch_normalization_63[0][0]'] 
+ a)                                                                                               
+                                                                                                  
+ conv2d_67 (Conv2D)             (None, 26, 26, 128)  32768       ['tf.nn.leaky_relu_63[0][0]']    
+                                                                                                  
+ batch_normalization_65 (BatchN  (None, 26, 26, 128)  512        ['conv2d_67[0][0]']              
+ ormalization)                                                                                    
+                                                                                                  
+ tf.nn.leaky_relu_65 (TFOpLambd  (None, 26, 26, 128)  0          ['batch_normalization_65[0][0]'] 
+ a)                                                                                               
+                                                                                                  
+ tf.image.resize_1 (TFOpLambda)  (None, 52, 52, 128)  0          ['tf.nn.leaky_relu_65[0][0]']    
+                                                                                                  
+ tf.concat_1 (TFOpLambda)       (None, 52, 52, 384)  0           ['tf.image.resize_1[0][0]',      
+                                                                  'tf.__operators__.add_10[0][0]']
+                                                                                                  
+ conv2d_68 (Conv2D)             (None, 52, 52, 128)  49152       ['tf.concat_1[0][0]']            
+                                                                                                  
+ batch_normalization_66 (BatchN  (None, 52, 52, 128)  512        ['conv2d_68[0][0]']              
+ ormalization)                                                                                    
+                                                                                                  
+ tf.nn.leaky_relu_66 (TFOpLambd  (None, 52, 52, 128)  0          ['batch_normalization_66[0][0]'] 
+ a)                                                                                               
+                                                                                                  
+ conv2d_69 (Conv2D)             (None, 52, 52, 256)  294912      ['tf.nn.leaky_relu_66[0][0]']    
+                                                                                                  
+ batch_normalization_67 (BatchN  (None, 52, 52, 256)  1024       ['conv2d_69[0][0]']              
+ ormalization)                                                                                    
+                                                                                                  
+ tf.nn.leaky_relu_67 (TFOpLambd  (None, 52, 52, 256)  0          ['batch_normalization_67[0][0]'] 
+ a)                                                                                               
+                                                                                                  
+ conv2d_70 (Conv2D)             (None, 52, 52, 128)  32768       ['tf.nn.leaky_relu_67[0][0]']    
+                                                                                                  
+ batch_normalization_68 (BatchN  (None, 52, 52, 128)  512        ['conv2d_70[0][0]']              
+ ormalization)                                                                                    
+                                                                                                  
+ tf.nn.leaky_relu_68 (TFOpLambd  (None, 52, 52, 128)  0          ['batch_normalization_68[0][0]'] 
+ a)                                                                                               
+                                                                                                  
+ conv2d_71 (Conv2D)             (None, 52, 52, 256)  294912      ['tf.nn.leaky_relu_68[0][0]']    
+                                                                                                  
+ batch_normalization_69 (BatchN  (None, 52, 52, 256)  1024       ['conv2d_71[0][0]']              
+ ormalization)                                                                                    
+                                                                                                  
+ tf.nn.leaky_relu_69 (TFOpLambd  (None, 52, 52, 256)  0          ['batch_normalization_69[0][0]'] 
+ a)                                                                                               
+                                                                                                  
+ conv2d_72 (Conv2D)             (None, 52, 52, 128)  32768       ['tf.nn.leaky_relu_69[0][0]']    
+                                                                                                  
+ batch_normalization_70 (BatchN  (None, 52, 52, 128)  512        ['conv2d_72[0][0]']              
+ ormalization)                                                                                    
+                                                                                                  
+ tf.nn.leaky_relu_70 (TFOpLambd  (None, 52, 52, 128)  0          ['batch_normalization_70[0][0]'] 
+ a)                                                                                               
+                                                                                                  
+ conv2d_73 (Conv2D)             (None, 52, 52, 256)  294912      ['tf.nn.leaky_relu_70[0][0]']    
+                                                                                                  
+ conv2d_65 (Conv2D)             (None, 26, 26, 512)  1179648     ['tf.nn.leaky_relu_63[0][0]']    
+                                                                                                  
+ conv2d_57 (Conv2D)             (None, 13, 13, 1024  4718592     ['tf.nn.leaky_relu_56[0][0]']    
+                                )                                                                 
+                                                                                                  
+ batch_normalization_71 (BatchN  (None, 52, 52, 256)  1024       ['conv2d_73[0][0]']              
+ ormalization)                                                                                    
+                                                                                                  
+ batch_normalization_64 (BatchN  (None, 26, 26, 512)  2048       ['conv2d_65[0][0]']              
+ ormalization)                                                                                    
+                                                                                                  
+ batch_normalization_57 (BatchN  (None, 13, 13, 1024  4096       ['conv2d_57[0][0]']              
+ ormalization)                  )                                                                 
+                                                                                                  
+ tf.nn.leaky_relu_71 (TFOpLambd  (None, 52, 52, 256)  0          ['batch_normalization_71[0][0]'] 
+ a)                                                                                               
+                                                                                                  
+ tf.nn.leaky_relu_64 (TFOpLambd  (None, 26, 26, 512)  0          ['batch_normalization_64[0][0]'] 
+ a)                                                                                               
+                                                                                                  
+ tf.nn.leaky_relu_57 (TFOpLambd  (None, 13, 13, 1024  0          ['batch_normalization_57[0][0]'] 
+ a)                             )                                                                 
+                                                                                                  
+ conv2d_74 (Conv2D)             (None, 52, 52, 255)  65535       ['tf.nn.leaky_relu_71[0][0]']    
+                                                                                                  
+ conv2d_66 (Conv2D)             (None, 26, 26, 255)  130815      ['tf.nn.leaky_relu_64[0][0]']    
+                                                                                                  
+ conv2d_58 (Conv2D)             (None, 13, 13, 255)  261375      ['tf.nn.leaky_relu_57[0][0]']    
+                                                                                                  
+ tf.split (TFOpLambda)          [(None, 52, 52, 2),  0           ['conv2d_74[0][0]']              
+                                 (None, 52, 52, 2),                                               
+                                 (None, 52, 52, 81)                                               
+                                , (None, 52, 52, 2)                                               
+                                , (None, 52, 52, 2)                                               
+                                , (None, 52, 52, 81                                               
+                                ),                                                                
+                                 (None, 52, 52, 2),                                               
+                                 (None, 52, 52, 2),                                               
+                                 (None, 52, 52, 81)                                               
+                                ]                                                                 
+                                                                                                  
+ tf.split_1 (TFOpLambda)        [(None, 26, 26, 2),  0           ['conv2d_66[0][0]']              
+                                 (None, 26, 26, 2),                                               
+                                 (None, 26, 26, 81)                                               
+                                , (None, 26, 26, 2)                                               
+                                , (None, 26, 26, 2)                                               
+                                , (None, 26, 26, 81                                               
+                                ),                                                                
+                                 (None, 26, 26, 2),                                               
+                                 (None, 26, 26, 2),                                               
+                                 (None, 26, 26, 81)                                               
+                                ]                                                                 
+                                                                                                  
+ tf.split_2 (TFOpLambda)        [(None, 13, 13, 2),  0           ['conv2d_58[0][0]']              
+                                 (None, 13, 13, 2),                                               
+                                 (None, 13, 13, 81)                                               
+                                , (None, 13, 13, 2)                                               
+                                , (None, 13, 13, 2)                                               
+                                , (None, 13, 13, 81                                               
+                                ),                                                                
+                                 (None, 13, 13, 2),                                               
+                                 (None, 13, 13, 2),                                               
+                                 (None, 13, 13, 81)                                               
+                                ]                                                                 
+                                                                                                  
+ tf.math.sigmoid_3 (TFOpLambda)  (None, 52, 52, 2)   0           ['tf.split[0][0]']               
+                                                                                                  
+ tf.math.sigmoid_4 (TFOpLambda)  (None, 52, 52, 2)   0           ['tf.split[0][3]']               
+                                                                                                  
+ tf.math.sigmoid_5 (TFOpLambda)  (None, 52, 52, 2)   0           ['tf.split[0][6]']               
+                                                                                                  
+ tf.math.sigmoid_9 (TFOpLambda)  (None, 26, 26, 2)   0           ['tf.split_1[0][0]']             
+                                                                                                  
+ tf.math.sigmoid_10 (TFOpLambda  (None, 26, 26, 2)   0           ['tf.split_1[0][3]']             
+ )                                                                                                
+                                                                                                  
+ tf.math.sigmoid_11 (TFOpLambda  (None, 26, 26, 2)   0           ['tf.split_1[0][6]']             
+ )                                                                                                
+                                                                                                  
+ tf.math.sigmoid_15 (TFOpLambda  (None, 13, 13, 2)   0           ['tf.split_2[0][0]']             
+ )                                                                                                
+                                                                                                  
+ tf.math.sigmoid_16 (TFOpLambda  (None, 13, 13, 2)   0           ['tf.split_2[0][3]']             
+ )                                                                                                
+                                                                                                  
+ tf.math.sigmoid_17 (TFOpLambda  (None, 13, 13, 2)   0           ['tf.split_2[0][6]']             
+ )                                                                                                
+                                                                                                  
+ tf.math.multiply_6 (TFOpLambda  (None, 52, 52, 2)   0           ['tf.math.sigmoid_3[0][0]']      
+ )                                                                                                
+                                                                                                  
+ tf.math.multiply_8 (TFOpLambda  (None, 52, 52, 2)   0           ['tf.math.sigmoid_4[0][0]']      
+ )                                                                                                
+                                                                                                  
+ tf.math.multiply_10 (TFOpLambd  (None, 52, 52, 2)   0           ['tf.math.sigmoid_5[0][0]']      
+ a)                                                                                               
+                                                                                                  
+ tf.math.multiply_18 (TFOpLambd  (None, 26, 26, 2)   0           ['tf.math.sigmoid_9[0][0]']      
+ a)                                                                                               
+                                                                                                  
+ tf.math.multiply_20 (TFOpLambd  (None, 26, 26, 2)   0           ['tf.math.sigmoid_10[0][0]']     
+ a)                                                                                               
+                                                                                                  
+ tf.math.multiply_22 (TFOpLambd  (None, 26, 26, 2)   0           ['tf.math.sigmoid_11[0][0]']     
+ a)                                                                                               
+                                                                                                  
+ tf.math.multiply_30 (TFOpLambd  (None, 13, 13, 2)   0           ['tf.math.sigmoid_15[0][0]']     
+ a)                                                                                               
+                                                                                                  
+ tf.math.multiply_32 (TFOpLambd  (None, 13, 13, 2)   0           ['tf.math.sigmoid_16[0][0]']     
+ a)                                                                                               
+                                                                                                  
+ tf.math.multiply_34 (TFOpLambd  (None, 13, 13, 2)   0           ['tf.math.sigmoid_17[0][0]']     
+ a)                                                                                               
+                                                                                                  
+ tf.math.subtract (TFOpLambda)  (None, 52, 52, 2)    0           ['tf.math.multiply_6[0][0]']     
+                                                                                                  
+ tf.math.subtract_1 (TFOpLambda  (None, 52, 52, 2)   0           ['tf.math.multiply_8[0][0]']     
+ )                                                                                                
+                                                                                                  
+ tf.math.subtract_2 (TFOpLambda  (None, 52, 52, 2)   0           ['tf.math.multiply_10[0][0]']    
+ )                                                                                                
+                                                                                                  
+ tf.math.subtract_3 (TFOpLambda  (None, 26, 26, 2)   0           ['tf.math.multiply_18[0][0]']    
+ )                                                                                                
+                                                                                                  
+ tf.math.subtract_4 (TFOpLambda  (None, 26, 26, 2)   0           ['tf.math.multiply_20[0][0]']    
+ )                                                                                                
+                                                                                                  
+ tf.math.subtract_5 (TFOpLambda  (None, 26, 26, 2)   0           ['tf.math.multiply_22[0][0]']    
+ )                                                                                                
+                                                                                                  
+ tf.math.subtract_6 (TFOpLambda  (None, 13, 13, 2)   0           ['tf.math.multiply_30[0][0]']    
+ )                                                                                                
+                                                                                                  
+ tf.math.subtract_7 (TFOpLambda  (None, 13, 13, 2)   0           ['tf.math.multiply_32[0][0]']    
+ )                                                                                                
+                                                                                                  
+ tf.math.subtract_8 (TFOpLambda  (None, 13, 13, 2)   0           ['tf.math.multiply_34[0][0]']    
+ )                                                                                                
+                                                                                                  
+ tf.__operators__.add_23 (TFOpL  (None, 52, 52, 2)   0           ['tf.math.subtract[0][0]']       
+ ambda)                                                                                           
+                                                                                                  
+ tf.__operators__.add_24 (TFOpL  (None, 52, 52, 2)   0           ['tf.math.subtract_1[0][0]']     
+ ambda)                                                                                           
+                                                                                                  
+ tf.__operators__.add_25 (TFOpL  (None, 52, 52, 2)   0           ['tf.math.subtract_2[0][0]']     
+ ambda)                                                                                           
+                                                                                                  
+ tf.math.exp (TFOpLambda)       (None, 52, 52, 2)    0           ['tf.split[0][1]']               
+                                                                                                  
+ tf.math.exp_1 (TFOpLambda)     (None, 52, 52, 2)    0           ['tf.split[0][4]']               
+                                                                                                  
+ tf.math.exp_2 (TFOpLambda)     (None, 52, 52, 2)    0           ['tf.split[0][7]']               
+                                                                                                  
+ tf.__operators__.add_26 (TFOpL  (None, 26, 26, 2)   0           ['tf.math.subtract_3[0][0]']     
+ ambda)                                                                                           
+                                                                                                  
+ tf.__operators__.add_27 (TFOpL  (None, 26, 26, 2)   0           ['tf.math.subtract_4[0][0]']     
+ ambda)                                                                                           
+                                                                                                  
+ tf.__operators__.add_28 (TFOpL  (None, 26, 26, 2)   0           ['tf.math.subtract_5[0][0]']     
+ ambda)                                                                                           
+                                                                                                  
+ tf.math.exp_3 (TFOpLambda)     (None, 26, 26, 2)    0           ['tf.split_1[0][1]']             
+                                                                                                  
+ tf.math.exp_4 (TFOpLambda)     (None, 26, 26, 2)    0           ['tf.split_1[0][4]']             
+                                                                                                  
+ tf.math.exp_5 (TFOpLambda)     (None, 26, 26, 2)    0           ['tf.split_1[0][7]']             
+                                                                                                  
+ tf.__operators__.add_29 (TFOpL  (None, 13, 13, 2)   0           ['tf.math.subtract_6[0][0]']     
+ ambda)                                                                                           
+                                                                                                  
+ tf.__operators__.add_30 (TFOpL  (None, 13, 13, 2)   0           ['tf.math.subtract_7[0][0]']     
+ ambda)                                                                                           
+                                                                                                  
+ tf.__operators__.add_31 (TFOpL  (None, 13, 13, 2)   0           ['tf.math.subtract_8[0][0]']     
+ ambda)                                                                                           
+                                                                                                  
+ tf.math.exp_6 (TFOpLambda)     (None, 13, 13, 2)    0           ['tf.split_2[0][1]']             
+                                                                                                  
+ tf.math.exp_7 (TFOpLambda)     (None, 13, 13, 2)    0           ['tf.split_2[0][4]']             
+                                                                                                  
+ tf.math.exp_8 (TFOpLambda)     (None, 13, 13, 2)    0           ['tf.split_2[0][7]']             
+                                                                                                  
+ tf.math.sigmoid (TFOpLambda)   (None, 52, 52, 81)   0           ['tf.split[0][2]']               
+                                                                                                  
+ tf.math.sigmoid_1 (TFOpLambda)  (None, 52, 52, 81)  0           ['tf.split[0][5]']               
+                                                                                                  
+ tf.math.sigmoid_2 (TFOpLambda)  (None, 52, 52, 81)  0           ['tf.split[0][8]']               
+                                                                                                  
+ tf.math.sigmoid_6 (TFOpLambda)  (None, 26, 26, 81)  0           ['tf.split_1[0][2]']             
+                                                                                                  
+ tf.math.sigmoid_7 (TFOpLambda)  (None, 26, 26, 81)  0           ['tf.split_1[0][5]']             
+                                                                                                  
+ tf.math.sigmoid_8 (TFOpLambda)  (None, 26, 26, 81)  0           ['tf.split_1[0][8]']             
+                                                                                                  
+ tf.math.sigmoid_12 (TFOpLambda  (None, 13, 13, 81)  0           ['tf.split_2[0][2]']             
+ )                                                                                                
+                                                                                                  
+ tf.math.sigmoid_13 (TFOpLambda  (None, 13, 13, 81)  0           ['tf.split_2[0][5]']             
+ )                                                                                                
+                                                                                                  
+ tf.math.sigmoid_14 (TFOpLambda  (None, 13, 13, 81)  0           ['tf.split_2[0][8]']             
+ )                                                                                                
+                                                                                                  
+ tf.math.multiply_7 (TFOpLambda  (None, 52, 52, 2)   0           ['tf.__operators__.add_23[0][0]']
+ )                                                                                                
+                                                                                                  
+ tf.math.multiply_9 (TFOpLambda  (None, 52, 52, 2)   0           ['tf.__operators__.add_24[0][0]']
+ )                                                                                                
+                                                                                                  
+ tf.math.multiply_11 (TFOpLambd  (None, 52, 52, 2)   0           ['tf.__operators__.add_25[0][0]']
+ a)                                                                                               
+                                                                                                  
+ tf.math.multiply_3 (TFOpLambda  (None, 52, 52, 2)   0           ['tf.math.exp[0][0]']            
+ )                                                                                                
+                                                                                                  
+ tf.math.multiply_4 (TFOpLambda  (None, 52, 52, 2)   0           ['tf.math.exp_1[0][0]']          
+ )                                                                                                
+                                                                                                  
+ tf.math.multiply_5 (TFOpLambda  (None, 52, 52, 2)   0           ['tf.math.exp_2[0][0]']          
+ )                                                                                                
+                                                                                                  
+ tf.math.multiply_19 (TFOpLambd  (None, 26, 26, 2)   0           ['tf.__operators__.add_26[0][0]']
+ a)                                                                                               
+                                                                                                  
+ tf.math.multiply_21 (TFOpLambd  (None, 26, 26, 2)   0           ['tf.__operators__.add_27[0][0]']
+ a)                                                                                               
+                                                                                                  
+ tf.math.multiply_23 (TFOpLambd  (None, 26, 26, 2)   0           ['tf.__operators__.add_28[0][0]']
+ a)                                                                                               
+                                                                                                  
+ tf.math.multiply_15 (TFOpLambd  (None, 26, 26, 2)   0           ['tf.math.exp_3[0][0]']          
+ a)                                                                                               
+                                                                                                  
+ tf.math.multiply_16 (TFOpLambd  (None, 26, 26, 2)   0           ['tf.math.exp_4[0][0]']          
+ a)                                                                                               
+                                                                                                  
+ tf.math.multiply_17 (TFOpLambd  (None, 26, 26, 2)   0           ['tf.math.exp_5[0][0]']          
+ a)                                                                                               
+                                                                                                  
+ tf.math.multiply_31 (TFOpLambd  (None, 13, 13, 2)   0           ['tf.__operators__.add_29[0][0]']
+ a)                                                                                               
+                                                                                                  
+ tf.math.multiply_33 (TFOpLambd  (None, 13, 13, 2)   0           ['tf.__operators__.add_30[0][0]']
+ a)                                                                                               
+                                                                                                  
+ tf.math.multiply_35 (TFOpLambd  (None, 13, 13, 2)   0           ['tf.__operators__.add_31[0][0]']
+ a)                                                                                               
+                                                                                                  
+ tf.math.multiply_27 (TFOpLambd  (None, 13, 13, 2)   0           ['tf.math.exp_6[0][0]']          
+ a)                                                                                               
+                                                                                                  
+ tf.math.multiply_28 (TFOpLambd  (None, 13, 13, 2)   0           ['tf.math.exp_7[0][0]']          
+ a)                                                                                               
+                                                                                                  
+ tf.math.multiply_29 (TFOpLambd  (None, 13, 13, 2)   0           ['tf.math.exp_8[0][0]']          
+ a)                                                                                               
+                                                                                                  
+ tf.__operators__.getitem (Slic  (None, 52, 52, 1)   0           ['tf.math.sigmoid[0][0]']        
+ ingOpLambda)                                                                                     
+                                                                                                  
+ tf.__operators__.getitem_1 (Sl  (None, 52, 52, 80)  0           ['tf.math.sigmoid[0][0]']        
+ icingOpLambda)                                                                                   
+                                                                                                  
+ tf.__operators__.getitem_2 (Sl  (None, 52, 52, 1)   0           ['tf.math.sigmoid_1[0][0]']      
+ icingOpLambda)                                                                                   
+                                                                                                  
+ tf.__operators__.getitem_3 (Sl  (None, 52, 52, 80)  0           ['tf.math.sigmoid_1[0][0]']      
+ icingOpLambda)                                                                                   
+                                                                                                  
+ tf.__operators__.getitem_4 (Sl  (None, 52, 52, 1)   0           ['tf.math.sigmoid_2[0][0]']      
+ icingOpLambda)                                                                                   
+                                                                                                  
+ tf.__operators__.getitem_5 (Sl  (None, 52, 52, 80)  0           ['tf.math.sigmoid_2[0][0]']      
+ icingOpLambda)                                                                                   
+                                                                                                  
+ tf.__operators__.getitem_6 (Sl  (None, 26, 26, 1)   0           ['tf.math.sigmoid_6[0][0]']      
+ icingOpLambda)                                                                                   
+                                                                                                  
+ tf.__operators__.getitem_7 (Sl  (None, 26, 26, 80)  0           ['tf.math.sigmoid_6[0][0]']      
+ icingOpLambda)                                                                                   
+                                                                                                  
+ tf.__operators__.getitem_8 (Sl  (None, 26, 26, 1)   0           ['tf.math.sigmoid_7[0][0]']      
+ icingOpLambda)                                                                                   
+                                                                                                  
+ tf.__operators__.getitem_9 (Sl  (None, 26, 26, 80)  0           ['tf.math.sigmoid_7[0][0]']      
+ icingOpLambda)                                                                                   
+                                                                                                  
+ tf.__operators__.getitem_10 (S  (None, 26, 26, 1)   0           ['tf.math.sigmoid_8[0][0]']      
+ licingOpLambda)                                                                                  
+                                                                                                  
+ tf.__operators__.getitem_11 (S  (None, 26, 26, 80)  0           ['tf.math.sigmoid_8[0][0]']      
+ licingOpLambda)                                                                                  
+                                                                                                  
+ tf.__operators__.getitem_12 (S  (None, 13, 13, 1)   0           ['tf.math.sigmoid_12[0][0]']     
+ licingOpLambda)                                                                                  
+                                                                                                  
+ tf.__operators__.getitem_13 (S  (None, 13, 13, 80)  0           ['tf.math.sigmoid_12[0][0]']     
+ licingOpLambda)                                                                                  
+                                                                                                  
+ tf.__operators__.getitem_14 (S  (None, 13, 13, 1)   0           ['tf.math.sigmoid_13[0][0]']     
+ licingOpLambda)                                                                                  
+                                                                                                  
+ tf.__operators__.getitem_15 (S  (None, 13, 13, 80)  0           ['tf.math.sigmoid_13[0][0]']     
+ licingOpLambda)                                                                                  
+                                                                                                  
+ tf.__operators__.getitem_16 (S  (None, 13, 13, 1)   0           ['tf.math.sigmoid_14[0][0]']     
+ licingOpLambda)                                                                                  
+                                                                                                  
+ tf.__operators__.getitem_17 (S  (None, 13, 13, 80)  0           ['tf.math.sigmoid_14[0][0]']     
+ licingOpLambda)                                                                                  
+                                                                                                  
+ tf.reshape_6 (TFOpLambda)      (1, None, 2)         0           ['tf.math.multiply_7[0][0]']     
+                                                                                                  
+ tf.reshape_7 (TFOpLambda)      (1, None, 2)         0           ['tf.math.multiply_9[0][0]']     
+                                                                                                  
+ tf.reshape_8 (TFOpLambda)      (1, None, 2)         0           ['tf.math.multiply_11[0][0]']    
+                                                                                                  
+ tf.reshape_3 (TFOpLambda)      (1, None, 2)         0           ['tf.math.multiply_3[0][0]']     
+                                                                                                  
+ tf.reshape_4 (TFOpLambda)      (1, None, 2)         0           ['tf.math.multiply_4[0][0]']     
+                                                                                                  
+ tf.reshape_5 (TFOpLambda)      (1, None, 2)         0           ['tf.math.multiply_5[0][0]']     
+                                                                                                  
+ tf.reshape_15 (TFOpLambda)     (1, None, 2)         0           ['tf.math.multiply_19[0][0]']    
+                                                                                                  
+ tf.reshape_16 (TFOpLambda)     (1, None, 2)         0           ['tf.math.multiply_21[0][0]']    
+                                                                                                  
+ tf.reshape_17 (TFOpLambda)     (1, None, 2)         0           ['tf.math.multiply_23[0][0]']    
+                                                                                                  
+ tf.reshape_12 (TFOpLambda)     (1, None, 2)         0           ['tf.math.multiply_15[0][0]']    
+                                                                                                  
+ tf.reshape_13 (TFOpLambda)     (1, None, 2)         0           ['tf.math.multiply_16[0][0]']    
+                                                                                                  
+ tf.reshape_14 (TFOpLambda)     (1, None, 2)         0           ['tf.math.multiply_17[0][0]']    
+                                                                                                  
+ tf.reshape_24 (TFOpLambda)     (1, None, 2)         0           ['tf.math.multiply_31[0][0]']    
+                                                                                                  
+ tf.reshape_25 (TFOpLambda)     (1, None, 2)         0           ['tf.math.multiply_33[0][0]']    
+                                                                                                  
+ tf.reshape_26 (TFOpLambda)     (1, None, 2)         0           ['tf.math.multiply_35[0][0]']    
+                                                                                                  
+ tf.reshape_21 (TFOpLambda)     (1, None, 2)         0           ['tf.math.multiply_27[0][0]']    
+                                                                                                  
+ tf.reshape_22 (TFOpLambda)     (1, None, 2)         0           ['tf.math.multiply_28[0][0]']    
+                                                                                                  
+ tf.reshape_23 (TFOpLambda)     (1, None, 2)         0           ['tf.math.multiply_29[0][0]']    
+                                                                                                  
+ tf.math.multiply (TFOpLambda)  (None, 52, 52, 80)   0           ['tf.__operators__.getitem[0][0]'
+                                                                 , 'tf.__operators__.getitem_1[0][
+                                                                 0]']                             
+                                                                                                  
+ tf.math.multiply_1 (TFOpLambda  (None, 52, 52, 80)  0           ['tf.__operators__.getitem_2[0][0
+ )                                                               ]',                              
+                                                                  'tf.__operators__.getitem_3[0][0
+                                                                 ]']                              
+                                                                                                  
+ tf.math.multiply_2 (TFOpLambda  (None, 52, 52, 80)  0           ['tf.__operators__.getitem_4[0][0
+ )                                                               ]',                              
+                                                                  'tf.__operators__.getitem_5[0][0
+                                                                 ]']                              
+                                                                                                  
+ tf.math.multiply_12 (TFOpLambd  (None, 26, 26, 80)  0           ['tf.__operators__.getitem_6[0][0
+ a)                                                              ]',                              
+                                                                  'tf.__operators__.getitem_7[0][0
+                                                                 ]']                              
+                                                                                                  
+ tf.math.multiply_13 (TFOpLambd  (None, 26, 26, 80)  0           ['tf.__operators__.getitem_8[0][0
+ a)                                                              ]',                              
+                                                                  'tf.__operators__.getitem_9[0][0
+                                                                 ]']                              
+                                                                                                  
+ tf.math.multiply_14 (TFOpLambd  (None, 26, 26, 80)  0           ['tf.__operators__.getitem_10[0][
+ a)                                                              0]',                             
+                                                                  'tf.__operators__.getitem_11[0][
+                                                                 0]']                             
+                                                                                                  
+ tf.math.multiply_24 (TFOpLambd  (None, 13, 13, 80)  0           ['tf.__operators__.getitem_12[0][
+ a)                                                              0]',                             
+                                                                  'tf.__operators__.getitem_13[0][
+                                                                 0]']                             
+                                                                                                  
+ tf.math.multiply_25 (TFOpLambd  (None, 13, 13, 80)  0           ['tf.__operators__.getitem_14[0][
+ a)                                                              0]',                             
+                                                                  'tf.__operators__.getitem_15[0][
+                                                                 0]']                             
+                                                                                                  
+ tf.math.multiply_26 (TFOpLambd  (None, 13, 13, 80)  0           ['tf.__operators__.getitem_16[0][
+ a)                                                              0]',                             
+                                                                  'tf.__operators__.getitem_17[0][
+                                                                 0]']                             
+                                                                                                  
+ tf.concat_4 (TFOpLambda)       (1, None, 2)         0           ['tf.reshape_6[0][0]',           
+                                                                  'tf.reshape_7[0][0]',           
+                                                                  'tf.reshape_8[0][0]']           
+                                                                                                  
+ tf.concat_3 (TFOpLambda)       (1, None, 2)         0           ['tf.reshape_3[0][0]',           
+                                                                  'tf.reshape_4[0][0]',           
+                                                                  'tf.reshape_5[0][0]']           
+                                                                                                  
+ tf.concat_8 (TFOpLambda)       (1, None, 2)         0           ['tf.reshape_15[0][0]',          
+                                                                  'tf.reshape_16[0][0]',          
+                                                                  'tf.reshape_17[0][0]']          
+                                                                                                  
+ tf.concat_7 (TFOpLambda)       (1, None, 2)         0           ['tf.reshape_12[0][0]',          
+                                                                  'tf.reshape_13[0][0]',          
+                                                                  'tf.reshape_14[0][0]']          
+                                                                                                  
+ tf.concat_12 (TFOpLambda)      (1, None, 2)         0           ['tf.reshape_24[0][0]',          
+                                                                  'tf.reshape_25[0][0]',          
+                                                                  'tf.reshape_26[0][0]']          
+                                                                                                  
+ tf.concat_11 (TFOpLambda)      (1, None, 2)         0           ['tf.reshape_21[0][0]',          
+                                                                  'tf.reshape_22[0][0]',          
+                                                                  'tf.reshape_23[0][0]']          
+                                                                                                  
+ tf.reshape (TFOpLambda)        (1, None, 80)        0           ['tf.math.multiply[0][0]']       
+                                                                                                  
+ tf.reshape_1 (TFOpLambda)      (1, None, 80)        0           ['tf.math.multiply_1[0][0]']     
+                                                                                                  
+ tf.reshape_2 (TFOpLambda)      (1, None, 80)        0           ['tf.math.multiply_2[0][0]']     
+                                                                                                  
+ tf.reshape_9 (TFOpLambda)      (1, None, 80)        0           ['tf.math.multiply_12[0][0]']    
+                                                                                                  
+ tf.reshape_10 (TFOpLambda)     (1, None, 80)        0           ['tf.math.multiply_13[0][0]']    
+                                                                                                  
+ tf.reshape_11 (TFOpLambda)     (1, None, 80)        0           ['tf.math.multiply_14[0][0]']    
+                                                                                                  
+ tf.reshape_18 (TFOpLambda)     (1, None, 80)        0           ['tf.math.multiply_24[0][0]']    
+                                                                                                  
+ tf.reshape_19 (TFOpLambda)     (1, None, 80)        0           ['tf.math.multiply_25[0][0]']    
+                                                                                                  
+ tf.reshape_20 (TFOpLambda)     (1, None, 80)        0           ['tf.math.multiply_26[0][0]']    
+                                                                                                  
+ tf.concat_5 (TFOpLambda)       (1, None, 4)         0           ['tf.concat_4[0][0]',            
+                                                                  'tf.concat_3[0][0]']            
+                                                                                                  
+ tf.concat_9 (TFOpLambda)       (1, None, 4)         0           ['tf.concat_8[0][0]',            
+                                                                  'tf.concat_7[0][0]']            
+                                                                                                  
+ tf.concat_13 (TFOpLambda)      (1, None, 4)         0           ['tf.concat_12[0][0]',           
+                                                                  'tf.concat_11[0][0]']           
+                                                                                                  
+ tf.concat_2 (TFOpLambda)       (1, None, 80)        0           ['tf.reshape[0][0]',             
+                                                                  'tf.reshape_1[0][0]',           
+                                                                  'tf.reshape_2[0][0]']           
+                                                                                                  
+ tf.concat_6 (TFOpLambda)       (1, None, 80)        0           ['tf.reshape_9[0][0]',           
+                                                                  'tf.reshape_10[0][0]',          
+                                                                  'tf.reshape_11[0][0]']          
+                                                                                                  
+ tf.concat_10 (TFOpLambda)      (1, None, 80)        0           ['tf.reshape_18[0][0]',          
+                                                                  'tf.reshape_19[0][0]',          
+                                                                  'tf.reshape_20[0][0]']          
+                                                                                                  
+ tf.concat_14 (TFOpLambda)      (1, None, 4)         0           ['tf.concat_5[0][0]',            
+                                                                  'tf.concat_9[0][0]',            
+                                                                  'tf.concat_13[0][0]']           
+                                                                                                  
+ tf.concat_15 (TFOpLambda)      (1, None, 80)        0           ['tf.concat_2[0][0]',            
+                                                                  'tf.concat_6[0][0]',            
+                                                                  'tf.concat_10[0][0]']           
+                                                                                                  
+==================================================================================================
+Total params: 62,001,757
+Trainable params: 61,949,149
+Non-trainable params: 52,608
+__________________________________________________________________________________________________
