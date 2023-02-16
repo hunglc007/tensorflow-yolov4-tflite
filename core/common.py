@@ -18,8 +18,9 @@ class BatchNormalization(tf.keras.layers.BatchNormalization):
 
 def convolutional(input_layer, filters_shape, downsample=False, activate=True, bn=True, activate_type='leaky'):
     if downsample:
-        input_layer = tf.keras.layers.ZeroPadding2D(((1, 0), (1, 0)))(input_layer)
-        padding = 'valid'
+        # input_layer = tf.keras.layers.ZeroPadding2D(((1, 0), (1, 0)))(input_layer)
+        # padding = 'valid'
+        padding = 'same'
         strides = 2
     else:
         strides = 1
