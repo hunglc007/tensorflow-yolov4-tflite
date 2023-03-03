@@ -20,6 +20,9 @@ python save_model.py --weights ./data/yolov3.weights --output ./checkpoints/yolo
 
 python convert_tflite.py --weights ./checkpoints/yolov3-416 --output ./checkpoints/yolov3-416.tflite
 
+# anchor  = [116,90, 156,198, 373,326, 30,61, 62,45, 59,119, 10,13, 16,30, 33,23]
+# STRIDES = [32, 16, 8]
+
 ```
 
 ### Prerequisites

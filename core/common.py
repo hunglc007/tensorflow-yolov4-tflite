@@ -18,6 +18,7 @@ class BatchNormalization(tf.keras.layers.BatchNormalization):
 
 def convolutional(input_layer, filters_shape, downsample=False, activate=True, bn=True, activate_type='leaky'):
     if downsample:
+        # Remove Padding & replace padding 'valid' to 'same'
         # input_layer = tf.keras.layers.ZeroPadding2D(((1, 0), (1, 0)))(input_layer)
         # padding = 'valid'
         padding = 'same'
@@ -64,5 +65,7 @@ def route_group(input_layer, groups, group_id):
     return convs[group_id]
 
 def upsample(input_layer):
+    # TODO: replace bilinear to linear
+    # Not support method='linear'
+    #return tf.image.resize(input_layer, (input_layer.shape[1] * 2, input_layer.shape[2] * 2), method='linear')
     return tf.image.resize(input_layer, (input_layer.shape[1] * 2, input_layer.shape[2] * 2), method='bilinear')
-
